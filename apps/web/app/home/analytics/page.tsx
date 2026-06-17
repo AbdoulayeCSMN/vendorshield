@@ -11,6 +11,7 @@ import {
   getSoleSourceExposure,
   getTopRiskySuppliers,
 } from '~/lib/vendorshield/analytics.server';
+import { getBankruptcyOverview } from '~/lib/vendorshield/actions/prediction.actions';
 
 import { AnalyticsDashboard } from './_components/analytics-dashboard';
 
@@ -25,6 +26,7 @@ async function AnalyticsPage() {
     topRisky,
     soleSource,
     countries,
+    bankruptcyOverview,
   ] = await Promise.all([
     getAnalyticsDashboard(),
     getRiskDistribution(),
@@ -34,6 +36,7 @@ async function AnalyticsPage() {
     getTopRiskySuppliers(10),
     getSoleSourceExposure(),
     getCountryExposure(),
+    getBankruptcyOverview(),
   ]);
 
   return (
@@ -52,6 +55,7 @@ async function AnalyticsPage() {
           topRiskySuppliers={topRisky}
           soleSourceSuppliers={soleSource}
           countryExposure={countries}
+          bankruptcyOverview={bankruptcyOverview}
         />
       </PageBody>
     </>

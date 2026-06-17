@@ -56,6 +56,7 @@ import {
   formatEur,
   type RiskLevel,
 } from '~/lib/vendorshield/types';
+import type { BankruptcyPrediction } from '~/lib/vendorshield/actions/prediction.actions';
 
 // ─── Constantes couleurs ──────────────────────────────────────────────────────
 
@@ -123,10 +124,12 @@ function ScoreBar({ score }: { score: number | null }) {
   const color = score >= 70 ? '#22c55e' : score >= 40 ? '#f97316' : '#ef4444';
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 h-1.5 rounded-full bg-gray-100 dark:bg-gray-800">
-        <div className="h-1.5 rounded-full" style={{ width: `${score}%`, background: color }} />
-      </div>
-      <span className="text-xs font-semibold tabular-nums w-6 text-right" style={{ color }}>
+      <progress
+        className={`h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800 ${score >= 70 ? 'accent-green-500' : score >= 40 ? 'accent-orange-500' : 'accent-red-500'}`}
+        value={score}
+        max={100}
+      />
+      <span className={`text-xs font-semibold tabular-nums w-6 text-right ${score >= 70 ? 'text-green-500' : score >= 40 ? 'text-orange-500' : 'text-red-500'}`}>
         {score}
       </span>
     </div>
@@ -144,6 +147,15 @@ interface Props {
   topRiskySuppliers: TopRiskySupplier[];
   soleSourceSuppliers: SoleSourceItem[];
   countryExposure: CountryExposure[];
+  bankruptcyOverview: {
+    distress_count: number;
+    grey_count: number;
+    safe_count: number;
+    latest: (BankruptcyPrediction & {
+      supplier_name: string;
+      annual_spend_eur: number | null;
+    })[];
+  };
 }
 
 // ─── Composant principal ──────────────────────────────────────────────────────
@@ -157,6 +169,7 @@ export function AnalyticsDashboard({
   topRiskySuppliers,
   soleSourceSuppliers,
   countryExposure,
+  bankruptcyOverview,
 }: Props) {
   const totalRisk = riskDistribution.reduce((s, r) => s + r.count, 0);
 
@@ -272,10 +285,7 @@ export function AnalyticsDashboard({
                   <div key={item.level}>
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2">
-                        <div
-                          className="h-2.5 w-2.5 rounded-full"
-                          style={{ background: RISK_COLORS[item.level] ?? '#ccc' }}
-                        />
+                        <div className={`h-2.5 w-2.5 rounded-full ${item.level === 'critical' ? 'bg-red-500' : item.level === 'high' ? 'bg-orange-500' : item.level === 'medium' ? 'bg-amber-500' : 'bg-green-500'}`} />
                         <span className="text-sm text-gray-600 dark:text-gray-400">{item.label}</span>
                       </div>
                       <span className="text-sm font-semibold text-gray-900 dark:text-white tabular-nums">
@@ -287,15 +297,11 @@ export function AnalyticsDashboard({
                         )}
                       </span>
                     </div>
-                    <div className="h-1.5 w-full rounded-full bg-gray-100 dark:bg-gray-800">
-                      <div
-                        className="h-1.5 rounded-full"
-                        style={{
-                          width: totalRisk > 0 ? `${(item.count / totalRisk) * 100}%` : '0%',
-                          background: RISK_COLORS[item.level] ?? '#ccc',
-                        }}
-                      />
-                    </div>
+                    <progress
+                      className={`h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800 ${item.level === 'critical' ? 'accent-red-500' : item.level === 'high' ? 'accent-orange-500' : item.level === 'medium' ? 'accent-amber-500' : 'accent-green-500'}`}
+                      value={totalRisk > 0 ? (item.count / totalRisk) * 100 : 0}
+                      max={100}
+                    />
                   </div>
                 ))}
               </div>
@@ -533,7 +539,77 @@ export function AnalyticsDashboard({
         </Card>
       </div>
 
-      {/* ── Row 6 : Sole source ── */}
+      {/* ── Row 6 : Bankruptcy overview ── */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-rose-500" />
+                Bankruptcy Overview
+              </CardTitle>
+              <CardDescription>
+                Projection Altman Z-score sur les fournisseurs les plus exposés
+              </CardDescription>
+            </div>
+            <Link href="/home/suppliers?sort=global_score&order=asc" className="text-xs text-primary hover:underline flex items-center gap-1 shrink-0">
+              Voir fournisseurs <ArrowUpRight className="h-3 w-3" />
+            </Link>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2.5">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-red-700">Distress</p>
+              <p className="mt-1 text-2xl font-bold tabular-nums text-red-700">{bankruptcyOverview.distress_count}</p>
+            </div>
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-amber-700">Grey Zone</p>
+              <p className="mt-1 text-2xl font-bold tabular-nums text-amber-700">{bankruptcyOverview.grey_count}</p>
+            </div>
+            <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2.5">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-green-700">Safe</p>
+              <p className="mt-1 text-2xl font-bold tabular-nums text-green-700">{bankruptcyOverview.safe_count}</p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            {bankruptcyOverview.latest.length === 0 ? (
+              <p className="text-sm text-gray-400 py-3 text-center">Aucune prédiction de faillite disponible</p>
+            ) : (
+              bankruptcyOverview.latest.slice(0, 5).map((row) => {
+                const zoneClass =
+                  row.risk_zone === 'distress'
+                    ? 'bg-red-50 text-red-700 border-red-200'
+                    : row.risk_zone === 'grey'
+                      ? 'bg-amber-50 text-amber-700 border-amber-200'
+                      : 'bg-green-50 text-green-700 border-green-200';
+
+                return (
+                  <Link
+                    key={row.id}
+                    href={`/home/suppliers/${row.supplier_id}`}
+                    className="flex items-center gap-3 rounded-lg p-2.5 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{row.supplier_name}</p>
+                      <p className="text-[11px] text-gray-500 mt-0.5">
+                        Z-score {row.z_score.toFixed(2)} · 12m {Math.round(row.probability_12m)}%
+                        {row.annual_spend_eur ? ` · ${formatEur(row.annual_spend_eur)}` : ''}
+                      </p>
+                    </div>
+                    <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase ${zoneClass}`}>
+                      {row.risk_zone}
+                    </span>
+                  </Link>
+                );
+              })
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ── Row 7 : Sole source ── */}
       {soleSourceSuppliers.length > 0 && (
         <Card>
           <CardHeader>

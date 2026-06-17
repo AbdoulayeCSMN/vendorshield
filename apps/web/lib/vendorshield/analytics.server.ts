@@ -36,11 +36,18 @@ export async function getRiskDistribution(): Promise<RiskDistributionItem[]> {
     .select('risk_level')
     .neq('status', 'blacklisted');
 
-  if (!data) return [];
-  const counts: Record<string, number> = { critical: 0, high: 0, medium: 0, low: 0 };
-  for (const row of data) {
-    const k = row.risk_level;
-    if (k && k in counts) counts[k]++;
+  const rows = (data ?? []) as Array<{ risk_level: 'critical' | 'high' | 'medium' | 'low' | null }>;
+  const counts: { critical: number; high: number; medium: number; low: number } = {
+    critical: 0,
+    high: 0,
+    medium: 0,
+    low: 0,
+  };
+  for (const row of rows) {
+    const key = row.risk_level;
+    if (key) {
+      counts[key] += 1;
+    }
   }
   return [
     { level: 'critical', label: 'Critique', count: counts.critical, fill: 'var(--color-critical)' },
@@ -76,12 +83,13 @@ export async function getScoresByCategory(): Promise<CategoryScoreItem[]> {
     .neq('status', 'blacklisted')
     .not('global_score', 'is', null);
 
-  if (!data) return [];
+  const rows = (data ?? []) as Array<{ category: string | null; global_score: number }>;
 
   const groups: Record<string, number[]> = {};
-  for (const row of data) {
-    if (!groups[row.category]) groups[row.category] = [];
-    groups[row.category].push(row.global_score);
+  for (const row of rows) {
+    const category = row.category ?? 'other';
+    if (!groups[category]) groups[category] = [];
+    groups[category].push(row.global_score);
   }
 
   return Object.entries(groups)
@@ -288,6 +296,10 @@ export interface SupplierNode {
   category: string;
   criticality: string;
   global_score: number | null;
+  financial_score: number | null;
+  operational_score: number | null;
+  geopolitical_score: number | null;
+  esg_score: number | null;
   risk_level: string | null;
   is_sole_source: boolean;
   annual_spend_eur: number | null;
@@ -299,7 +311,7 @@ export async function getSuppliersForNetwork(): Promise<SupplierNode[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data } = await (client as any)
     .from('supplier_risk_summary')
-    .select('id,name,country_code,category,criticality,global_score,risk_level,is_sole_source,annual_spend_eur,open_alerts')
+    .select('id,name,country_code,category,criticality,global_score,financial_score,operational_score,geopolitical_score,esg_score,risk_level,is_sole_source,annual_spend_eur,open_alerts')
     .eq('status', 'active')
     .limit(50);
   return (data ?? []) as SupplierNode[];
@@ -312,7 +324,7 @@ export async function getSuppliersByCountry(countryCode: string): Promise<Suppli
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data } = await (client as any)
     .from('supplier_risk_summary')
-    .select('id,name,country_code,category,criticality,global_score,risk_level,is_sole_source,annual_spend_eur,open_alerts')
+    .select('id,name,country_code,category,criticality,global_score,financial_score,operational_score,geopolitical_score,esg_score,risk_level,is_sole_source,annual_spend_eur,open_alerts')
     .eq('country_code', countryCode)
     .neq('status', 'blacklisted');
   return (data ?? []) as SupplierNode[];
