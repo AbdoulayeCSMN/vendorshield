@@ -42,10 +42,12 @@ import {
   getSupplierAnalyses,
 } from '~/lib/vendorshield/actions/ai.actions';
 import { getSupplierPredictions } from '~/lib/vendorshield/actions/prediction.actions';
+import { getDeliveryPrediction } from '~/lib/vendorshield/actions/operational-prediction.actions';
 import { getSupplyChainGraph } from '~/lib/vendorshield/actions/tier.actions';
 import { getSupplierById } from '~/lib/vendorshield/suppliers.server';
 
 import { BankruptcyPanel } from './_components/bankruptcy-panel';
+import { OperationalPredictionPanel } from './_components/operational-prediction-panel';
 import { SupplierAiPanel } from './_components/supplier-ai-panel';
 import { SupplierDetail } from './_components/supplier-detail';
 import { TierNetworkGraph } from './_components/tier-network-graph';
@@ -57,13 +59,15 @@ interface Props {
 async function SupplierDetailPage({ params }: Props) {
   const { id } = await params;
 
-  const [supplier, analyses, configStatus, predictions, scGraph] = await Promise.all([
-    getSupplierById(id),
-    getSupplierAnalyses(id, 5),
-    getAiConfigStatus(),
-    getSupplierPredictions(id, 4),
-    getSupplyChainGraph(id),
-  ]);
+  const [supplier, analyses, configStatus, predictions, scGraph, deliveryPrediction] =
+    await Promise.all([
+      getSupplierById(id),
+      getSupplierAnalyses(id, 5),
+      getAiConfigStatus(),
+      getSupplierPredictions(id, 4),
+      getSupplyChainGraph(id),
+      getDeliveryPrediction(id),
+    ]);
 
   if (!supplier) notFound();
 
@@ -77,6 +81,7 @@ async function SupplierDetailPage({ params }: Props) {
             <SupplierDetail supplier={supplier} />
           </div>
           <div className="space-y-4">
+            <OperationalPredictionPanel supplierId={id} initial={deliveryPrediction} />
             <BankruptcyPanel supplierId={id} predictions={predictions} />
             <SupplierAiPanel supplierId={id} pastAnalyses={analyses} configStatus={configStatus} />
           </div>
