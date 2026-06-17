@@ -111,9 +111,3 @@ export function InviteAcceptCard({ invitation, token }: InviteAcceptCardProps) {
     </div>
   );
 }
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function useState<T>(initial: T): [T, (v: T) => void] {
-  // Re-export pour éviter l'import manquant (le composant est 'use client')
-  return require('react').useState(initial);
-}

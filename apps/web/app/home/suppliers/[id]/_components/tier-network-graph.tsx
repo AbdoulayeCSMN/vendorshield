@@ -60,7 +60,7 @@ interface TooltipState { x: number; y: number; node: TierNode }
 // ─── Canvas renderer ─────────────────────────────────────────────────────────
 
 function useNetworkCanvas(
-  canvasRef: React.RefObject<HTMLCanvasElement>,
+  canvasRef: React.RefObject<HTMLCanvasElement | null>,
   graph: SupplyChainGraph,
   onNodeClick: (node: TierNode) => void,
 ) {
@@ -159,7 +159,7 @@ function useNetworkCanvas(
       // Orbites
       for (let tier = 2; tier <= 4; tier++) {
         const r = RING_RADII[tier];
-        if (!byTier.has(tier)) continue;
+        if (r === undefined || !byTier.has(tier)) continue;
         ctx.beginPath();
         ctx.arc(CX, CY, r, 0, Math.PI * 2);
         ctx.strokeStyle = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
@@ -181,9 +181,9 @@ function useNetworkCanvas(
 
       // Nœuds
       for (const n of nodes) {
-        const fill  = n.tier_level === 1
+        const fill  = (n.tier_level === 1
           ? TIER_COLORS[0]
-          : RISK_COLORS[n.estimated_risk_level ?? 'unknown'];
+          : RISK_COLORS[n.estimated_risk_level ?? 'unknown']) ?? '#9ca3af';
         const tc    = dark ? 'rgba(255,255,255,0.75)' : 'rgba(0,0,0,0.75)';
 
         // Halo sole source

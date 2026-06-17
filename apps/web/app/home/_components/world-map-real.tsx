@@ -30,11 +30,10 @@ const ISO_NUMERIC_TO_ALPHA2: Record<string, string> = {
   '834': 'TZ', '764': 'TH', '788': 'TN', '792': 'TR', '800': 'UG',
   '804': 'UA', '784': 'AE', '840': 'US', '858': 'UY', '860': 'UZ',
   '862': 'VE', '704': 'VN', '887': 'YE', '894': 'ZM', '716': 'ZW',
-  '040': 'AT', '703': 'SK', '705': 'SI', '724': 'ES', '826': 'GB',
+  '703': 'SK', '705': 'SI', '724': 'ES', '826': 'GB',
   '096': 'BN', '702': 'SG', '344': 'HK', '446': 'MO', '158': 'TW',
-  '096': 'BN', '064': 'BT', '072': 'BW', '084': 'BZ', '204': 'BJ',
-  '466': 'ML', '478': 'MR', '454': 'MW', '450': 'MG', '818': 'EG',
-  '152': 'CL',
+  '064': 'BT', '072': 'BW', '084': 'BZ', '204': 'BJ',
+  '466': 'ML', '478': 'MR', '454': 'MW', '450': 'MG',
 };
 
 // ─── Helpers couleur ──────────────────────────────────────────────────────────
@@ -135,8 +134,9 @@ export const WorldMapReal = memo(function WorldMapReal({
         >
           <ZoomableGroup zoom={1} minZoom={0.8} maxZoom={6}>
             <Geographies geography={GEO_URL}>
-              {({ geographies }) =>
-                geographies.map((geo) => {
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {({ geographies }: { geographies: any[] }) =>
+                geographies.map((geo: any) => {
                   // Convertir l'ID numérique ISO en alpha-2
                   const alpha2 = ISO_NUMERIC_TO_ALPHA2[String(geo.id).padStart(3, '0')];
                   const data = alpha2 ? dataMap.get(alpha2) : undefined;
@@ -151,7 +151,8 @@ export const WorldMapReal = memo(function WorldMapReal({
                         if (!data || !alpha2) return;
                         onSelect(isSelected ? null : alpha2);
                       }}
-                      onMouseEnter={(evt) => handleMouseEnter(geo, data, evt)}
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      onMouseEnter={(evt: any) => handleMouseEnter(geo, data, evt)}
                       onMouseLeave={() => setTooltip(null)}
                       style={{
                         default: {

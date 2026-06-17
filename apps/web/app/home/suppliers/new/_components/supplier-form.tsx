@@ -75,7 +75,7 @@ export function SupplierForm() {
   );
 
   const fieldError = (field: string): string | undefined =>
-    state?.fieldErrors?.[field]?.[0];
+    state && !state.success ? state.fieldErrors?.[field]?.[0] : undefined;
 
   return (
     <form action={formAction} className="space-y-6">

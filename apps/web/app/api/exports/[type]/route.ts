@@ -14,7 +14,8 @@ async function requireAuth() {
 
 // ─── Helper — récupérer les données ──────────────────────────────────────────
 
-async function fetchSuppliers(client: ReturnType<typeof getSupabaseServerClient>, supplierId?: string) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function fetchSuppliers(client: any, supplierId?: string) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let query = (client as any)
     .from('supplier_risk_summary')
@@ -29,7 +30,8 @@ async function fetchSuppliers(client: ReturnType<typeof getSupabaseServerClient>
 }
 
 async function fetchAssessmentWithFactors(
-  client: ReturnType<typeof getSupabaseServerClient>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  client: any,
   assessmentId: string,
 ) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

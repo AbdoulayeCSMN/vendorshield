@@ -7,6 +7,13 @@ import type {
   SupplierRiskSummary,
 } from '~/lib/vendorshield/types';
 
+export type { AccountRiskDashboard } from '~/lib/vendorshield/types';
+
+// Alias de compatibilité utilisés par les composants analytics.
+export type ScoreTrendPoint = AssessmentTrendItem;
+export type GeoRiskEntry = CountryExposure;
+export type CategoryRiskEntry = CategoryScoreItem;
+
 // ─── KPIs globaux (vue SQL account_risk_dashboard) ────────────────────────────
 
 export async function getAnalyticsDashboard(): Promise<AccountRiskDashboard | null> {
@@ -64,6 +71,11 @@ export interface CategoryScoreItem {
   label: string;
   avg_score: number;
   count: number;
+  supplier_count: number;
+  low_count: number;
+  medium_count: number;
+  high_count: number;
+  critical_count: number;
 }
 
 const CATEGORY_LABELS_MAP: Record<string, string> = {
@@ -79,25 +91,48 @@ export async function getScoresByCategory(): Promise<CategoryScoreItem[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data } = await (client as any)
     .from('suppliers')
-    .select('category, global_score')
+    .select('category, global_score, risk_level')
     .neq('status', 'blacklisted')
     .not('global_score', 'is', null);
 
-  const rows = (data ?? []) as Array<{ category: string | null; global_score: number }>;
+  const rows = (data ?? []) as Array<{
+    category: string | null;
+    global_score: number;
+    risk_level: 'critical' | 'high' | 'medium' | 'low' | null;
+  }>;
 
-  const groups: Record<string, number[]> = {};
+  type Group = {
+    scores: number[];
+    low: number;
+    medium: number;
+    high: number;
+    critical: number;
+  };
+  const groups: Record<string, Group> = {};
   for (const row of rows) {
     const category = row.category ?? 'other';
-    if (!groups[category]) groups[category] = [];
-    groups[category].push(row.global_score);
+    const g = (groups[category] ??= {
+      scores: [],
+      low: 0,
+      medium: 0,
+      high: 0,
+      critical: 0,
+    });
+    g.scores.push(row.global_score);
+    if (row.risk_level) g[row.risk_level] += 1;
   }
 
   return Object.entries(groups)
-    .map(([cat, scores]) => ({
+    .map(([cat, g]) => ({
       category: cat,
       label: CATEGORY_LABELS_MAP[cat] ?? cat,
-      avg_score: Math.round(scores.reduce((a, b) => a + b, 0) / scores.length),
-      count: scores.length,
+      avg_score: Math.round(g.scores.reduce((a, b) => a + b, 0) / g.scores.length),
+      count: g.scores.length,
+      supplier_count: g.scores.length,
+      low_count: g.low,
+      medium_count: g.medium,
+      high_count: g.high,
+      critical_count: g.critical,
     }))
     .sort((a, b) => a.avg_score - b.avg_score);
 }
@@ -245,8 +280,11 @@ export interface CountryExposure {
   country_code: string;
   country_name: string;
   count: number;
+  supplier_count: number;
   avg_score: number | null;
   total_spend: number;
+  critical_count: number;
+  high_count: number;
 }
 
 export async function getCountryExposure(): Promise<CountryExposure[]> {
@@ -255,7 +293,7 @@ export async function getCountryExposure(): Promise<CountryExposure[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (client as any)
     .from('supplier_risk_summary')
-    .select('country_code,country_name,global_score,annual_spend_eur,status')
+    .select('country_code,country_name,global_score,annual_spend_eur,status,risk_level')
     .neq('status', 'blacklisted')
     .not('country_code', 'is', null);
 
@@ -265,23 +303,32 @@ export async function getCountryExposure(): Promise<CountryExposure[]> {
   }
   if (!data || data.length === 0) return [];
 
-  const groups: Record<string, { name: string; scores: number[]; spend: number; count: number }> = {};
+  const groups: Record<
+    string,
+    { name: string; scores: number[]; spend: number; count: number; critical: number; high: number }
+  > = {};
   for (const row of data) {
     const cc = (row.country_code as string).trim(); // trim pour CHAR(2) padding
-    if (!groups[cc]) groups[cc] = { name: row.country_name ?? cc, scores: [], spend: 0, count: 0 };
+    if (!groups[cc])
+      groups[cc] = { name: row.country_name ?? cc, scores: [], spend: 0, count: 0, critical: 0, high: 0 };
     groups[cc].count++;
     groups[cc].spend += row.annual_spend_eur ?? 0;
     if (row.global_score !== null) groups[cc].scores.push(row.global_score);
+    if (row.risk_level === 'critical') groups[cc].critical++;
+    else if (row.risk_level === 'high') groups[cc].high++;
   }
   return Object.entries(groups)
     .map(([code, g]) => ({
       country_code: code,
       country_name: g.name,
       count: g.count,
+      supplier_count: g.count,
       avg_score: g.scores.length
         ? Math.round(g.scores.reduce((a, b) => a + b, 0) / g.scores.length)
         : null,
       total_spend: g.spend,
+      critical_count: g.critical,
+      high_count: g.high,
     }))
     .sort((a, b) => (a.avg_score ?? 999) - (b.avg_score ?? 999))
     .slice(0, 10);

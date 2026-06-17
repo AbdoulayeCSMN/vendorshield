@@ -51,6 +51,8 @@ const CONFIDENCE_CFG: Record<string, { label: string; cls: string }> = {
 
 function SignalCard({ signal }: { signal: OsintSignal }) {
   const Icon = TYPE_ICONS[signal.type] ?? Shield;
+  const confidenceCfg =
+    CONFIDENCE_CFG[signal.confidence] ?? CONFIDENCE_CFG.low!;
   return (
     <div className={`flex items-start gap-3 rounded-lg border-l-4 border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-3 ${SEVERITY_BORDER[signal.severity] ?? 'border-l-gray-300'}`}>
       <div className={`rounded-md p-1.5 shrink-0 mt-0.5 ${TYPE_COLORS[signal.type] ?? 'text-gray-600 bg-gray-50'}`}>
@@ -62,8 +64,8 @@ function SignalCard({ signal }: { signal: OsintSignal }) {
           <div className="flex items-center gap-1.5 shrink-0">
             {signal.severity === 'critical' && <ShieldAlert className="h-3.5 w-3.5 text-red-500" />}
             {signal.severity === 'warning'  && <AlertTriangle className="h-3.5 w-3.5 text-orange-500" />}
-            <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${(CONFIDENCE_CFG[signal.confidence] ?? CONFIDENCE_CFG.low).cls}`}>
-              {(CONFIDENCE_CFG[signal.confidence] ?? CONFIDENCE_CFG.low).label}
+            <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${confidenceCfg.cls}`}>
+              {confidenceCfg.label}
             </span>
           </div>
         </div>

@@ -390,7 +390,7 @@ export async function validateBatch(
  */
 function parsefrDate(dateStr: string): Date {
   const [day, month, year] = dateStr.split('/').map(Number);
-  return new Date(year, month - 1, day);
+  return new Date(year ?? 0, (month ?? 1) - 1, day ?? 1);
 }
 
 /**

@@ -32,7 +32,7 @@ const chartConfig = {
 // Formater "2025-01" → "Jan 25"
 function formatMonth(month: string): string {
   const [year, m] = month.split('-');
-  const d = new Date(parseInt(year), parseInt(m) - 1);
+  const d = new Date(parseInt(year ?? '0'), parseInt(m ?? '1') - 1);
   return d.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
 }
 

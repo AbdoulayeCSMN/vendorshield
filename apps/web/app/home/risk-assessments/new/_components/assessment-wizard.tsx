@@ -353,8 +353,8 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
     const fd = new FormData();
     fd.set('supplier_id', config.supplier_id);
     fd.set('title', config.title);
-    fd.set('assessment_date', config.assessment_date);
-    fd.set('next_review_date', config.next_review_date);
+    fd.set('assessment_date', config.assessment_date ?? '');
+    fd.set('next_review_date', config.next_review_date ?? '');
     fd.set('weight_financial', String(config.weight_financial));
     fd.set('weight_operational', String(config.weight_operational));
     fd.set('weight_geopolitical', String(config.weight_geopolitical));
