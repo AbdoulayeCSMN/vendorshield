@@ -93,7 +93,21 @@ export async function getAlerts(filters: AlertsFilters = {}) {
   query = query.range((page - 1) * limit, page * limit - 1);
 
   const { data, error, count } = await query;
-  if (error) throw new Error(error.message);
+  
+  if (error) {
+    console.error('[getAlerts] Supabase error:', {
+      message: error.message,
+      details: (error as any).details,
+      code: (error as any).code,
+    });
+    return {
+      alerts: [],
+      total: 0,
+      page,
+      limit,
+      pageCount: 0,
+    };
+  }
 
   return {
     alerts: (data ?? []) as AlertWithSupplier[],
@@ -117,7 +131,14 @@ export async function getAlertRules(): Promise<AlertRule[]> {
     .order('severity', { ascending: false })
     .order('created_at', { ascending: false });
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error('[getAlertRules] Supabase error:', {
+      message: error.message,
+      details: (error as any).details,
+      code: (error as any).code,
+    });
+    return [];
+  }
   return (data ?? []) as AlertRule[];
 }
 
@@ -159,7 +180,21 @@ export async function getAuditLog(filters: AuditFilters = {}) {
   query = query.range((page - 1) * limit, page * limit - 1);
 
   const { data, error, count } = await query;
-  if (error) throw new Error(error.message);
+  
+  if (error) {
+    console.error('[getAuditLog] Supabase error:', {
+      message: error.message,
+      details: (error as any).details,
+      code: (error as any).code,
+    });
+    return {
+      entries: [],
+      total: 0,
+      page,
+      limit,
+      pageCount: 0,
+    };
+  }
 
   return {
     entries: (data ?? []) as AuditLogEntry[],

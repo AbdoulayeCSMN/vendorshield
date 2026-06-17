@@ -19,7 +19,9 @@ const PathsSchema = z.object({
     riskAssessmentNew: z.string().min(1),
     alerts: z.string().min(1),
     riskAnalytics: z.string().min(1),
+    supplyChain: z.string().min(1),
     auditLog: z.string().min(1),
+    imports: z.string().min(1),
     // V1
     onboarding: z.string().min(1),
   }),
@@ -44,7 +46,9 @@ const pathsConfig = PathsSchema.parse({
     riskAssessmentNew: '/home/risk-assessments/new',
     alerts: '/home/alerts',
     riskAnalytics: '/home/analytics',
+    supplyChain: '/home/supply-chain',
     auditLog: '/home/audit-log',
+    imports: '/home/imports',
     // V1
     onboarding: '/onboarding',
   },

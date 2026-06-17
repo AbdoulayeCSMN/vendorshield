@@ -101,3 +101,25 @@ export async function getOsintStats(): Promise<OsintStats> {
     alerts_auto_created: completed.reduce((s: number, a: AiAnalysis) => s + (a.alerts_created ?? 0), 0),
   };
 }
+
+// ─── Récentes analyses avec infos fournisseur (pour dashboard) ──────────────
+
+export interface RecentAnalysis extends AiAnalysis {
+  supplier_name: string;
+}
+
+export async function getRecentAnalyses(limit = 4): Promise<RecentAnalysis[]> {
+  const client = getSupabaseServerClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (client as any)
+    .from('ai_analyses')
+    .select('*, supplier:suppliers(name)')
+    .eq('status', 'completed')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) return [];
+  return (data ?? []).map((a: any) => ({
+    ...a,
+    supplier_name: a.supplier?.name ?? 'Unknown',
+  })) as RecentAnalysis[];
+}

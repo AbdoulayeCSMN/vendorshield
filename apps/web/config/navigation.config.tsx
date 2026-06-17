@@ -4,9 +4,11 @@ import {
   Bell,
   Building2,
   FileSearch,
+  GitBranch,
   Home,
   Settings,
   ShieldCheck,
+  Upload,
   User,
   Users,
 } from 'lucide-react';
@@ -39,6 +41,11 @@ const routes = [
         Icon: <Building2 className={iconClasses} />,
       },
       {
+        label: 'Importer des données',
+        path: pathsConfig.app.imports,
+        Icon: <Upload className={iconClasses} />,
+      },
+      {
         label: 'common:routes.riskAssessments',
         path: pathsConfig.app.riskAssessments,
         Icon: <ShieldCheck className={iconClasses} />,
@@ -57,6 +64,11 @@ const routes = [
         label: 'common:routes.riskAnalytics',
         path: pathsConfig.app.riskAnalytics,
         Icon: <BarChart3 className={iconClasses} />,
+      },
+      {
+        label: 'Supply Chain',
+        path: pathsConfig.app.supplyChain,
+        Icon: <GitBranch className={iconClasses} />,
       },
       {
         label: 'common:routes.auditLog',

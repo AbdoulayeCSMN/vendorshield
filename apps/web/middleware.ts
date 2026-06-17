@@ -16,10 +16,15 @@ export const config = {
   matcher: ['/((?!_next/static|_next/image|images|locales|assets|api/*).*)'],
 };
 
-const getUser = (request: NextRequest, response: NextResponse) => {
-  const supabase = createMiddlewareClient(request, response);
-
-  return supabase.auth.getClaims();
+const getUser = async (request: NextRequest, response: NextResponse) => {
+  try {
+    const supabase = createMiddlewareClient(request, response);
+    return await supabase.auth.getClaims();
+  } catch (error) {
+    // Network or auth refresh failures in edge runtime should not crash middleware.
+    console.error('[middleware] Supabase getClaims failed:', error);
+    return { data: null, error: null } as const;
+  }
 };
 
 export async function middleware(request: NextRequest) {
@@ -139,8 +144,16 @@ function getPatterns() {
 
         const supabase = createMiddlewareClient(req, res);
 
-        const requiresMultiFactorAuthentication =
-          await checkRequiresMultiFactorAuthentication(supabase);
+        let requiresMultiFactorAuthentication = false;
+        try {
+          requiresMultiFactorAuthentication =
+            await checkRequiresMultiFactorAuthentication(supabase);
+        } catch (error) {
+          // If MFA check fails because auth backend is temporarily unreachable,
+          // avoid throwing 500 from middleware.
+          console.error('[middleware] MFA check failed:', error);
+          requiresMultiFactorAuthentication = false;
+        }
 
         // If user requires multi-factor authentication, redirect to MFA page.
         if (requiresMultiFactorAuthentication) {

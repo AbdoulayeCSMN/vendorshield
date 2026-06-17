@@ -7,13 +7,14 @@
     "node": ">=v18.18.0"
   },
   "author": {
-    "url": "https://github.com/AbdoulayeCSMN",
+    "url": "https://github.com/AbdoulayeCSMN/vendorshield",
     "name": "Abdoulaye"
   },
   "scripts": {
     "preinstall": "pnpm run --filter scripts requirements",
     "postinstall": "manypkg fix",
     "build": "turbo build --cache-dir=.turbo",
+    "web:start": "pnpm --filter web start",
     "clean": "git clean -xdf node_modules dist .next",
     "clean:workspaces": "turbo clean",
     "dev": "cross-env FORCE_COLOR=1 turbo dev --parallel",
@@ -42,10 +43,10 @@
   },
   "devDependencies": {
     "@manypkg/cli": "^0.25.1",
-    "@turbo/gen": "^2.5.8",
+    "@turbo/gen": "^2.9.6",
     "cross-env": "^10.1.0",
     "prettier": "^3.6.2",
-    "turbo": "2.5.8",
+    "turbo": "2.9.6",
     "typescript": "^5.9.3"
   }
 }

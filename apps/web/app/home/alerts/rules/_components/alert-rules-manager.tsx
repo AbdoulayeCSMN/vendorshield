@@ -204,7 +204,6 @@ function CreateRuleDialog({
                   <SelectValue placeholder="Score global" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Score global</SelectItem>
                   {(['financial', 'operational', 'geopolitical', 'esg'] as RiskDimension[]).map((d) => (
                     <SelectItem key={d} value={d}>{DIMENSION_LABELS[d]}</SelectItem>
                   ))}
@@ -257,7 +256,6 @@ function CreateRuleDialog({
                   <SelectValue placeholder="Toutes" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Toutes catégories</SelectItem>
                   {(Object.keys(CATEGORY_LABELS) as SupplierCategory[]).map((c) => (
                     <SelectItem key={c} value={c}>{CATEGORY_LABELS[c]}</SelectItem>
                   ))}
@@ -273,7 +271,6 @@ function CreateRuleDialog({
                   <SelectValue placeholder="Toutes" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Toutes criticités</SelectItem>
                   {(Object.keys(CRITICALITY_LABELS) as SupplierCriticality[]).map((c) => (
                     <SelectItem key={c} value={c}>{CRITICALITY_LABELS[c]}</SelectItem>
                   ))}

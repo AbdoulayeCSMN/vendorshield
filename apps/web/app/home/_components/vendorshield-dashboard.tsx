@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import {
   AlertTriangle, ArrowUpRight, Bell, Building2, CheckCircle,
-  Globe, Shield, ShieldAlert, X,
+  Globe, Shield, ShieldAlert, Sparkles, X,
 } from 'lucide-react';
 import {
   Cell, PieChart, Pie, RadarChart, Radar, PolarGrid, PolarAngleAxis,
@@ -18,6 +18,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@kit/
 
 import type { AccountRiskDashboard } from '~/lib/vendorshield/types';
 import type { AlertWithSupplier } from '~/lib/vendorshield/alerts.server';
+import type { RecentAnalysis } from '~/lib/vendorshield/ai.server';
 import type {
   CountryExposure, DimensionScore, RiskDistributionItem,
   TopRiskySupplier, SupplierNode,
@@ -29,6 +30,16 @@ import { WorldMapReal } from './world-map-real';
 
 const scoreColor = (s: number | null) =>
   !s ? '#9ca3af' : s >= 70 ? '#22c55e' : s >= 40 ? '#f97316' : '#ef4444';
+const scoreTextClass = (s: number | null) =>
+  !s ? 'text-gray-400' : s >= 70 ? 'text-green-500' : s >= 40 ? 'text-orange-500' : 'text-red-500';
+const scoreAccentClass = (s: number | null) =>
+  !s ? 'accent-gray-400' : s >= 70 ? 'accent-green-500' : s >= 40 ? 'accent-orange-500' : 'accent-red-500';
+const riskTextClass = (level: keyof typeof RISK_COLORS) => {
+  if (level === 'critical') return 'text-red-600';
+  if (level === 'high') return 'text-orange-600';
+  if (level === 'medium') return 'text-amber-600';
+  return 'text-green-600';
+};
 const riskLabel = (s: number | null) =>
   !s ? 'N/A' : s >= 70 ? 'Risque faible' : s >= 40 ? 'Risque modéré' : s >= 20 ? 'Risque élevé' : 'Risque critique';
 function countryFlag(code: string) {
@@ -62,6 +73,7 @@ interface Props {
   recentAlerts: AlertWithSupplier[];
   countryExposure: CountryExposure[];
   networkSuppliers: SupplierNode[];
+  recentAnalyses: RecentAnalysis[];
 }
 
 // ─── KPI Card ─────────────────────────────────────────────────────────────────
@@ -102,7 +114,7 @@ function WorldMap({ countries, selected, onSelect }: {
   return (
     <div className="space-y-3">
       {/* SVG carte schématique */}
-      <div className="relative w-full select-none" style={{ paddingBottom: '48%' }}>
+      <div className="relative w-full select-none pb-[48%]">
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 520 250">
           {/* Fond */}
           <rect x="0" y="0" width="520" height="250" fill="currentColor" fillOpacity="0.02" rx="8"/>
@@ -142,7 +154,7 @@ function WorldMap({ countries, selected, onSelect }: {
             const isSelected = selected === code;
             return (
               <g key={code}
-                style={{ cursor: data ? 'pointer' : 'default' }}
+                className={data ? 'cursor-pointer' : 'cursor-default'}
                 onClick={() => data && onSelect(isSelected ? null : code)}
                 onMouseEnter={() => data && setHovered(code)}
                 onMouseLeave={() => setHovered(null)}>
@@ -178,7 +190,7 @@ function WorldMap({ countries, selected, onSelect }: {
             <span className="font-medium">{countryFlag(hovered)} {d.country_name}</span>
             <span className="ml-2 text-gray-400">
               {d.count} fournisseur{d.count > 1 ? 's' : ''} •
-              Score moyen : <span style={{color: scoreColor(d.avg_score)}}>{d.avg_score ?? 'N/A'}/100</span>
+              Score moyen : <span className={scoreTextClass(d.avg_score)}>{d.avg_score ?? 'N/A'}/100</span>
             </span>
           </div>
         );
@@ -202,10 +214,12 @@ function WorldMap({ countries, selected, onSelect }: {
                   <span className="text-[10px] text-gray-400 shrink-0 ml-2">{c.count} fournisseur{c.count > 1 ? 's' : ''}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="flex-1 h-1 rounded-full bg-gray-100 dark:bg-gray-800">
-                    <div className="h-1 rounded-full" style={{width:`${c.avg_score??0}%`,background:scoreColor(c.avg_score)}}/>
-                  </div>
-                  <span className="text-[10px] font-semibold w-7 text-right tabular-nums" style={{color:scoreColor(c.avg_score)}}>
+                  <progress
+                    className={`h-1 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800 ${scoreAccentClass(c.avg_score)}`}
+                    value={c.avg_score ?? 0}
+                    max={100}
+                  />
+                  <span className={`text-[10px] font-semibold w-7 text-right tabular-nums ${scoreTextClass(c.avg_score)}`}>
                     {c.avg_score ?? '—'}
                   </span>
                 </div>
@@ -224,12 +238,13 @@ const CRIT_LABELS = ['','Faible','Moyen','Élevé','Critique'];
 
 function MatrixTooltip({ active, payload }: { active?: boolean; payload?: {payload: SupplierNode}[] }) {
   if (!active || !payload?.length) return null;
-  const s = payload[0].payload;
+  const s = payload[0]?.payload;
+  if (!s) return null;
   return (
     <div className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg p-3 text-xs max-w-48">
       <p className="font-semibold mb-1 text-gray-900 dark:text-white">{s.name}</p>
       <p className="text-gray-500">{CATEGORY_LABELS[s.category as keyof typeof CATEGORY_LABELS] ?? s.category}</p>
-      <p className="mt-1">Score : <span className="font-medium" style={{color:scoreColor(s.global_score)}}>{s.global_score ?? '—'}/100</span></p>
+      <p className="mt-1">Score : <span className={`font-medium ${scoreTextClass(s.global_score)}`}>{s.global_score ?? '—'}/100</span></p>
       <p>Dépense : <span className="font-medium">{s.annual_spend_eur ? formatEur(s.annual_spend_eur) : '—'}</span></p>
       {s.is_sole_source && <p className="text-amber-600 font-medium mt-1">⚠ Sole source</p>}
       {s.open_alerts > 0 && <p className="text-red-600">{s.open_alerts} alerte{s.open_alerts > 1 ? 's' : ''}</p>}
@@ -272,7 +287,9 @@ function CriticalityMatrix({ suppliers }: { suppliers: SupplierNode[] }) {
 // ─── Radar dimensions ──────────────────────────────────────────────────────────
 function DimensionRadar({ suppliers }: { suppliers: SupplierNode[] }) {
   const avg = (key: 'financial_score'|'operational_score'|'geopolitical_score'|'esg_score') => {
-    const vals = suppliers.map(s => s[key] as number|null).filter(v => v !== null) as number[];
+    const vals = suppliers
+      .map(s => s[key])
+      .filter((v): v is number => typeof v === 'number');
     return vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
   };
   const data = [
@@ -400,7 +417,7 @@ function SupplierNetwork({ suppliers }: { suppliers: SupplierNode[] }) {
   }, [suppliers]);
 
   return (
-    <div className="relative w-full rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900" style={{height:300}}>
+    <div className="relative w-full rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 h-[300px]">
       <canvas ref={canvasRef} className="w-full h-full"/>
       {suppliers.length===0 && (
         <div className="absolute inset-0 flex items-center justify-center">
@@ -408,14 +425,14 @@ function SupplierNetwork({ suppliers }: { suppliers: SupplierNode[] }) {
         </div>
       )}
       <div className="absolute bottom-2 right-3 flex gap-2.5 text-[9px] text-gray-400 pointer-events-none">
-        {[['#22c55e','Faible'],['#f97316','Modéré'],['#ef4444','Élevé']].map(([c,l])=>(
+          {[['#22c55e','Faible'],['#f97316','Modéré'],['#ef4444','Élevé']].map(([c,l])=>(
           <span key={l} className="flex items-center gap-1">
-            <span className="inline-block w-2.5 h-2.5 rounded-full" style={{background:c}}/>
+            <span className={`inline-block w-2.5 h-2.5 rounded-full ${c === '#22c55e' ? 'bg-green-500' : c === '#f97316' ? 'bg-orange-500' : 'bg-red-500'}`} />
             {l}
           </span>
         ))}
         <span className="flex items-center gap-1">
-          <span className="inline-block w-2.5 h-2.5 rounded-full border-2" style={{borderColor:'#f59e0b'}}/>SS
+          <span className="inline-block w-2.5 h-2.5 rounded-full border-2 border-amber-500"/>SS
         </span>
       </div>
     </div>
@@ -426,10 +443,12 @@ function SupplierNetwork({ suppliers }: { suppliers: SupplierNode[] }) {
 function MiniScoreBar({ score }: { score: number | null }) {
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 h-1.5 rounded-full bg-gray-100 dark:bg-gray-800">
-        <div className="h-1.5 rounded-full" style={{width:`${score??0}%`,background:scoreColor(score)}}/>
-      </div>
-      <span className="text-xs font-semibold w-7 text-right tabular-nums" style={{color:scoreColor(score)}}>
+      <progress
+        className={`h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800 ${scoreAccentClass(score)}`}
+        value={score ?? 0}
+        max={100}
+      />
+      <span className={`text-xs font-semibold w-7 text-right tabular-nums ${scoreTextClass(score)}`}>
         {score??'—'}
       </span>
     </div>
@@ -444,7 +463,7 @@ function relativeTime(d: string) {
 // ─── Dashboard principal ──────────────────────────────────────────────────────
 export function VendorShieldDashboard({
   kpis, riskDistribution, topSuppliers,
-  recentAlerts, countryExposure, networkSuppliers,
+  recentAlerts, countryExposure, networkSuppliers, recentAnalyses,
 }: Props) {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
 
@@ -519,7 +538,7 @@ export function VendorShieldDashboard({
           </CardHeader>
           <CardContent className="space-y-2.5">
             <div className="flex justify-center">
-              <div style={{width:110,height:110}}>
+              <div className="h-[110px] w-[110px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={riskDistribution} dataKey="count" nameKey="label"
@@ -539,11 +558,13 @@ export function VendorShieldDashboard({
                 <div key={level}>
                   <div className="flex justify-between text-xs mb-0.5">
                     <span className="text-gray-500">{labels[level]}</span>
-                    <span className="font-semibold tabular-nums" style={{color:RISK_COLORS[level]}}>{count}</span>
+                    <span className={`font-semibold tabular-nums ${riskTextClass(level)}`}>{count}</span>
                   </div>
-                  <div className="h-1.5 w-full rounded-full bg-gray-100 dark:bg-gray-800">
-                    <div className="h-1.5 rounded-full" style={{width:totalRisk>0?`${(count/totalRisk)*100}%`:'0%',background:RISK_COLORS[level]}}/>
-                  </div>
+                  <progress
+                    className={`h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800 ${level === 'critical' ? 'accent-red-500' : level === 'high' ? 'accent-orange-500' : level === 'medium' ? 'accent-amber-500' : 'accent-green-500'}`}
+                    value={totalRisk > 0 ? (count / totalRisk) * 100 : 0}
+                    max={100}
+                  />
                 </div>
               );
             })}
@@ -679,6 +700,38 @@ export function VendorShieldDashboard({
           </CardContent>
         </Card>
       </div>
+
+      {/* Analyses IA récentes */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm font-semibold">Analyses IA récentes</CardTitle>
+            <Link href="/home/analytics" className="text-xs text-primary hover:underline flex items-center gap-1">
+              Voir tout <ArrowUpRight className="h-3 w-3"/>
+            </Link>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {recentAnalyses.length===0 ? (
+            <div className="flex flex-col items-center justify-center py-6 text-center">
+              <Sparkles className="h-7 w-7 text-purple-300 mb-1.5"/>
+              <p className="text-sm text-gray-500">Aucune analyse récente</p>
+            </div>
+          ) : (
+            recentAnalyses.slice(0,4).map(analysis=>(
+              <Link key={analysis.id} href={`/home/suppliers/${analysis.supplier_id}`}
+                className="flex items-start gap-2.5 rounded-lg p-2.5 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <div className="mt-1.5 h-2 w-2 rounded-full shrink-0 bg-purple-500"/>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{analysis.supplier_name}</p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">{analysis.risk_signals?.length ?? 0} signaux détectés</p>
+                </div>
+                <span className="text-[9px] text-gray-400 shrink-0">{relativeTime(analysis.created_at)}</span>
+              </Link>
+            ))
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

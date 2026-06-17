@@ -51,7 +51,23 @@ export async function getSuppliers(filters: SuppliersFilters = {}) {
     .range((page - 1) * limit, page * limit - 1);
 
   const { data, error, count } = await query;
-  if (error) throw new Error(error.message);
+  
+  if (error) {
+    console.error('[getSuppliers] Supabase error:', {
+      message: error.message,
+      details: (error as any).details,
+      hint: (error as any).hint,
+      code: (error as any).code,
+    });
+    // Return empty result on error instead of throwing to allow page to render
+    return {
+      suppliers: [],
+      total: 0,
+      page,
+      limit,
+      pageCount: 0,
+    };
+  }
 
   return {
     suppliers: (data ?? []) as SupplierRiskSummary[],

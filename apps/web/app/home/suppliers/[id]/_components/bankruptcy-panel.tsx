@@ -69,6 +69,20 @@ const IMPACT_CFG = {
   low:    { cls: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400', label: 'Faible' },
 } as const;
 
+function probTextClass(pct: number) {
+  return pct > 30 ? 'text-red-500' : pct > 15 ? 'text-orange-500' : 'text-green-500';
+}
+
+function probAccentClass(pct: number) {
+  return pct > 30 ? 'accent-red-500' : pct > 15 ? 'accent-orange-500' : 'accent-green-500';
+}
+
+function zoneDotClass(color: string) {
+  if (color === '#22c55e') return 'bg-green-500';
+  if (color === '#f97316') return 'bg-orange-500';
+  return 'bg-red-500';
+}
+
 // ─── Gauge Z-Score ─────────────────────────────────────────────────────────────
 
 function ZScoreGauge({ z, zone }: { z: number; zone: BankruptcyRiskZone }) {
@@ -135,14 +149,15 @@ function ProbBar({ label, pct, color }: { label: string; pct: number; color: str
     <div>
       <div className="flex justify-between items-center mb-0.5">
         <span className="text-xs text-gray-500 dark:text-gray-400">{label}</span>
-        <span className="text-xs font-bold tabular-nums" style={{ color }}>
+        <span className={`text-xs font-bold tabular-nums ${probTextClass(pct)}`}>
           {pct}%
         </span>
       </div>
-      <div className="h-2 w-full rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
-        <div className="h-2 rounded-full transition-all duration-500"
-          style={{ width: `${pct}%`, background: color }} />
-      </div>
+      <progress
+        className={`h-2 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800 ${probAccentClass(pct)}`}
+        value={pct}
+        max={100}
+      />
     </div>
   );
 }
@@ -202,8 +217,7 @@ function PredictionDetail({ p }: { p: BankruptcyPrediction }) {
       <button
         className="w-full flex items-center gap-3 py-3 px-1 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-lg transition-colors text-left"
         onClick={() => setOpen(o => !o)}>
-        <div className={`h-2.5 w-2.5 rounded-full shrink-0 flex-shrink-0`}
-          style={{ background: cfg.color }} />
+        <div className={`h-2.5 w-2.5 rounded-full shrink-0 flex-shrink-0 ${zoneDotClass(cfg.color)}`} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <p className="text-xs text-gray-500">
@@ -214,9 +228,9 @@ function PredictionDetail({ p }: { p: BankruptcyPrediction }) {
             </span>
           </div>
           <div className="flex items-center gap-3 mt-0.5 text-[10px] text-gray-400">
-            <span>6m: <b style={{color: probColor(p.probability_6m)}}>{p.probability_6m}%</b></span>
-            <span>12m: <b style={{color: probColor(p.probability_12m)}}>{p.probability_12m}%</b></span>
-            <span>24m: <b style={{color: probColor(p.probability_24m)}}>{p.probability_24m}%</b></span>
+            <span>6m: <b className={probTextClass(p.probability_6m)}>{p.probability_6m}%</b></span>
+            <span>12m: <b className={probTextClass(p.probability_12m)}>{p.probability_12m}%</b></span>
+            <span>24m: <b className={probTextClass(p.probability_24m)}>{p.probability_24m}%</b></span>
             {p.score_trend_3m !== null && (
               <span className={p.score_trend_3m < 0 ? 'text-red-500' : 'text-green-500'}>
                 {p.score_trend_3m > 0 ? '↑' : '↓'} {Math.abs(p.score_trend_3m)} pts

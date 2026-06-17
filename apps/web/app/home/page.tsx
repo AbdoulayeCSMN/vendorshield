@@ -10,11 +10,12 @@ import {
   getSuppliersForNetwork,
 } from '~/lib/vendorshield/analytics.server';
 import { getAlerts } from '~/lib/vendorshield/alerts.server';
+import { getRecentAnalyses } from '~/lib/vendorshield/ai.server';
 
 import { VendorShieldDashboard } from './_components/vendorshield-dashboard';
 
 async function HomePage() {
-  const [kpis, riskDist, dimScores, topRisky, recentAlerts, countries, networkSuppliers] =
+  const [kpis, riskDist, dimScores, topRisky, recentAlerts, countries, networkSuppliers, recentAiAnalyses] =
     await Promise.all([
       getAnalyticsDashboard(),
       getRiskDistribution(),
@@ -23,6 +24,7 @@ async function HomePage() {
       getAlerts({ status: 'open', sort: 'created_at', order: 'desc', limit: 6 }),
       getCountryExposure(),
       getSuppliersForNetwork(),
+      getRecentAnalyses(4),
     ]);
 
   return (
@@ -40,6 +42,7 @@ async function HomePage() {
           recentAlerts={recentAlerts.alerts}
           countryExposure={countries}
           networkSuppliers={networkSuppliers}
+          recentAnalyses={recentAiAnalyses}
         />
       </PageBody>
     </>

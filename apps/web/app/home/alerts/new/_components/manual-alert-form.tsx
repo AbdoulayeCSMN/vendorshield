@@ -62,7 +62,6 @@ export function ManualAlertForm({ suppliers }: Props) {
                 <SelectValue placeholder="Aucun fournisseur spécifique" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Aucun fournisseur</SelectItem>
                 {suppliers.map((s) => (
                   <SelectItem key={s.id} value={s.id}>
                     {s.country_code && countryFlag(s.country_code)} {s.name}

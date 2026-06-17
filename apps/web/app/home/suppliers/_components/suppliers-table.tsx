@@ -125,7 +125,11 @@ function MiniScoreBar({ score }: { score: number | null }) {
     score >= 70 ? 'bg-green-500' : score >= 40 ? 'bg-orange-500' : 'bg-red-500';
   return (
     <div className="mt-1 h-1 w-full rounded-full bg-gray-100 dark:bg-gray-800">
-      <div className={`h-1 rounded-full ${color}`} style={{ width: `${score}%` }} />
+      <progress
+        className={`h-1 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800 ${score >= 70 ? 'accent-green-500' : score >= 40 ? 'accent-orange-500' : 'accent-red-500'}`}
+        value={score}
+        max={100}
+      />
     </div>
   );
 }

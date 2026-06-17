@@ -63,7 +63,21 @@ export async function getAssessments(filters: AssessmentsFilters = {}) {
   query = query.range((page - 1) * limit, page * limit - 1);
 
   const { data, error, count } = await query;
-  if (error) throw new Error(error.message);
+  
+  if (error) {
+    console.error('[getAssessments] Supabase error:', {
+      message: error.message,
+      details: (error as any).details,
+      code: (error as any).code,
+    });
+    return {
+      assessments: [],
+      total: 0,
+      page,
+      limit,
+      pageCount: 0,
+    };
+  }
 
   return {
     assessments: (data ?? []) as AssessmentWithSupplier[],
@@ -99,7 +113,12 @@ export async function getAssessmentById(
 
   if (error) {
     if (error.code === 'PGRST116') return null;
-    throw new Error(error.message);
+    console.error('[getAssessmentById] Supabase error:', {
+      message: error.message,
+      details: (error as any).details,
+      code: (error as any).code,
+    });
+    return null;
   }
 
   // Grouper les facteurs par dimension
@@ -129,7 +148,14 @@ export async function getScoringTemplates(): Promise<ScoringTemplate[]> {
     .order('is_system', { ascending: false })
     .order('name');
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error('[getScoringTemplates] Supabase error:', {
+      message: error.message,
+      details: (error as any).details,
+      code: (error as any).code,
+    });
+    return [];
+  }
   return (data ?? []) as ScoringTemplate[];
 }
 
@@ -145,7 +171,14 @@ export async function getActiveSuppliers() {
     .eq('status', 'active')
     .order('name');
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error('[getActiveSuppliers] Supabase error:', {
+      message: error.message,
+      details: (error as any).details,
+      code: (error as any).code,
+    });
+    return [];
+  }
   return (data ?? []) as Pick<
     Supplier,
     'id' | 'name' | 'country_code' | 'category' | 'global_score' | 'risk_level'
