@@ -299,6 +299,217 @@ ${assessment.analyst_notes ? `
 </html>`;
 }
 
+// ─── Scorecard fournisseur (PDF 1 page) ──────────────────────────────────────
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function fetchSupplierScorecard(client: any, supplierId: string) {
+  const { data: supplier, error } = await client
+    .from('supplier_risk_summary')
+    .select('*')
+    .eq('id', supplierId)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  if (!supplier) throw new Error('Fournisseur introuvable');
+
+  const { data: alerts } = await client
+    .from('alerts')
+    .select('severity,title,message,created_at')
+    .eq('supplier_id', supplierId)
+    .eq('status', 'open')
+    .order('created_at', { ascending: false })
+    .limit(8);
+
+  const { data: analyses } = await client
+    .from('ai_analyses')
+    .select('overall_assessment,recommendations,confidence_score,completed_at')
+    .eq('supplier_id', supplierId)
+    .eq('status', 'completed')
+    .order('completed_at', { ascending: false })
+    .limit(1);
+
+  return { supplier, alerts: alerts ?? [], analysis: analyses?.[0] ?? null };
+}
+
+// Échappe le contenu dynamique inséré dans le HTML.
+function esc(value: unknown): string {
+  if (value === null || value === undefined) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+const RISK_META: Record<string, { label: string; color: string; bg: string }> = {
+  low:      { label: 'Risque faible',   color: '#16a34a', bg: '#f0fdf4' },
+  medium:   { label: 'Risque modéré',   color: '#d97706', bg: '#fffbeb' },
+  high:     { label: 'Risque élevé',    color: '#ea580c', bg: '#fff7ed' },
+  critical: { label: 'Risque critique', color: '#dc2626', bg: '#fef2f2' },
+};
+
+const SEVERITY_COLOR: Record<string, string> = {
+  critical: '#dc2626',
+  warning:  '#d97706',
+  info:     '#2563eb',
+};
+
+function supplierScorecardToPDFHtml(data: {
+  supplier: Record<string, unknown>;
+  alerts: Record<string, unknown>[];
+  analysis: Record<string, unknown> | null;
+}): string {
+  const { supplier, alerts, analysis } = data;
+
+  const scoreColor = (s: unknown) =>
+    typeof s === 'number'
+      ? s >= 70 ? '#16a34a' : s >= 40 ? '#d97706' : '#dc2626'
+      : '#9ca3af';
+
+  const risk = RISK_META[supplier.risk_level as string] ?? {
+    label: 'Non évalué',
+    color: '#9ca3af',
+    bg: '#f9fafb',
+  };
+
+  const scoreCards = [
+    ['Score global', supplier.global_score],
+    ['Financier', supplier.financial_score],
+    ['Opérationnel', supplier.operational_score],
+    ['Géopolitique', supplier.geopolitical_score],
+    ['ESG', supplier.esg_score],
+  ]
+    .map(
+      ([label, value]) => `
+      <div class="score-card">
+        <div class="label">${esc(label)}</div>
+        <div class="value" style="color:${scoreColor(value)}">${value ?? '—'}</div>
+      </div>`,
+    )
+    .join('');
+
+  const alertsRows = alerts.length
+    ? alerts
+        .map(
+          (a) => `
+        <li>
+          <span class="dot" style="background:${SEVERITY_COLOR[a.severity as string] ?? '#9ca3af'}"></span>
+          <span class="alert-title">${esc(a.title)}</span>
+          <span class="alert-msg">${esc(a.message)}</span>
+        </li>`,
+        )
+        .join('')
+    : '<li class="empty">Aucune alerte ouverte 🎉</li>';
+
+  const recommendations =
+    (analysis?.recommendations as Record<string, unknown>[] | undefined) ?? [];
+  const recoBlock = recommendations.length
+    ? `<ol class="reco">${recommendations
+        .slice(0, 4)
+        .map(
+          (r) =>
+            `<li><strong>${esc(r.action)}</strong>${r.rationale ? ` — ${esc(r.rationale)}` : ''}</li>`,
+        )
+        .join('')}</ol>`
+    : '';
+
+  const spend = supplier.annual_spend_eur
+    ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(
+        Number(supplier.annual_spend_eur),
+      )
+    : '—';
+
+  return `<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Scorecard — ${esc(supplier.name)}</title>
+<style>
+  @page { margin: 18mm; size: A4; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, 'Segoe UI', sans-serif; font-size: 12px; color: #1f2937; line-height: 1.5; }
+  .header { display:flex; justify-content:space-between; align-items:flex-start; padding-bottom: 14px; border-bottom: 2px solid #e5e7eb; margin-bottom: 18px; }
+  .logo { font-size:18px; font-weight:700; }
+  .logo span { color:#6366f1; }
+  .report-meta { text-align:right; color:#6b7280; font-size:11px; }
+  .hero { display:flex; justify-content:space-between; align-items:center; padding:16px; border-radius:10px; margin-bottom:18px; background:${risk.bg}; border:1px solid ${risk.color}33; }
+  .supplier-name { font-size:20px; font-weight:700; }
+  .supplier-meta { color:#6b7280; font-size:11px; margin-top:4px; }
+  .risk-badge { text-align:right; }
+  .risk-badge .lvl { font-size:15px; font-weight:700; color:${risk.color}; }
+  .risk-badge .glob { font-size:30px; font-weight:800; color:${scoreColor(supplier.global_score)}; line-height:1; }
+  .scores-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:20px; }
+  .score-card { padding:12px; background:#fff; border:1px solid #e5e7eb; border-radius:8px; text-align:center; }
+  .score-card .label { font-size:10px; color:#9ca3af; margin-bottom:4px; }
+  .score-card .value { font-size:22px; font-weight:700; }
+  h2 { font-size:13px; font-weight:600; margin:0 0 8px; padding-bottom:4px; border-bottom:1px solid #e5e7eb; }
+  .section { margin-bottom:18px; break-inside:avoid; }
+  ul.alerts { list-style:none; }
+  ul.alerts li { display:flex; align-items:baseline; gap:8px; padding:6px 0; border-bottom:1px solid #f3f4f6; font-size:11px; }
+  ul.alerts .dot { width:8px; height:8px; border-radius:50%; flex:none; }
+  ul.alerts .alert-title { font-weight:600; }
+  ul.alerts .alert-msg { color:#6b7280; }
+  ul.alerts .empty { color:#16a34a; }
+  .summary-box { padding:14px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; }
+  ol.reco { margin:8px 0 0 16px; font-size:11px; }
+  ol.reco li { margin-bottom:4px; }
+  .footer { margin-top:24px; padding-top:12px; border-top:1px solid #e5e7eb; font-size:10px; color:#9ca3af; display:flex; justify-content:space-between; }
+  @media print { body { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">Vendor<span>Shield</span></div>
+  <div class="report-meta">
+    <div>Scorecard de risque fournisseur</div>
+    <div>Généré le ${new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+    <div>Réservé à usage interne — Confidentiel</div>
+  </div>
+</div>
+
+<div class="hero">
+  <div>
+    <div class="supplier-name">${esc(supplier.name)}</div>
+    <div class="supplier-meta">
+      ${esc(supplier.country_name ?? supplier.country_code ?? '')} ·
+      ${esc(CATEGORY_LABELS[supplier.category as string] ?? supplier.category ?? '')} ·
+      Criticité : ${esc(supplier.criticality ?? '—')} ·
+      Dépense annuelle : ${spend}
+    </div>
+  </div>
+  <div class="risk-badge">
+    <div class="glob">${supplier.global_score ?? '—'}<span style="font-size:13px;color:#9ca3af">/100</span></div>
+    <div class="lvl">${risk.label}</div>
+  </div>
+</div>
+
+<div class="scores-grid">${scoreCards}</div>
+
+<div class="section">
+  <h2>Alertes ouvertes (${alerts.length})</h2>
+  <ul class="alerts">${alertsRows}</ul>
+</div>
+
+${
+  analysis
+    ? `<div class="section">
+  <h2>Analyse IA — synthèse</h2>
+  <div class="summary-box">
+    <p>${esc(analysis.overall_assessment) || 'Aucune synthèse disponible.'}</p>
+    ${recoBlock ? `<p style="margin-top:8px;font-weight:600">Recommandations prioritaires :</p>${recoBlock}` : ''}
+  </div>
+</div>`
+    : ''
+}
+
+<div class="footer">
+  <span>VendorShield — Supplier Risk Intelligence Platform</span>
+  <span>${esc(supplier.name)} — Confidentiel</span>
+</div>
+</body>
+</html>`;
+}
+
 // ─── Route handler ────────────────────────────────────────────────────────────
 
 export async function GET(
@@ -388,6 +599,17 @@ export async function GET(
     if (type === 'pdf-assessment' && assessmentId) {
       const assessment = await fetchAssessmentWithFactors(client, assessmentId);
       const html = supplierToPDFHtml(assessment);
+
+      return new Response(html, {
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+      });
+    }
+
+    // ── Scorecard fournisseur (PDF 1 page, sans évaluation requise) ──────────
+
+    if (type === 'pdf-supplier' && supplierId) {
+      const scorecard = await fetchSupplierScorecard(client, supplierId);
+      const html = supplierScorecardToPDFHtml(scorecard);
 
       return new Response(html, {
         headers: { 'Content-Type': 'text/html; charset=utf-8' },

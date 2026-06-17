@@ -221,6 +221,16 @@ export function SupplierDetail({
 
         <div className="flex items-center gap-2 shrink-0">
           <Button variant="outline" size="sm" asChild>
+            <a
+              href={`/api/exports/pdf-supplier?supplier_id=${supplier.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FileText className="mr-1.5 h-4 w-4" />
+              Scorecard PDF
+            </a>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
             <Link href={`/home/risk-assessments/new?supplier=${supplier.id}`}>
               <Shield className="mr-1.5 h-4 w-4" />
               Nouvelle évaluation
