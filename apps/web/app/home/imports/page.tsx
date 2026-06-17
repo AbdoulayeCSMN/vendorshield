@@ -5,10 +5,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@kit/ui/tabs';
 import { Card } from '@kit/ui/card';
 import { Button } from '@kit/ui/button';
 import { Upload, File, CheckCircle, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
 import { UploadZone } from './upload-zone';
 import { ColumnMapping } from './column-mapping';
 import { QualityReport, ValidationError } from './quality-report';
 import { ImportHistory } from './import-history';
+import { commitImportAction } from '~/lib/vendorshield/actions/import.actions';
 
 interface ValidationResult {
   total_rows: number;
@@ -55,25 +57,36 @@ export default function ImportsPage() {
 
     setImportStatus('importing');
     try {
-      // Here you would call the actual import API endpoint
-      // For now, show success message
-      console.log('Import started', {
-        file: uploadedFile.name,
-        rows: validationResult.valid_rows,
-        quality: validationResult.quality_score,
+      const result = await commitImportAction({
+        rows: parsedRows,
+        columnMapping,
+        filename: uploadedFile.name,
+        fileType: uploadedFile.name.split('.').pop()?.toLowerCase() || 'csv',
+        qualityScore: validationResult.quality_score,
       });
 
-      // Reset after successful import
-      setTimeout(() => {
-        setUploadedFile(null);
-        setParsedRows([]);
-        setColumnMapping({});
-        setValidationResult(null);
+      if (!result.success) {
+        toast.error(result.error);
         setImportStatus('idle');
-        setStep('upload');
-      }, 1500);
+        return;
+      }
+
+      toast.success(
+        `${result.data.imported} lignes importées · ${result.data.matched} rattachées à un fournisseur` +
+          (result.data.unmatched > 0
+            ? ` · ${result.data.unmatched} non rapprochées`
+            : ''),
+      );
+
+      setUploadedFile(null);
+      setParsedRows([]);
+      setColumnMapping({});
+      setValidationResult(null);
+      setImportStatus('idle');
+      setStep('upload');
     } catch (error) {
       console.error('Import failed:', error);
+      toast.error('Import échoué. Réessayez.');
       setImportStatus('idle');
     }
   };
