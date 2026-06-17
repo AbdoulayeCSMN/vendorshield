@@ -6,6 +6,8 @@ import { requireUser } from '@kit/supabase/require-user';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { z } from 'zod';
 
+import { denyIfDemo } from '~/lib/vendorshield/demo';
+
 type ActionResult<T = null> =
   | { success: true; data: T; message?: string }
   | { success: false; error: string };
@@ -16,6 +18,9 @@ export async function acknowledgeAlertAction(alertId: string): Promise<ActionRes
   const client = getSupabaseServerClient();
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
+
+  const demo = await denyIfDemo();
+  if (demo) return demo;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (client as any)
@@ -49,6 +54,9 @@ export async function resolveAlertAction(
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
 
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
   const parsed = ResolveSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!parsed.success) return { success: false, error: 'Données invalides' };
 
@@ -77,6 +85,9 @@ export async function dismissAlertAction(alertId: string): Promise<ActionResult>
   const client = getSupabaseServerClient();
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
+
+  const demo = await denyIfDemo();
+  if (demo) return demo;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (client as any)
@@ -107,6 +118,9 @@ export async function createManualAlertAction(
   const client = getSupabaseServerClient();
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
+
+  const demo = await denyIfDemo();
+  if (demo) return demo;
 
   const parsed = ManualAlertSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!parsed.success) {
@@ -172,6 +186,9 @@ export async function createAlertRuleAction(
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
 
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
   const parsed = AlertRuleSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues.map((i) => i.message).join(', ') };
@@ -198,6 +215,9 @@ export async function updateAlertRuleAction(
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
 
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
   const parsed = AlertRuleSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!parsed.success) return { success: false, error: 'Données invalides' };
 
@@ -218,6 +238,9 @@ export async function deleteAlertRuleAction(ruleId: string): Promise<ActionResul
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
 
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (client as any).from('alert_rules').delete().eq('id', ruleId);
   if (error) return { success: false, error: error.message };
@@ -233,6 +256,9 @@ export async function toggleAlertRuleAction(
   const client = getSupabaseServerClient();
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
+
+  const demo = await denyIfDemo();
+  if (demo) return demo;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (client as any)

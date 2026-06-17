@@ -7,6 +7,8 @@ import { requireUser } from '@kit/supabase/require-user';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { z } from 'zod';
 
+import { denyIfDemo } from '~/lib/vendorshield/demo';
+
 import type {
   OrgMemberRole,
   Organization,
@@ -35,6 +37,9 @@ export async function createOrganizationAction(
   const client = getSupabaseServerClient();
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
+
+  const demo = await denyIfDemo();
+  if (demo) return demo;
 
   const raw = Object.fromEntries(formData.entries());
   const parsed = CreateOrgSchema.safeParse(raw);
@@ -201,6 +206,9 @@ export async function inviteMemberAction(
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
 
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
   const parsed = InviteSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? 'Données invalides' };
@@ -293,6 +301,9 @@ export async function acceptInvitationAction(
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
 
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
   // Récupérer l'invitation
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: invitation } = await (client as any)
@@ -352,6 +363,9 @@ export async function updateMemberRoleAction(
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
 
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (client as any)
     .from('org_members')
@@ -375,6 +389,9 @@ export async function removeMemberAction(
   const client = getSupabaseServerClient();
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
+
+  const demo = await denyIfDemo();
+  if (demo) return demo;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (client as any)
@@ -408,6 +425,9 @@ export async function updateOrganizationAction(
   const client = getSupabaseServerClient();
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
+
+  const demo = await denyIfDemo();
+  if (demo) return demo;
 
   const parsed = UpdateOrgSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!parsed.success) return { success: false, error: 'Données invalides' };

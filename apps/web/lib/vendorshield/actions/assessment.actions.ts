@@ -7,6 +7,8 @@ import { requireUser } from '@kit/supabase/require-user';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { z } from 'zod';
 
+import { denyIfDemo } from '~/lib/vendorshield/demo';
+
 type ActionResult<T = null> =
   | { success: true; data: T; message?: string }
   | { success: false; error: string };
@@ -35,6 +37,9 @@ export async function createAssessmentAction(
   const client = getSupabaseServerClient();
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
+
+  const demo = await denyIfDemo();
+  if (demo) return demo;
 
   const parsed = CreateAssessmentSchema.safeParse(
     Object.fromEntries(formData.entries()),
@@ -108,6 +113,9 @@ export async function updateFactorScoresAction(
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
 
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
   // Valider chaque facteur
   for (const f of factors) {
     const result = FactorScoreSchema.safeParse(f);
@@ -144,6 +152,9 @@ export async function computeAssessmentScoresAction(
   const client = getSupabaseServerClient();
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
+
+  const demo = await denyIfDemo();
+  if (demo) return demo;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (client as any).rpc('compute_assessment_scores', {
@@ -190,6 +201,9 @@ export async function finalizeAssessmentAction(
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
 
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
   const parsed = FinalizeSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!parsed.success) {
     return { success: false, error: 'Données invalides' };
@@ -230,6 +244,9 @@ export async function approveAssessmentAction(
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
 
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (client as any)
     .from('risk_assessments')
@@ -258,6 +275,9 @@ export async function archiveAssessmentAction(
   const client = getSupabaseServerClient();
   const auth = await requireUser(client);
   if (auth.error) return { success: false, error: 'Non authentifié' };
+
+  const demo = await denyIfDemo();
+  if (demo) return demo;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (client as any)

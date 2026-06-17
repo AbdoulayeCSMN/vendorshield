@@ -7,6 +7,8 @@ import { requireUser } from '@kit/supabase/require-user';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { z } from 'zod';
 
+import { denyIfDemo } from '~/lib/vendorshield/demo';
+
 // ─── Schéma de validation ─────────────────────────────────────────────────────
 
 const SupplierFormSchema = z.object({
@@ -81,6 +83,9 @@ export async function createSupplierAction(
     return { success: false, error: 'Non authentifié' };
   }
 
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
   const raw = Object.fromEntries(formData.entries());
   const parsed = SupplierFormSchema.safeParse(raw);
 
@@ -124,6 +129,9 @@ export async function updateSupplierAction(
     return { success: false, error: 'Non authentifié' };
   }
 
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
   const raw = Object.fromEntries(formData.entries());
   const parsed = SupplierFormSchema.safeParse(raw);
 
@@ -165,6 +173,9 @@ export async function deleteSupplierAction(id: string): Promise<ActionResult> {
     return { success: false, error: 'Non authentifié' };
   }
 
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (client as any)
     .from('suppliers')
@@ -191,6 +202,9 @@ export async function updateSupplierStatusAction(
   if (result.error) {
     return { success: false, error: 'Non authentifié' };
   }
+
+  const demo = await denyIfDemo();
+  if (demo) return demo;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (client as any)

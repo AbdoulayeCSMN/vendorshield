@@ -14,12 +14,12 @@ export function DemoModeBanner() {
             Mode démo actif
           </p>
           <p className="mt-0.5 text-xs text-amber-700">
-            Vous visualisez des données de démonstration. Quittez le mode démo pour revenir à vos données réelles.
+            Vous explorez VendorShield avec des données de démonstration (lecture seule). Créez un compte pour gérer vos propres fournisseurs.
           </p>
         </div>
 
         <Button asChild variant="outline" size="sm" className="border-amber-300 bg-white text-amber-800 hover:bg-amber-100">
-          <Link href="/demo/exit">Utiliser mes données</Link>
+          <Link href="/demo/exit">Quitter la démo & créer un compte</Link>
         </Button>
       </div>
     </div>

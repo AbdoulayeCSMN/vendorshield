@@ -39,6 +39,15 @@ function SignInPage() {
           </Link>
         </Button>
       </div>
+
+      <div className={'flex flex-col items-center gap-1 border-t pt-4'}>
+        <p className={'text-muted-foreground text-xs'}>
+          Pas envie de créer un compte tout de suite ?
+        </p>
+        <Button asChild variant={'outline'} size={'sm'}>
+          <Link href={'/demo'}>🚀 Explorer la démo (sans inscription)</Link>
+        </Button>
+      </div>
     </>
   );
 }
