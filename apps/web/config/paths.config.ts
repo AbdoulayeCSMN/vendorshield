@@ -22,6 +22,7 @@ const PathsSchema = z.object({
     supplyChain: z.string().min(1),
     auditLog: z.string().min(1),
     imports: z.string().min(1),
+    billing: z.string().min(1),
     // V1
     onboarding: z.string().min(1),
   }),
@@ -49,6 +50,7 @@ const pathsConfig = PathsSchema.parse({
     supplyChain: '/home/supply-chain',
     auditLog: '/home/audit-log',
     imports: '/home/imports',
+    billing: '/home/billing',
     // V1
     onboarding: '/onboarding',
   },
