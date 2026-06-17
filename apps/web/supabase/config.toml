@@ -111,3 +111,11 @@ verify_jwt = false
 [functions.bankruptcy-predictor]
 enabled = true
 verify_jwt = true
+
+[functions.tier-builder]
+enabled = true
+verify_jwt = true
+
+[functions.data-ingestion]
+enabled = true
+verify_jwt = true
