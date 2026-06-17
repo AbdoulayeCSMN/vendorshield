@@ -12,10 +12,12 @@ import { SidebarProvider } from '@kit/ui/shadcn-sidebar';
 import { AppLogo } from '~/components/app-logo';
 import { navigationConfig } from '~/config/navigation.config';
 import { withI18n } from '~/lib/i18n/with-i18n';
+import { isDemoMode } from '~/lib/vendorshield/demo';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
 
 // home imports
 import { HomeMenuNavigation } from './_components/home-menu-navigation';
+import { DemoModeBanner } from './_components/demo-mode-banner';
 import { HomeMobileNavigation } from './_components/home-mobile-navigation';
 import { HomeSidebar } from './_components/home-sidebar';
 
@@ -23,22 +25,26 @@ import { HomeSidebar } from './_components/home-sidebar';
 
 async function HomeLayout({ children }: React.PropsWithChildren) {
   const cookieStore = await cookies();
+  const demoMode = await isDemoMode();
   const style =
     (cookieStore.get('layout-style')?.value as PageLayoutStyle) ??
     navigationConfig.style;
 
   if (style === 'sidebar') {
-    return <SidebarLayout>{children}</SidebarLayout>;
+    return <SidebarLayout demoMode={demoMode}>{children}</SidebarLayout>;
   }
 
-  return <HeaderLayout>{children}</HeaderLayout>;
+  return <HeaderLayout demoMode={demoMode}>{children}</HeaderLayout>;
 }
 
 export default withI18n(HomeLayout);
 
 // ─── SidebarLayout — async ────────────────────────────────────────────────────
 
-async function SidebarLayout({ children }: React.PropsWithChildren) {
+async function SidebarLayout({
+  children,
+  demoMode,
+}: React.PropsWithChildren<{ demoMode: boolean }>) {
   const [user] = await Promise.all([requireUserInServerComponent()]);
 
   // Guard onboarding — import dynamique pour éviter tout conflit de module
@@ -67,6 +73,7 @@ async function SidebarLayout({ children }: React.PropsWithChildren) {
           <MobileNavigation />
         </PageMobileNavigation>
 
+        {demoMode ? <DemoModeBanner /> : null}
         {children}
       </Page>
     </SidebarProvider>
@@ -75,7 +82,10 @@ async function SidebarLayout({ children }: React.PropsWithChildren) {
 
 // ─── HeaderLayout ─────────────────────────────────────────────────────────────
 
-function HeaderLayout({ children }: React.PropsWithChildren) {
+function HeaderLayout({
+  children,
+  demoMode,
+}: React.PropsWithChildren<{ demoMode: boolean }>) {
   return (
     <Page style={'header'}>
       <PageNavigation>
@@ -86,6 +96,7 @@ function HeaderLayout({ children }: React.PropsWithChildren) {
         <MobileNavigation />
       </PageMobileNavigation>
 
+      {demoMode ? <DemoModeBanner /> : null}
       {children}
     </Page>
   );
