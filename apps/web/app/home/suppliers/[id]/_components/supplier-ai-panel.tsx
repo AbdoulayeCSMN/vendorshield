@@ -384,9 +384,11 @@ export function SupplierAiPanel({ supplierId, pastAnalyses, configStatus }: Prop
         <p className="text-[9px] text-gray-300 dark:text-gray-700 text-center">
           {configStatus.mode === 'mock'
             ? 'Mode simulation — données fictives réalistes'
-            : configStatus.mode === 'groq'
-              ? 'Llama 3.3 via Groq — API gratuite'
-              : 'Configurer GROQ_API_KEY ou MOCK_AI=true'}
+            : configStatus.mode === 'openrouter'
+              ? 'Llama 3.3 via OpenRouter — modèle gratuit'
+              : configStatus.mode === 'groq'
+                ? 'Llama 3.3 via Groq — API gratuite'
+                : 'Configurer OPENROUTER_API_KEY ou MOCK_AI=true'}
         </p>
       </CardContent>
     </Card>

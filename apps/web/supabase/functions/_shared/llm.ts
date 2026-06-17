@@ -1,10 +1,12 @@
 /**
  * VendorShield — LLM helper partagé
- * Supporte : Groq (gratuit) · Mock dev (zéro API)
+ * Supporte : OpenRouter (modèle gratuit) · Groq (repli) · Mock dev (zéro API)
  *
- * Variables d'environnement :
- *   GROQ_API_KEY   = clé Groq (console.groq.com → free)
- *   MOCK_AI        = "true" → bypass complet, réponses simulées réalistes
+ * Variables d'environnement (par ordre de priorité) :
+ *   MOCK_AI            = "true" → bypass complet, réponses simulées réalistes
+ *   OPENROUTER_API_KEY = clé OpenRouter (openrouter.ai → modèles :free)
+ *   OPENROUTER_MODEL   = (optionnel) override du modèle, défaut meta-llama/llama-3.3-70b-instruct:free
+ *   GROQ_API_KEY       = clé Groq (console.groq.com → free), utilisée en repli
  */
 
 // ─── Types communs ─────────────────────────────────────────────────────────────
@@ -271,20 +273,34 @@ export function generateMockResult(ctx: SupplierContext): AnalysisResult {
   };
 }
 
-// ─── Appel LLM réel (Groq — OpenAI-compatible) ───────────────────────────────
+// ─── Appel LLM réel (API OpenAI-compatible : OpenRouter / Groq) ───────────────
 
-export async function callGroq(
+export interface LlmEndpoint {
+  url: string;
+  apiKey: string;
+  model: string;
+  /** En-têtes additionnels (OpenRouter recommande HTTP-Referer + X-Title). */
+  extraHeaders?: Record<string, string>;
+  /** Libellé du fournisseur pour les messages d'erreur. */
+  label: string;
+}
+
+export const OPENROUTER_MODEL = 'meta-llama/llama-3.3-70b-instruct:free';
+export const GROQ_MODEL = 'llama-3.3-70b-versatile';
+
+async function callChatCompletion(
+  endpoint: LlmEndpoint,
   userPrompt: string,
-  apiKey: string,
 ): Promise<AnalysisResult> {
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+  const res = await fetch(endpoint.url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
+      Authorization: `Bearer ${endpoint.apiKey}`,
+      ...endpoint.extraHeaders,
     },
     body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile', // Gratuit, excellent en JSON structuré
+      model: endpoint.model,
       temperature: 0.2,                 // Basse pour des réponses reproductibles
       max_tokens: 2000,
       response_format: { type: 'json_object' }, // Force le JSON — évite le parsing fragile
@@ -297,7 +313,7 @@ export async function callGroq(
 
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(`Groq API ${res.status}: ${errText}`);
+    throw new Error(`${endpoint.label} API ${res.status}: ${errText}`);
   }
 
   const data = await res.json();
@@ -310,7 +326,10 @@ export async function callGroq(
   } catch {
     // Fallback : extraire le JSON si le modèle a ajouté du texte autour
     const match = rawContent.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error(`JSON invalide dans la réponse Groq: ${rawContent.slice(0, 200)}`);
+    if (!match)
+      throw new Error(
+        `JSON invalide dans la réponse ${endpoint.label}: ${rawContent.slice(0, 200)}`,
+      );
     parsed = JSON.parse(match[0]);
   }
 
@@ -336,12 +355,14 @@ function getRuntimeEnv(name: string): string | undefined {
 /**
  * Point d'entrée unique pour l'analyse.
  * Consulte les variables d'environnement dans l'ordre :
- *   1. MOCK_AI=true   → mock déterministe (développement)
- *   2. GROQ_API_KEY   → Groq Llama 3.3 (gratuit, recommandé)
+ *   1. MOCK_AI=true         → mock déterministe (développement)
+ *   2. OPENROUTER_API_KEY   → OpenRouter, modèle gratuit (recommandé)
+ *   3. GROQ_API_KEY         → Groq Llama 3.3 (repli, gratuit)
  */
 export async function analyzeSupplier(ctx: SupplierContext): Promise<AnalysisResult> {
-  const mockMode = getRuntimeEnv('MOCK_AI') === 'true';
-  const groqKey  = getRuntimeEnv('GROQ_API_KEY') ?? '';
+  const mockMode       = getRuntimeEnv('MOCK_AI') === 'true';
+  const openRouterKey  = getRuntimeEnv('OPENROUTER_API_KEY') ?? '';
+  const groqKey        = getRuntimeEnv('GROQ_API_KEY') ?? '';
 
   if (mockMode) {
     // Simuler une latence réaliste (~300ms) pour que l'UI ne soit pas trop rapide
@@ -349,12 +370,38 @@ export async function analyzeSupplier(ctx: SupplierContext): Promise<AnalysisRes
     return generateMockResult(ctx);
   }
 
-  if (!groqKey) {
-    throw new Error(
-      'Aucune clé API configurée. Définir GROQ_API_KEY (console.groq.com) ou MOCK_AI=true pour le développement.'
+  const prompt = buildPrompt(ctx);
+
+  if (openRouterKey) {
+    return callChatCompletion(
+      {
+        url: 'https://openrouter.ai/api/v1/chat/completions',
+        apiKey: openRouterKey,
+        model: getRuntimeEnv('OPENROUTER_MODEL') ?? OPENROUTER_MODEL,
+        label: 'OpenRouter',
+        extraHeaders: {
+          // Recommandé par OpenRouter pour l'attribution (facultatif).
+          'HTTP-Referer': getRuntimeEnv('OPENROUTER_SITE_URL') ?? 'https://vendorshield.io',
+          'X-Title': 'VendorShield',
+        },
+      },
+      prompt,
     );
   }
 
-  const prompt = buildPrompt(ctx);
-  return callGroq(prompt, groqKey);
+  if (groqKey) {
+    return callChatCompletion(
+      {
+        url: 'https://api.groq.com/openai/v1/chat/completions',
+        apiKey: groqKey,
+        model: GROQ_MODEL,
+        label: 'Groq',
+      },
+      prompt,
+    );
+  }
+
+  throw new Error(
+    'Aucune clé API configurée. Définir OPENROUTER_API_KEY (openrouter.ai) ou GROQ_API_KEY, ou MOCK_AI=true pour le développement.',
+  );
 }

@@ -59,7 +59,6 @@ import {
   type RiskDimension,
   type RiskLevel,
 } from '~/lib/vendorshield/types';
-import { AiScanButton } from './ai-scan-button';
 
 // ─── Score card ───────────────────────────────────────────────────────────────
 
@@ -221,7 +220,6 @@ export function SupplierDetail({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <AiScanButton supplierId={supplier.id} />
           <Button variant="outline" size="sm" asChild>
             <Link href={`/home/risk-assessments/new?supplier=${supplier.id}`}>
               <Shield className="mr-1.5 h-4 w-4" />

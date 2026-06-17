@@ -19,24 +19,6 @@ export interface Recommendation {
   rationale: string;
 }
 
-// Résultat d'un scan OSINT tel que renvoyé par l'API /api/ai/scan et
-// consommé par le panneau d'analyse IA côté fournisseur.
-export interface OsintSignal {
-  type: string;
-  severity: 'info' | 'warning' | 'critical';
-  title: string;
-  description: string;
-  confidence: 'low' | 'medium' | 'high';
-}
-
-export interface OsintResult {
-  risk_detected: boolean;
-  overall_risk_level: string;
-  summary?: string;
-  signals: OsintSignal[];
-  model_note?: string;
-}
-
 export interface AiAnalysis {
   id: string;
   supplier_id: string;

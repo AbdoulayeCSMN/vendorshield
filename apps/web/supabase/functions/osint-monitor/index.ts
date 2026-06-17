@@ -56,7 +56,7 @@ Deno.serve(async (req: Request) => {
       account_id,
       supplier_id,
       source: 'manual_trigger',
-      model_used: mockMode ? 'mock' : 'llama-3.3-70b-versatile',
+      model_used: mockMode ? 'mock' : 'llama-3.3-70b',
       status: 'running',
       triggered_by: triggered_by ?? null,
       started_at: new Date().toISOString(),
@@ -167,7 +167,7 @@ Deno.serve(async (req: Request) => {
           signal_type:     signal.type,
           confidence:      signal.confidence,
           source_hint:     signal.source_hint ?? null,
-          model:           mockMode ? 'mock' : 'llama-3.3-70b-versatile',
+          model:           mockMode ? 'mock' : 'llama-3.3-70b',
           mock_mode:       mockMode,
         },
       });

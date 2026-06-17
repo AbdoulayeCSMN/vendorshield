@@ -49,18 +49,20 @@ export interface AiAnalysis {
 }
 
 export type AiConfigStatus =
-  | { configured: true;  mode: 'groq' | 'mock'; label: string }
+  | { configured: true;  mode: 'openrouter' | 'groq' | 'mock'; label: string }
   | { configured: false; mode: null; label: string };
 
 // ─── Statut de configuration ──────────────────────────────────────────────────
 
 export async function getAiConfigStatus(): Promise<AiConfigStatus> {
-  const mockMode = process.env.MOCK_AI === 'true';
-  const groqKey  = process.env.GROQ_API_KEY ?? '';
+  const mockMode      = process.env.MOCK_AI === 'true';
+  const openRouterKey = process.env.OPENROUTER_API_KEY ?? '';
+  const groqKey       = process.env.GROQ_API_KEY ?? '';
 
-  if (mockMode) return { configured: true, mode: 'mock', label: 'Mode simulation (dev)' };
-  if (groqKey)  return { configured: true, mode: 'groq', label: 'Groq Llama 3.3 (gratuit)' };
-  return { configured: false, mode: null, label: 'Configurer GROQ_API_KEY ou MOCK_AI=true' };
+  if (mockMode)      return { configured: true,  mode: 'mock',       label: 'Mode simulation (dev)' };
+  if (openRouterKey) return { configured: true,  mode: 'openrouter', label: 'OpenRouter (modèle gratuit)' };
+  if (groqKey)       return { configured: true,  mode: 'groq',       label: 'Groq Llama 3.3 (gratuit)' };
+  return { configured: false, mode: null, label: 'Configurer OPENROUTER_API_KEY ou MOCK_AI=true' };
 }
 
 // ─── Analyse en mode mock (exécutée directement dans la Server Action) ────────
@@ -214,10 +216,11 @@ async function runEdgeFunctionAnalysis(
     const data = await res.json();
 
     if (!res.ok || !data.success) {
-      if (data.error?.includes('GROQ_API_KEY')) {
+      if (data.error?.includes('API') && data.error?.includes('configurée')) {
         return {
           success: false,
-          error: '🔑 GROQ_API_KEY manquant. Exécuter : supabase secrets set GROQ_API_KEY=gsk_...',
+          error:
+            '🔑 Clé LLM manquante. Exécuter : supabase secrets set OPENROUTER_API_KEY=sk-or-...',
         };
       }
       return { success: false, error: data.error ?? 'Erreur interne' };
