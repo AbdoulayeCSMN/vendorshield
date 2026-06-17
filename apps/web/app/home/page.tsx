@@ -11,11 +11,13 @@ import {
 } from '~/lib/vendorshield/analytics.server';
 import { getAlerts } from '~/lib/vendorshield/alerts.server';
 import { getRecentAnalyses } from '~/lib/vendorshield/ai.server';
+import { getQuickStartStatus } from '~/lib/vendorshield/onboarding.server';
 
+import { QuickStartCard } from './_components/quick-start-card';
 import { VendorShieldDashboard } from './_components/vendorshield-dashboard';
 
 async function HomePage() {
-  const [kpis, riskDist, dimScores, topRisky, recentAlerts, countries, networkSuppliers, recentAiAnalyses] =
+  const [kpis, riskDist, dimScores, topRisky, recentAlerts, countries, networkSuppliers, recentAiAnalyses, quickStart] =
     await Promise.all([
       getAnalyticsDashboard(),
       getRiskDistribution(),
@@ -25,6 +27,7 @@ async function HomePage() {
       getCountryExposure(),
       getSuppliersForNetwork(),
       getRecentAnalyses(4),
+      getQuickStartStatus(),
     ]);
 
   return (
@@ -34,6 +37,11 @@ async function HomePage() {
         description="Vue d'ensemble de vos risques fournisseurs"
       />
       <PageBody>
+        {!quickStart.complete && (
+          <div className="mb-4">
+            <QuickStartCard status={quickStart} />
+          </div>
+        )}
         <VendorShieldDashboard
           kpis={kpis}
           riskDistribution={riskDist}
