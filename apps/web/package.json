@@ -29,7 +29,7 @@
     "supabase:typegen:packages": "supabase gen types typescript --local > ../../packages/supabase/src/database.types.ts",
     "supabase:typegen:app": "supabase gen types typescript --local > ./lib/database.types.ts",
     "supabase:db:dump:local": "supabase db dump --local --data-only",
-    "deploy:functions": "supabase functions deploy bankruptcy-predictor && supabase functions deploy osint-monitor && supabase functions deploy osint-scan && supabase functions deploy oecd-enrichment"
+    "deploy:functions": "supabase functions deploy bankruptcy-predictor && supabase functions deploy osint-monitor && supabase functions deploy osint-scan && supabase functions deploy oecd-enrichment && supabase functions deploy tier-builder && supabase functions deploy data-ingestion"
   },
   "dependencies": {
     "@edge-csrf/nextjs": "2.5.3-cloudflare-rc1",
