@@ -1,0 +1,8 @@
+[
+  {"id":1,"name":"Alpha Co","email":"contact@alpha.com","quantity":10,"price":9.99,"date_received":"2024-12-01","country":"US","gtin":"0123456789012"},
+  {"id":2,"name":"Beta LLC","email":"invalid-email","quantity":5,"price":19.50,"date_received":"2023-05-10","country":"FR","gtin":"0123456789013"},
+  {"id":3,"name":"Gamma Inc","email":"","quantity":0,"price":0.00,"date_received":"2026-01-01","country":"DE","gtin":"0123456789014"},
+  {"id":4,"name":"Delta SA","email":"delta@d.sa","quantity":100,"price":-5.00,"date_received":"2024-06-15","country":"CN","gtin":"0123456789015"},
+  {"id":5,"name":"Echo GmbH","email":"echo@gmbh.de","quantity":50,"price":15.00,"date_received":"2024-05-01","country":"US","gtin":"0123456789016"},
+  {"id":1,"name":"Duplicate Co","email":"dup@co.com","quantity":1,"price":1.00,"date_received":"2024-04-01","country":"US","gtin":"0123456789012"}
+]
