@@ -47,6 +47,7 @@ import { getSupplyChainGraph } from '~/lib/vendorshield/actions/tier.actions';
 import { getSupplierById } from '~/lib/vendorshield/suppliers.server';
 
 import { BankruptcyPanel } from './_components/bankruptcy-panel';
+import { ClimateRiskPanel } from './_components/climate-risk-panel';
 import { OperationalPredictionPanel } from './_components/operational-prediction-panel';
 import { SupplierAiPanel } from './_components/supplier-ai-panel';
 import { SupplierDetail } from './_components/supplier-detail';
@@ -82,6 +83,7 @@ async function SupplierDetailPage({ params }: Props) {
           </div>
           <div className="space-y-4">
             <OperationalPredictionPanel supplierId={id} initial={deliveryPrediction} />
+            <ClimateRiskPanel supplierId={id} />
             <BankruptcyPanel supplierId={id} predictions={predictions} />
             <SupplierAiPanel supplierId={id} pastAnalyses={analyses} configStatus={configStatus} />
           </div>
