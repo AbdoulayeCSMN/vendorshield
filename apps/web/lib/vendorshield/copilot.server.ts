@@ -1,5 +1,7 @@
 import 'server-only';
 
+import { getSupabaseServerClient } from '@kit/supabase/server-client';
+
 import { getAlerts } from '~/lib/vendorshield/alerts.server';
 import {
   getAnalyticsDashboard,
@@ -34,10 +36,68 @@ function fmt(n: number | null | undefined): string {
 }
 
 /**
+ * Bloc de contexte ciblé sur un fournisseur (quand l'utilisateur consulte sa
+ * fiche) — scores, alertes ouvertes et dernière prédiction opérationnelle.
+ */
+export async function buildSupplierContextBlock(supplierId: string): Promise<string | null> {
+  const client = getSupabaseServerClient();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: s } = await (client as any)
+    .from('supplier_risk_summary')
+    .select(
+      'name,country_code,category,global_score,financial_score,operational_score,geopolitical_score,esg_score,risk_level,criticality,annual_spend_eur',
+    )
+    .eq('id', supplierId)
+    .maybeSingle();
+  if (!s) return null;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [{ data: alerts }, { data: pred }] = await Promise.all([
+    (client as any)
+      .from('alerts')
+      .select('severity,title')
+      .eq('supplier_id', supplierId)
+      .eq('status', 'open')
+      .limit(5),
+    (client as any)
+      .from('delivery_predictions')
+      .select(
+        'delay_probability,expected_delay_days,predicted_ppm,ppm_breach_probability,risk_level,explanation',
+      )
+      .eq('supplier_id', supplierId)
+      .maybeSingle(),
+  ]);
+
+  const alertsTxt = (alerts ?? []).length
+    ? (alerts as { severity: string; title: string }[])
+        .map((a) => `[${a.severity}] ${a.title}`)
+        .join('; ')
+    : 'aucune';
+
+  const predTxt = pred
+    ? `retard ${fmt(pred.delay_probability)}% (≈${fmt(pred.expected_delay_days)} j), PPM prévu ${fmt(
+        pred.predicted_ppm,
+      )} (dépassement ${fmt(pred.ppm_breach_probability)}%), niveau ${pred.risk_level ?? '—'}`
+    : 'non calculée';
+
+  return `FOURNISSEUR ACTUELLEMENT CONSULTÉ — ${s.name} :
+- Pays: ${s.country_code ?? '—'} · Catégorie: ${s.category ?? '—'} · Criticité: ${s.criticality ?? '—'}
+- Scores: global ${fmt(s.global_score)}, financier ${fmt(s.financial_score)}, opérationnel ${fmt(
+    s.operational_score,
+  )}, géopolitique ${fmt(s.geopolitical_score)}, ESG ${fmt(s.esg_score)} (niveau ${s.risk_level ?? '—'})
+- Dépense annuelle: ${fmt(s.annual_spend_eur)}
+- Alertes ouvertes: ${alertsTxt}
+- Prédiction opérationnelle: ${predTxt}
+Quand l'utilisateur dit "ce fournisseur", il s'agit de celui-ci.`;
+}
+
+/**
  * Construit le prompt système complet, incluant un instantané (account-scoped
  * via RLS) de l'état réel du compte. Tronqué pour rester économe en tokens.
+ * Si `supplierId` est fourni, ajoute un bloc ciblé sur ce fournisseur.
  */
-export async function buildCopilotSystemPrompt(): Promise<string> {
+export async function buildCopilotSystemPrompt(supplierId?: string): Promise<string> {
   const [kpis, topRisky, alerts] = await Promise.all([
     getAnalyticsDashboard(),
     getTopRiskySuppliers(5),
@@ -69,6 +129,8 @@ export async function buildCopilotSystemPrompt(): Promise<string> {
         .join('\n')
     : 'Aucune alerte ouverte.';
 
+  const supplierBlock = supplierId ? await buildSupplierContextBlock(supplierId) : null;
+
   return `Tu es le copilote VendorShield, un assistant pour directeurs des achats et de la supply chain.
 Tu aides à comprendre les risques fournisseurs et à utiliser l'application.
 
@@ -88,5 +150,5 @@ Top fournisseurs à risque :
 ${suppliersBlock}
 
 Alertes ouvertes récentes :
-${alertsBlock}`;
+${alertsBlock}${supplierBlock ? `\n\n${supplierBlock}` : ''}`;
 }

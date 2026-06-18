@@ -95,7 +95,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const body = (await request.json()) as { messages?: ChatMessage[] };
+  const body = (await request.json()) as {
+    messages?: ChatMessage[];
+    context?: { supplierId?: string };
+  };
   const history = (body.messages ?? [])
     .filter((m) => m.content?.trim())
     .slice(-MAX_HISTORY);
@@ -104,7 +107,13 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: 'Aucun message.' }, { status: 400 });
   }
 
-  const system = await buildCopilotSystemPrompt();
+  // Valide l'UUID éventuel pour éviter toute requête parasite.
+  const supplierId =
+    body.context?.supplierId && /^[0-9a-f-]{36}$/i.test(body.context.supplierId)
+      ? body.context.supplierId
+      : undefined;
+
+  const system = await buildCopilotSystemPrompt(supplierId);
 
   const result = await callOpenRouter(apiKey, [
     { role: 'system', content: system },

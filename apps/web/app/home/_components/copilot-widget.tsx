@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { Loader2, Send, Sparkles, X } from 'lucide-react';
 
@@ -13,11 +14,17 @@ interface Message {
   content: string;
 }
 
-const SUGGESTIONS = [
+const BASE_SUGGESTIONS = [
   'Quels fournisseurs sont les plus à risque ?',
   'Résume mes alertes ouvertes',
   'Comment importer mes fournisseurs ?',
   'Explique-moi le score de risque',
+];
+
+const SUPPLIER_SUGGESTIONS = [
+  'Analyse ce fournisseur et ses risques',
+  'Que faire pour réduire son risque ?',
+  'Explique sa prédiction de retard',
 ];
 
 // Rendu léger : liens markdown [label](href) + sauts de ligne, sans dépendance.
@@ -61,6 +68,14 @@ export function CopilotWidget() {
   const [streaming, setStreaming] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const pathname = usePathname();
+  const supplierId = pathname?.match(
+    /^\/home\/suppliers\/([0-9a-f]{8}-[0-9a-f-]{27})/i,
+  )?.[1];
+  const suggestions = supplierId
+    ? [...SUPPLIER_SUGGESTIONS, ...BASE_SUGGESTIONS.slice(0, 1)]
+    : BASE_SUGGESTIONS;
+
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, open]);
@@ -80,7 +95,7 @@ export function CopilotWidget() {
       const res = await fetch('/api/copilot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: next }),
+        body: JSON.stringify({ messages: next, context: { supplierId } }),
       });
 
       if (!res.ok || !res.body) {
@@ -122,6 +137,7 @@ export function CopilotWidget() {
       {/* Bouton flottant */}
       {!open && (
         <button
+          type="button"
           onClick={() => setOpen(true)}
           aria-label="Ouvrir le copilote"
           className="bg-primary text-primary-foreground fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-transform hover:scale-105"
@@ -138,7 +154,7 @@ export function CopilotWidget() {
               <Sparkles className="text-primary h-4 w-4" />
               <span className="text-sm font-semibold">Copilote VendorShield</span>
             </div>
-            <button onClick={() => setOpen(false)} aria-label="Fermer" className="text-muted-foreground hover:text-foreground">
+            <button type="button" onClick={() => setOpen(false)} aria-label="Fermer" className="text-muted-foreground hover:text-foreground">
               <X className="h-4 w-4" />
             </button>
           </header>
@@ -148,9 +164,10 @@ export function CopilotWidget() {
               <div className="text-muted-foreground space-y-3 text-sm">
                 <p>Posez une question sur vos fournisseurs, vos risques ou l'utilisation de l'application.</p>
                 <div className="flex flex-col gap-2">
-                  {SUGGESTIONS.map((s) => (
+                  {suggestions.map((s) => (
                     <button
                       key={s}
+                      type="button"
                       onClick={() => send(s)}
                       className="hover:bg-muted rounded-lg border px-3 py-2 text-left text-xs transition-colors"
                     >
