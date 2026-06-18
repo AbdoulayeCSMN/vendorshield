@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.env
+# Trained artifacts are reproducible (dvc repro / make train); don't commit binaries.
+artifacts/*.joblib
+artifacts/model_metadata.json
+artifacts/reference_stats.json
+artifacts/mlruns/

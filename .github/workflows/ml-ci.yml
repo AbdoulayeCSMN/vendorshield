@@ -1,0 +1,35 @@
+name: ml-ci
+
+on:
+  push:
+    paths: ["services/ml/**", ".github/workflows/ml-ci.yml"]
+  pull_request:
+    paths: ["services/ml/**"]
+
+defaults:
+  run:
+    working-directory: services/ml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv venv --python 3.12 .venv
+
+      - name: Install (with dev extras)
+        run: uv pip install --python .venv/bin/python -e ".[dev]"
+
+      - name: Lint
+        run: .venv/bin/ruff check src tests
+
+      - name: Type-check
+        run: .venv/bin/mypy src || true   # advisory until fully annotated
+
+      - name: Test (trains on synthetic data)
+        run: .venv/bin/pytest

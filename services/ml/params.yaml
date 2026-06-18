@@ -1,0 +1,5 @@
+# Hyperparameters / data params tracked by DVC (override via env VS_ML_*).
+min_supplier_history: 8
+ppm_breach_threshold: 5000
+cv_folds: 5
+random_state: 42

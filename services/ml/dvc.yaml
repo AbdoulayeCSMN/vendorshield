@@ -1,0 +1,17 @@
+# DVC pipeline — reproducible train stage.
+# `dvc repro` re-runs training whenever code or params change; artifacts are
+# tracked so model versions are reproducible and shareable via a DVC remote.
+stages:
+  train:
+    cmd: vendorshield-ml train
+    deps:
+      - src/vendorshield_ml
+    params:
+      - params.yaml:
+    outs:
+      - artifacts/delay_classifier.joblib
+      - artifacts/ppm_regressor.joblib
+      - artifacts/delay_base.joblib
+    metrics:
+      - artifacts/model_metadata.json:
+          cache: false

@@ -7,6 +7,7 @@ import { getSupabaseServerClient } from '@kit/supabase/server-client';
 
 import { openRouterComplete } from '~/lib/ai/openrouter.server';
 import { denyIfDemo } from '~/lib/vendorshield/demo';
+import { predictViaMlService } from '~/lib/vendorshield/predictions/ml-service';
 import {
   type DeliveryRow,
   MIN_DATA_POINTS,
@@ -113,7 +114,7 @@ export async function predictOperationalRiskAction(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: allRows, error } = await (client as any)
     .from('supplier_deliveries')
-    .select('supplier_id, planned_date, delay_days, on_time, ppm, quantity')
+    .select('supplier_id, planned_date, actual_date, delay_days, on_time, ppm, quantity')
     .eq('account_id', accountId);
 
   if (error) return { success: false, error: error.message };
@@ -128,10 +129,65 @@ export async function predictOperationalRiskAction(
     };
   }
 
-  const model = trainDelayModel(rows);
-  const delay = predictDelay(model, supplierRows);
-  const ppm = forecastPpm(supplierRows);
-  const riskLevel = operationalRiskLevel(delay.delayProbability, ppm.breachProbability);
+  // Tente d'abord le service ML Python ; repli transparent sur le modèle TS.
+  const mlResponse = await predictViaMlService(
+    supplierRows.map((r) => ({
+      supplier_id: supplierId,
+      planned_date: r.planned_date,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      actual_date: (r as any).actual_date ?? null,
+      ppm: r.ppm,
+      quantity: r.quantity,
+    })),
+  );
+
+  const mlPred = mlResponse?.predictions?.[0];
+  let pred: {
+    delayProbability: number;
+    expectedDelayDays: number;
+    predictedPpm: number | null;
+    ppmBreachProbability: number;
+    riskLevel: 'low' | 'medium' | 'high' | 'critical';
+    confidence: number;
+    dataPoints: number;
+    drivers: { feature: string; contribution: number }[];
+    modelVersion: string;
+    source: 'ml-service' | 'ts-fallback';
+    audit: Record<string, unknown>;
+  };
+
+  if (mlPred) {
+    pred = {
+      delayProbability: mlPred.delay_probability,
+      expectedDelayDays: mlPred.expected_delay_days,
+      predictedPpm: mlPred.predicted_ppm,
+      ppmBreachProbability: mlPred.ppm_breach_probability,
+      riskLevel: mlPred.risk_level,
+      confidence: mlPred.confidence,
+      dataPoints: mlPred.data_points,
+      drivers: mlPred.drivers.map((d) => ({ feature: d.feature, contribution: d.importance })),
+      modelVersion: mlResponse!.model_version,
+      source: 'ml-service',
+      audit: { drivers: mlPred.drivers, drift: mlResponse!.drift ?? null },
+    };
+  } else {
+    const model = trainDelayModel(rows);
+    const delay = predictDelay(model, supplierRows);
+    const ppm = forecastPpm(supplierRows);
+    pred = {
+      delayProbability: delay.delayProbability,
+      expectedDelayDays: delay.expectedDelayDays,
+      predictedPpm: ppm.predictedPpm,
+      ppmBreachProbability: ppm.breachProbability,
+      riskLevel: operationalRiskLevel(delay.delayProbability, ppm.breachProbability),
+      confidence: delay.confidence,
+      dataPoints: delay.dataPoints,
+      drivers: delay.topDrivers,
+      modelVersion: MODEL_VERSION,
+      source: 'ts-fallback',
+      audit: { weights: model.weights, trained: model.trained, ppm_trend: ppm.trendPerDelivery },
+    };
+  }
 
   // Nom du fournisseur (pour l'explication).
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -145,20 +201,20 @@ export async function predictOperationalRiskAction(
   const explanation =
     (await llmExplanation(
       supplierName,
-      delay.delayProbability,
-      delay.expectedDelayDays,
-      ppm.predictedPpm,
-      ppm.breachProbability,
-      delay.topDrivers,
-      delay.dataPoints,
+      pred.delayProbability,
+      pred.expectedDelayDays,
+      pred.predictedPpm,
+      pred.ppmBreachProbability,
+      pred.drivers,
+      pred.dataPoints,
     )) ??
     fallbackExplanation(
-      delay.delayProbability,
-      delay.expectedDelayDays,
-      ppm.predictedPpm,
-      ppm.breachProbability,
-      delay.topDrivers,
-      delay.dataPoints,
+      pred.delayProbability,
+      pred.expectedDelayDays,
+      pred.predictedPpm,
+      pred.ppmBreachProbability,
+      pred.drivers,
+      pred.dataPoints,
     );
 
   const generatedAt = new Date().toISOString();
@@ -170,21 +226,16 @@ export async function predictOperationalRiskAction(
       {
         account_id: accountId,
         supplier_id: supplierId,
-        delay_probability: delay.delayProbability,
-        expected_delay_days: delay.expectedDelayDays,
-        predicted_ppm: ppm.predictedPpm,
-        ppm_breach_probability: ppm.breachProbability,
-        risk_level: riskLevel,
-        confidence: delay.confidence,
-        data_points: delay.dataPoints,
-        features: {
-          weights: model.weights,
-          trained: model.trained,
-          drivers: delay.topDrivers,
-          ppm_trend: ppm.trendPerDelivery,
-        },
+        delay_probability: pred.delayProbability,
+        expected_delay_days: pred.expectedDelayDays,
+        predicted_ppm: pred.predictedPpm,
+        ppm_breach_probability: pred.ppmBreachProbability,
+        risk_level: pred.riskLevel,
+        confidence: pred.confidence,
+        data_points: pred.dataPoints,
+        features: { source: pred.source, ...pred.audit },
         explanation,
-        model_version: MODEL_VERSION,
+        model_version: pred.modelVersion,
         generated_at: generatedAt,
       },
       { onConflict: 'account_id,supplier_id' },
@@ -198,15 +249,15 @@ export async function predictOperationalRiskAction(
     success: true,
     data: {
       supplier_id: supplierId,
-      delay_probability: delay.delayProbability,
-      expected_delay_days: delay.expectedDelayDays,
-      predicted_ppm: ppm.predictedPpm,
-      ppm_breach_probability: ppm.breachProbability,
-      risk_level: riskLevel,
-      confidence: delay.confidence,
-      data_points: delay.dataPoints,
+      delay_probability: pred.delayProbability,
+      expected_delay_days: pred.expectedDelayDays,
+      predicted_ppm: pred.predictedPpm,
+      ppm_breach_probability: pred.ppmBreachProbability,
+      risk_level: pred.riskLevel,
+      confidence: pred.confidence,
+      data_points: pred.dataPoints,
       explanation,
-      model_version: MODEL_VERSION,
+      model_version: pred.modelVersion,
       generated_at: generatedAt,
     },
   };
