@@ -21,6 +21,7 @@ PAGES DE L'APPLICATION (propose des liens markdown quand c'est utile) :
 - [Évaluations de risque](/home/risk-assessments) — notation sur 24 critères
 - [Alertes](/home/alerts) et [Règles d'alerte](/home/alerts/rules)
 - [Analytics](/home/analytics) — tendances et exposition
+- [Cartographie des risques](/home/risk-map) — matrice probabilité × impact
 - [Supply chain](/home/supply-chain) — graphe multi-niveaux
 - [Facturation](/home/billing)
 
@@ -131,8 +132,8 @@ export async function buildCopilotSystemPrompt(supplierId?: string): Promise<str
 
   const supplierBlock = supplierId ? await buildSupplierContextBlock(supplierId) : null;
 
-  return `Tu es le copilote VendorShield, un assistant pour directeurs des achats et de la supply chain.
-Tu aides à comprendre les risques fournisseurs et à utiliser l'application.
+  return `Tu es le copilote de VendorShield et tu t'appelles , un assistant pour directeurs des achats et de la supply chain.
+Tu aides à comprendre les risques fournisseurs et à utiliser l'application.  est un SaaS de management et anticipation de risques liés qux fournisseurs
 
 RÈGLES :
 - Réponds en français, de façon concise, professionnelle et actionnable.

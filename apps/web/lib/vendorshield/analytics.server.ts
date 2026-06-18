@@ -249,6 +249,52 @@ export async function getTopRiskySuppliers(limit = 10): Promise<TopRiskySupplier
   return (data ?? []) as TopRiskySupplier[];
 }
 
+// ─── Cartographie des risques (matrice probabilité × impact) ──────────────────
+
+export type RiskMatrixPoint = {
+  id: string;
+  name: string;
+  country_code: string | null;
+  criticality: string | null;
+  risk_level: string | null;
+  /** Probabilité d'incident 0-100 (dérivée du score : faible score = forte proba). */
+  likelihood: number;
+  /** Impact business 0-100 (criticité). */
+  impact: number;
+  annual_spend_eur: number | null;
+};
+
+const CRITICALITY_IMPACT: Record<string, number> = {
+  critical: 95,
+  high: 72,
+  medium: 48,
+  low: 25,
+};
+
+export async function getRiskMatrix(): Promise<RiskMatrixPoint[]> {
+  const client = getSupabaseServerClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = await (client as any)
+    .from('supplier_risk_summary')
+    .select('id,name,country_code,criticality,risk_level,global_score,annual_spend_eur')
+    .eq('status', 'active')
+    .not('global_score', 'is', null);
+
+  return ((data ?? []) as Record<string, unknown>[]).map((s) => {
+    const score = (s.global_score as number | null) ?? 50;
+    return {
+      id: s.id as string,
+      name: s.name as string,
+      country_code: (s.country_code as string | null) ?? null,
+      criticality: (s.criticality as string | null) ?? null,
+      risk_level: (s.risk_level as string | null) ?? null,
+      likelihood: Math.round(100 - score), // faible score → forte probabilité d'incident
+      impact: CRITICALITY_IMPACT[(s.criticality as string) ?? 'medium'] ?? 48,
+      annual_spend_eur: (s.annual_spend_eur as number | null) ?? null,
+    };
+  });
+}
+
 // ─── Sole source exposure ─────────────────────────────────────────────────────
 
 export type SoleSourceItem = {

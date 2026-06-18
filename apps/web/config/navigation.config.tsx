@@ -9,6 +9,7 @@ import {
   Home,
   Settings,
   ShieldCheck,
+  Target,
   Upload,
   User,
   Users,
@@ -65,6 +66,11 @@ const routes = [
         label: 'common:routes.riskAnalytics',
         path: pathsConfig.app.riskAnalytics,
         Icon: <BarChart3 className={iconClasses} />,
+      },
+      {
+        label: 'Cartographie des risques',
+        path: pathsConfig.app.riskMap,
+        Icon: <Target className={iconClasses} />,
       },
       {
         label: 'Supply Chain',
