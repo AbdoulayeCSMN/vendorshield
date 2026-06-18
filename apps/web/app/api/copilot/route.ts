@@ -18,6 +18,7 @@ const MAX_HISTORY = 12;
 // Chaîne de modèles : OpenRouter bascule automatiquement sur le suivant si le
 // premier est saturé (429) ou indisponible. Tous gratuits par défaut ;
 // surchargeable via OPENROUTER_MODELS (liste séparée par des virgules).
+// OpenRouter limite le tableau `models` à 3 éléments max → on tronque par sécurité.
 const MODELS = (
   process.env.OPENROUTER_MODELS ??
   process.env.OPENROUTER_MODEL ??
@@ -25,12 +26,12 @@ const MODELS = (
     'meta-llama/llama-3.3-70b-instruct:free',
     'deepseek/deepseek-chat-v3-0324:free',
     'mistralai/mistral-small-3.2-24b-instruct:free',
-    'google/gemma-3-27b-it:free',
   ].join(',')
 )
   .split(',')
   .map((m) => m.trim())
-  .filter(Boolean);
+  .filter(Boolean)
+  .slice(0, 3);
 
 function parseRetryAfter(detail: string): number | null {
   try {
