@@ -2,8 +2,10 @@
 
 import { useState, useTransition } from 'react';
 
-import { Activity, Clock, Loader2, PackageX, TrendingUp } from 'lucide-react';
+import { Activity, Clock, Loader2, PackageX, Sparkles, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
+
+import { askCopilot } from '~/home/_components/copilot-widget';
 
 import { Badge } from '@kit/ui/badge';
 import { Button } from '@kit/ui/button';
@@ -124,17 +126,40 @@ export function OperationalPredictionPanel({
           </>
         )}
 
-        <Button onClick={run} disabled={isPending} variant="outline" size="sm" className="w-full">
-          {isPending ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Calcul du modèle...
-            </>
-          ) : prediction ? (
-            'Recalculer la prédiction'
-          ) : (
-            'Lancer la prédiction'
+        <div className="flex gap-2">
+          <Button
+            onClick={run}
+            disabled={isPending}
+            variant="outline"
+            size="sm"
+            className="flex-1"
+          >
+            {isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Calcul du modèle...
+              </>
+            ) : prediction ? (
+              'Recalculer'
+            ) : (
+              'Lancer la prédiction'
+            )}
+          </Button>
+          {prediction && (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="flex-1"
+              onClick={() =>
+                askCopilot(
+                  'Explique la prédiction opérationnelle de ce fournisseur (retard et défauts) et donne 2 actions concrètes pour réduire le risque.',
+                )
+              }
+            >
+              <Sparkles className="mr-1.5 h-4 w-4" /> Demander au copilote
+            </Button>
           )}
-        </Button>
+        </div>
       </CardContent>
     </Card>
   );

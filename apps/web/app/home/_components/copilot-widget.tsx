@@ -27,6 +27,13 @@ const SUPPLIER_SUGGESTIONS = [
   'Explique sa prédiction de retard',
 ];
 
+/** Ouvre le copilote et lui pose une question depuis n'importe quel composant. */
+export function askCopilot(message: string): void {
+  window.dispatchEvent(
+    new CustomEvent('vendorshield:copilot-ask', { detail: { message } }),
+  );
+}
+
 // Rendu léger : liens markdown [label](href) + sauts de ligne, sans dépendance.
 function RichText({ text }: { text: string }) {
   const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
@@ -76,6 +83,10 @@ export function CopilotWidget() {
     ? [...SUPPLIER_SUGGESTIONS, ...BASE_SUGGESTIONS.slice(0, 1)]
     : BASE_SUGGESTIONS;
 
+  // Évite les closures périmées quand send() est déclenché par un événement.
+  const messagesRef = useRef<Message[]>(messages);
+  messagesRef.current = messages;
+
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, open]);
@@ -84,7 +95,7 @@ export function CopilotWidget() {
     const content = text.trim();
     if (!content || streaming) return;
 
-    const next: Message[] = [...messages, { role: 'user', content }];
+    const next: Message[] = [...messagesRef.current, { role: 'user', content }];
     setMessages(next);
     setInput('');
     setStreaming(true);
@@ -131,6 +142,20 @@ export function CopilotWidget() {
       setStreaming(false);
     }
   }
+
+  // Permet à d'autres composants (ex: panneau de prédiction) d'ouvrir le
+  // copilote et de poser une question via un événement custom.
+  const sendRef = useRef(send);
+  sendRef.current = send;
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const msg = (e as CustomEvent<{ message?: string }>).detail?.message;
+      setOpen(true);
+      if (msg) void sendRef.current(msg);
+    };
+    window.addEventListener('vendorshield:copilot-ask', handler);
+    return () => window.removeEventListener('vendorshield:copilot-ask', handler);
+  }, []);
 
   return (
     <>
