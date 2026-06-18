@@ -18,14 +18,16 @@ const MAX_HISTORY = 12;
 // Chaîne de modèles : OpenRouter bascule automatiquement sur le suivant si le
 // premier est saturé (429) ou indisponible. Tous gratuits par défaut ;
 // surchargeable via OPENROUTER_MODELS (liste séparée par des virgules).
+// Chaîne de repli de modèles gratuits réellement disponibles (vérifiés en live).
+// OpenRouter route sur le suivant si un provider est saturé/indispo.
 // OpenRouter limite le tableau `models` à 3 éléments max → on tronque par sécurité.
 const MODELS = (
   process.env.OPENROUTER_MODELS ??
   process.env.OPENROUTER_MODEL ??
   [
-    'meta-llama/llama-3.3-70b-instruct:free',
-    'deepseek/deepseek-chat-v3-0324:free',
-    'mistralai/mistral-small-3.2-24b-instruct:free',
+    'openai/gpt-oss-120b:free',
+    'google/gemma-4-31b-it:free',
+    'nvidia/nemotron-3-super-120b-a12b:free',
   ].join(',')
 )
   .split(',')

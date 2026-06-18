@@ -22,9 +22,7 @@ export async function openRouterComplete(params: {
         'X-Title': 'VendorShield',
       },
       body: JSON.stringify({
-        model:
-          process.env.OPENROUTER_MODEL ??
-          'meta-llama/llama-3.3-70b-instruct:free',
+        model: process.env.OPENROUTER_MODEL ?? 'openai/gpt-oss-120b:free',
         temperature: 0.3,
         max_tokens: params.maxTokens ?? 400,
         messages: [
