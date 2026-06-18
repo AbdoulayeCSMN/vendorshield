@@ -14,7 +14,71 @@ interface ChatMessage {
 }
 
 const MAX_HISTORY = 12;
-const MODEL = process.env.OPENROUTER_MODEL ?? 'meta-llama/llama-3.3-70b-instruct:free';
+
+// Chaîne de modèles : OpenRouter bascule automatiquement sur le suivant si le
+// premier est saturé (429) ou indisponible. Tous gratuits par défaut ;
+// surchargeable via OPENROUTER_MODELS (liste séparée par des virgules).
+const MODELS = (
+  process.env.OPENROUTER_MODELS ??
+  process.env.OPENROUTER_MODEL ??
+  [
+    'meta-llama/llama-3.3-70b-instruct:free',
+    'deepseek/deepseek-chat-v3-0324:free',
+    'mistralai/mistral-small-3.2-24b-instruct:free',
+    'google/gemma-3-27b-it:free',
+  ].join(',')
+)
+  .split(',')
+  .map((m) => m.trim())
+  .filter(Boolean);
+
+function parseRetryAfter(detail: string): number | null {
+  try {
+    const sec = JSON.parse(detail)?.error?.metadata?.retry_after_seconds;
+    return typeof sec === 'number' ? sec : null;
+  } catch {
+    return null;
+  }
+}
+
+async function callOpenRouter(
+  apiKey: string,
+  messages: { role: string; content: string }[],
+): Promise<{ ok: true; res: Response } | { ok: false; status: number; detail: string }> {
+  const payload = JSON.stringify({
+    ...(MODELS.length > 1 ? { models: MODELS } : { model: MODELS[0] }),
+    stream: true,
+    temperature: 0.4,
+    max_tokens: 800,
+    messages,
+  });
+
+  let status = 0;
+  let detail = '';
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'X-Title': 'VendorShield Copilot',
+      },
+      body: payload,
+    });
+
+    if (res.ok && res.body) return { ok: true, res };
+
+    status = res.status;
+    detail = await res.text().catch(() => '');
+    if (status === 429 && attempt < 2) {
+      const wait = Math.min(3000, (parseRetryAfter(detail) ?? 1.5) * 1000);
+      await new Promise((r) => setTimeout(r, wait));
+      continue;
+    }
+    break;
+  }
+  return { ok: false, status, detail };
+}
 
 export async function POST(request: NextRequest) {
   const client = getSupabaseServerClient();
@@ -42,30 +106,26 @@ export async function POST(request: NextRequest) {
 
   const system = await buildCopilotSystemPrompt();
 
-  const upstream = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'X-Title': 'VendorShield Copilot',
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      stream: true,
-      temperature: 0.4,
-      max_tokens: 800,
-      messages: [{ role: 'system', content: system }, ...history],
-    }),
-  });
+  const result = await callOpenRouter(apiKey, [
+    { role: 'system', content: system },
+    ...history,
+  ]);
 
-  if (!upstream.ok || !upstream.body) {
-    const detail = await upstream.text().catch(() => '');
-    console.error('[copilot] OpenRouter error', upstream.status, detail);
+  if (!result.ok) {
+    console.error('[copilot] OpenRouter error', result.status, result.detail);
+    if (result.status === 429) {
+      return Response.json(
+        { error: 'Trop de requêtes sur le modèle gratuit. Réessayez dans quelques secondes.' },
+        { status: 429 },
+      );
+    }
     return Response.json(
       { error: 'Le service IA est momentanément indisponible.' },
       { status: 502 },
     );
   }
+
+  const upstream = result.res;
 
   // Re-stream OpenRouter SSE → plain text deltas the client appends.
   const encoder = new TextEncoder();
