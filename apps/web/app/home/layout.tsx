@@ -17,6 +17,7 @@ import { requireUserInServerComponent } from '~/lib/server/require-user-in-serve
 
 // home imports
 import { HomeMenuNavigation } from './_components/home-menu-navigation';
+import { CopilotWidget } from './_components/copilot-widget';
 import { DemoModeBanner } from './_components/demo-mode-banner';
 import { HomeMobileNavigation } from './_components/home-mobile-navigation';
 import { HomeSidebar } from './_components/home-sidebar';
@@ -30,11 +31,19 @@ async function HomeLayout({ children }: React.PropsWithChildren) {
     (cookieStore.get('layout-style')?.value as PageLayoutStyle) ??
     navigationConfig.style;
 
-  if (style === 'sidebar') {
-    return <SidebarLayout demoMode={demoMode}>{children}</SidebarLayout>;
-  }
+  const layout =
+    style === 'sidebar' ? (
+      <SidebarLayout demoMode={demoMode}>{children}</SidebarLayout>
+    ) : (
+      <HeaderLayout demoMode={demoMode}>{children}</HeaderLayout>
+    );
 
-  return <HeaderLayout demoMode={demoMode}>{children}</HeaderLayout>;
+  return (
+    <>
+      {layout}
+      <CopilotWidget />
+    </>
+  );
 }
 
 export default withI18n(HomeLayout);
