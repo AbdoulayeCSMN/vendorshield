@@ -33,15 +33,6 @@ const MODELS = (
   .filter(Boolean)
   .slice(0, 3);
 
-function parseRetryAfter(detail: string): number | null {
-  try {
-    const sec = JSON.parse(detail)?.error?.metadata?.retry_after_seconds;
-    return typeof sec === 'number' ? sec : null;
-  } catch {
-    return null;
-  }
-}
-
 async function callOpenRouter(
   apiKey: string,
   messages: { role: string; content: string }[],
@@ -54,31 +45,23 @@ async function callOpenRouter(
     messages,
   });
 
-  let status = 0;
-  let detail = '';
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'X-Title': 'VendorShield Copilot',
-      },
-      body: payload,
-    });
+  // Une seule tentative côté 429 : la limite du tier gratuit est partagée et ne
+  // se recharge pas en quelques secondes — retenter ne ferait qu'allonger
+  // l'attente. On échoue vite et on laisse l'utilisateur réessayer.
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      'X-Title': 'VendorShield Copilot',
+    },
+    body: payload,
+  });
 
-    if (res.ok && res.body) return { ok: true, res };
+  if (res.ok && res.body) return { ok: true, res };
 
-    status = res.status;
-    detail = await res.text().catch(() => '');
-    if (status === 429 && attempt < 2) {
-      const wait = Math.min(3000, (parseRetryAfter(detail) ?? 1.5) * 1000);
-      await new Promise((r) => setTimeout(r, wait));
-      continue;
-    }
-    break;
-  }
-  return { ok: false, status, detail };
+  const detail = await res.text().catch(() => '');
+  return { ok: false, status: res.status, detail };
 }
 
 export async function POST(request: NextRequest) {
