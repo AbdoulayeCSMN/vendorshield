@@ -92,6 +92,11 @@ export function CopilotWidget() {
   const [streaming, setStreaming] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Overlay strictement client : ne rend rien au SSR ni au 1er rendu client
+  // (server et client rendent `null` → aucune contribution à l'hydratation).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const pathname = usePathname();
   const supplierId = pathname?.match(
     /^\/home\/suppliers\/([0-9a-f]{8}-[0-9a-f-]{27})/i,
@@ -173,6 +178,8 @@ export function CopilotWidget() {
     window.addEventListener('vendorshield:copilot-ask', handler);
     return () => window.removeEventListener('vendorshield:copilot-ask', handler);
   }, []);
+
+  if (!mounted) return null;
 
   return (
     <>
