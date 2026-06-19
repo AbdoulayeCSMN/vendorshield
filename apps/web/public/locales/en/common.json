@@ -71,6 +71,10 @@
     "analytics": "Analytics",
     "riskAnalytics": "Risk Analytics",
     "supplyChain": "Supply Chain",
+    "imports": "Import Data",
+    "riskMap": "Risk Map",
+    "exposure": "Exposure",
+    "subscription": "Subscription",
     "auditLog": "Audit Log",
     "organization": "Organisation"
   },

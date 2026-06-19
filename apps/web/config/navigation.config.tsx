@@ -44,7 +44,7 @@ const routes = [
         Icon: <Building2 className={iconClasses} />,
       },
       {
-        label: 'Importer des données',
+        label: 'common:routes.imports',
         path: pathsConfig.app.imports,
         Icon: <Upload className={iconClasses} />,
       },
@@ -69,17 +69,17 @@ const routes = [
         Icon: <BarChart3 className={iconClasses} />,
       },
       {
-        label: 'Cartographie des risques',
+        label: 'common:routes.riskMap',
         path: pathsConfig.app.riskMap,
         Icon: <Target className={iconClasses} />,
       },
       {
-        label: 'Exposition',
+        label: 'common:routes.exposure',
         path: pathsConfig.app.exposure,
         Icon: <Layers className={iconClasses} />,
       },
       {
-        label: 'Supply Chain',
+        label: 'common:routes.supplyChain',
         path: pathsConfig.app.supplyChain,
         Icon: <GitBranch className={iconClasses} />,
       },
@@ -104,7 +104,7 @@ const routes = [
         Icon: <Users className={iconClasses} />,
       },
       {
-        label: 'Abonnement',
+        label: 'common:routes.subscription',
         path: pathsConfig.app.billing,
         Icon: <CreditCard className={iconClasses} />,
       },

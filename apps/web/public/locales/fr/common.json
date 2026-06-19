@@ -71,6 +71,10 @@
     "analytics": "Analytique",
     "riskAnalytics": "Analytique des risques",
     "supplyChain": "Supply chain",
+    "imports": "Importer des données",
+    "riskMap": "Cartographie des risques",
+    "exposure": "Exposition",
+    "subscription": "Abonnement",
     "auditLog": "Journal d'audit",
     "organization": "Organisation"
   },
