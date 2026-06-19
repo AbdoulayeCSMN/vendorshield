@@ -5,14 +5,13 @@ import { createI18nSettings } from '@kit/i18n';
  * This is used as a fallback language when the selected language is not supported.
  *
  */
-const defaultLanguage = process.env.NEXT_PUBLIC_DEFAULT_LOCALE ?? 'en';
+const defaultLanguage = process.env.NEXT_PUBLIC_DEFAULT_LOCALE ?? 'fr';
 
 /**
  * The list of supported languages.
- * By default, only the default language is supported.
- * Add more languages here if needed.
+ * fr (défaut) · en (anglais) · de (allemand) · ha (hausa)
  */
-export const languages: string[] = [defaultLanguage];
+export const languages: string[] = ['fr', 'en', 'de', 'ha'];
 
 /**
  * The name of the cookie that stores the selected language.
