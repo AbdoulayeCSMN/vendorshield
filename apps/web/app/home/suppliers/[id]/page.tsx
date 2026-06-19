@@ -46,10 +46,12 @@ import { getDeliveryPrediction } from '~/lib/vendorshield/actions/operational-pr
 import { getSupplyChainGraph } from '~/lib/vendorshield/actions/tier.actions';
 import { getSupplierById } from '~/lib/vendorshield/suppliers.server';
 import { getSupplierKpis } from '~/lib/vendorshield/kpis.server';
+import { getSupplierCompliance } from '~/lib/vendorshield/actions/document.actions';
 
 import { BankruptcyPanel } from './_components/bankruptcy-panel';
 import { ClimateRiskPanel } from './_components/climate-risk-panel';
 import { OperationalPredictionPanel } from './_components/operational-prediction-panel';
+import { SupplierDocumentsPanel } from './_components/supplier-documents-panel';
 import { SupplierKpiScorecard } from './_components/supplier-kpi-scorecard';
 import { SupplierAiPanel } from './_components/supplier-ai-panel';
 import { SupplierDetail } from './_components/supplier-detail';
@@ -62,7 +64,7 @@ interface Props {
 async function SupplierDetailPage({ params }: Props) {
   const { id } = await params;
 
-  const [supplier, analyses, configStatus, predictions, scGraph, deliveryPrediction, kpis] =
+  const [supplier, analyses, configStatus, predictions, scGraph, deliveryPrediction, kpis, compliance] =
     await Promise.all([
       getSupplierById(id),
       getSupplierAnalyses(id, 5),
@@ -71,6 +73,7 @@ async function SupplierDetailPage({ params }: Props) {
       getSupplyChainGraph(id),
       getDeliveryPrediction(id),
       getSupplierKpis(id),
+      getSupplierCompliance(id),
     ]);
 
   if (!supplier) notFound();
@@ -88,6 +91,7 @@ async function SupplierDetailPage({ params }: Props) {
           <div className="space-y-4">
             <OperationalPredictionPanel supplierId={id} initial={deliveryPrediction} />
             <ClimateRiskPanel supplierId={id} />
+            <SupplierDocumentsPanel supplierId={id} compliance={compliance} />
             <BankruptcyPanel supplierId={id} predictions={predictions} />
             <SupplierAiPanel supplierId={id} pastAnalyses={analyses} configStatus={configStatus} />
           </div>
