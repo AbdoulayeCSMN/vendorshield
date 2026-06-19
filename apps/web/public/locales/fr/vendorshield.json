@@ -168,5 +168,22 @@
       "cold": "Grand froid",
       "storm": "Vents violents"
     }
+  },
+  "prediction": {
+    "updated": "Prédiction mise à jour",
+    "title": "Prédictions opérationnelles",
+    "desc": "Modèle ML entraîné sur l'historique de livraisons · explication IA",
+    "empty": "Aucune prédiction encore. Lancez l'analyse à partir de l'historique importé.",
+    "nextDelay": "Retard prochaine livraison",
+    "expectedDays": "≈ {{days}} j attendus",
+    "predictedPpm": "Défauts (PPM) prévus",
+    "breach": "dépassement seuil : {{pct}}%",
+    "analysis": "Analyse",
+    "dataPoints": "{{count}} livraisons · confiance {{conf}}%",
+    "computing": "Calcul du modèle...",
+    "recompute": "Recalculer",
+    "launch": "Lancer la prédiction",
+    "askCopilot": "Demander au copilote",
+    "copilotPrompt": "Explique la prédiction opérationnelle de ce fournisseur (retard et défauts) et donne 2 actions concrètes pour réduire le risque."
   }
 }

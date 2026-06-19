@@ -168,5 +168,22 @@
       "cold": "Extreme cold",
       "storm": "High winds"
     }
+  },
+  "prediction": {
+    "updated": "Prediction updated",
+    "title": "Operational predictions",
+    "desc": "ML model trained on delivery history · AI explanation",
+    "empty": "No prediction yet. Run the analysis from the imported history.",
+    "nextDelay": "Next delivery delay",
+    "expectedDays": "≈ {{days}} days expected",
+    "predictedPpm": "Predicted defects (PPM)",
+    "breach": "threshold breach: {{pct}}%",
+    "analysis": "Analysis",
+    "dataPoints": "{{count}} deliveries · confidence {{conf}}%",
+    "computing": "Running model...",
+    "recompute": "Recompute",
+    "launch": "Run prediction",
+    "askCopilot": "Ask the copilot",
+    "copilotPrompt": "Explain this supplier's operational prediction (delays and defects) and give 2 concrete actions to reduce the risk."
   }
 }

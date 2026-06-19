@@ -168,5 +168,22 @@
       "cold": "Extreme Kälte",
       "storm": "Sturmböen"
     }
+  },
+  "prediction": {
+    "updated": "Prognose aktualisiert",
+    "title": "Operative Prognosen",
+    "desc": "ML-Modell auf Lieferhistorie trainiert · KI-Erklärung",
+    "empty": "Noch keine Prognose. Starten Sie die Analyse aus der importierten Historie.",
+    "nextDelay": "Verzug nächste Lieferung",
+    "expectedDays": "≈ {{days}} Tage erwartet",
+    "predictedPpm": "Prognostizierte Fehler (PPM)",
+    "breach": "Schwellenüberschreitung: {{pct}}%",
+    "analysis": "Analyse",
+    "dataPoints": "{{count}} Lieferungen · Konfidenz {{conf}}%",
+    "computing": "Modell wird berechnet...",
+    "recompute": "Neu berechnen",
+    "launch": "Prognose starten",
+    "askCopilot": "Copilot fragen",
+    "copilotPrompt": "Erkläre die operative Prognose dieses Lieferanten (Verzug und Fehler) und gib 2 konkrete Maßnahmen zur Risikominderung."
   }
 }

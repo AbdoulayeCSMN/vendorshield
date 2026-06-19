@@ -168,5 +168,22 @@
       "cold": "Sanyi mai tsanani",
       "storm": "Iska mai ƙarfi"
     }
+  },
+  "prediction": {
+    "updated": "An sabunta hasashe",
+    "title": "Hasashen aiki",
+    "desc": "Samfurin ML da aka horar bisa tarihin kawo kaya · bayanin AI",
+    "empty": "Babu hasashe tukuna. Fara nazari daga tarihin da aka shigar.",
+    "nextDelay": "Jinkirin kawo kaya na gaba",
+    "expectedDays": "≈ kwanaki {{days}} ana sa ran",
+    "predictedPpm": "Hasashen lahani (PPM)",
+    "breach": "wuce iyaka: {{pct}}%",
+    "analysis": "Nazari",
+    "dataPoints": "kaya {{count}} · tabbaci {{conf}}%",
+    "computing": "Ana lissafin samfuri...",
+    "recompute": "Sake lissafa",
+    "launch": "Fara hasashe",
+    "askCopilot": "Tambayi copilot",
+    "copilotPrompt": "Bayyana hasashen aiki na wannan mai kawo kaya (jinkiri da lahani) kuma ka bada matakai 2 na rage haɗari."
   }
 }

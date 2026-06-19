@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 
 import { Activity, Clock, Loader2, PackageX, Sparkles, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { askCopilot } from '~/home/_components/copilot-widget';
 
@@ -22,11 +23,14 @@ import {
   predictOperationalRiskAction,
 } from '~/lib/vendorshield/actions/operational-prediction.actions';
 
-const RISK_META: Record<string, { label: string; cls: string }> = {
-  low: { label: 'Risque faible', cls: 'bg-green-100 text-green-800' },
-  medium: { label: 'Risque modéré', cls: 'bg-amber-100 text-amber-800' },
-  high: { label: 'Risque élevé', cls: 'bg-orange-100 text-orange-800' },
-  critical: { label: 'Risque critique', cls: 'bg-red-100 text-red-800' },
+const RISK_CLS: Record<string, string> = {
+  low: 'bg-green-100 text-green-800',
+  medium: 'bg-amber-100 text-amber-800',
+  high: 'bg-orange-100 text-orange-800',
+  critical: 'bg-red-100 text-red-800',
+};
+const RISK_FULL: Record<string, string> = {
+  low: 'riskLowFull', medium: 'riskMediumFull', high: 'riskHighFull', critical: 'riskCriticalFull',
 };
 
 function pctColor(p: number): string {
@@ -43,6 +47,7 @@ export function OperationalPredictionPanel({
   supplierId: string;
   initial: OperationalPrediction | null;
 }) {
+  const { t } = useTranslation('vendorshield');
   const [prediction, setPrediction] = useState<OperationalPrediction | null>(initial);
   const [isPending, startTransition] = useTransition();
 
@@ -54,11 +59,9 @@ export function OperationalPredictionPanel({
         return;
       }
       setPrediction(res.data);
-      toast.success('Prédiction mise à jour');
+      toast.success(t('prediction.updated'));
     });
   };
-
-  const risk = prediction ? RISK_META[prediction.risk_level] ?? RISK_META.low! : null;
 
   return (
     <Card>
@@ -66,44 +69,48 @@ export function OperationalPredictionPanel({
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-sm font-semibold">
             <Activity className="text-primary h-4 w-4" />
-            Prédictions opérationnelles
+            {t('prediction.title')}
           </CardTitle>
-          {risk && <Badge className={risk.cls}>{risk.label}</Badge>}
+          {prediction && (
+            <Badge className={RISK_CLS[prediction.risk_level] ?? RISK_CLS.low!}>
+              {t(`dashboard.${RISK_FULL[prediction.risk_level] ?? 'riskLowFull'}`)}
+            </Badge>
+          )}
         </div>
         <CardDescription className="text-xs">
-          Modèle ML entraîné sur l'historique de livraisons · explication IA
+          {t('prediction.desc')}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4">
         {!prediction ? (
           <p className="text-muted-foreground text-sm">
-            Aucune prédiction encore. Lancez l'analyse à partir de l'historique importé.
+            {t('prediction.empty')}
           </p>
         ) : (
           <>
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg border p-3">
                 <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-                  <Clock className="h-3.5 w-3.5" /> Retard prochaine livraison
+                  <Clock className="h-3.5 w-3.5" /> {t('prediction.nextDelay')}
                 </div>
                 <div className={`mt-1 text-2xl font-bold ${pctColor(prediction.delay_probability)}`}>
                   {prediction.delay_probability}%
                 </div>
                 <div className="text-muted-foreground text-xs">
-                  ≈ {prediction.expected_delay_days} j attendus
+                  {t('prediction.expectedDays', { days: prediction.expected_delay_days })}
                 </div>
               </div>
 
               <div className="rounded-lg border p-3">
                 <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-                  <PackageX className="h-3.5 w-3.5" /> Défauts (PPM) prévus
+                  <PackageX className="h-3.5 w-3.5" /> {t('prediction.predictedPpm')}
                 </div>
                 <div className="mt-1 text-2xl font-bold">
                   {prediction.predicted_ppm ?? '—'}
                 </div>
                 <div className={`text-xs ${pctColor(prediction.ppm_breach_probability)}`}>
-                  dépassement seuil : {prediction.ppm_breach_probability}%
+                  {t('prediction.breach', { pct: prediction.ppm_breach_probability })}
                 </div>
               </div>
             </div>
@@ -111,7 +118,7 @@ export function OperationalPredictionPanel({
             {prediction.explanation && (
               <div className="bg-muted/50 rounded-lg p-3 text-xs leading-relaxed">
                 <div className="text-muted-foreground mb-1 flex items-center gap-1.5 font-medium">
-                  <TrendingUp className="h-3.5 w-3.5" /> Analyse
+                  <TrendingUp className="h-3.5 w-3.5" /> {t('prediction.analysis')}
                 </div>
                 {prediction.explanation}
               </div>
@@ -119,7 +126,7 @@ export function OperationalPredictionPanel({
 
             <div className="text-muted-foreground flex items-center justify-between text-[11px]">
               <span>
-                {prediction.data_points} livraisons · confiance {prediction.confidence}%
+                {t('prediction.dataPoints', { count: prediction.data_points, conf: prediction.confidence })}
               </span>
               <span>{prediction.model_version}</span>
             </div>
@@ -136,12 +143,12 @@ export function OperationalPredictionPanel({
           >
             {isPending ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Calcul du modèle...
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t('prediction.computing')}
               </>
             ) : prediction ? (
-              'Recalculer'
+              t('prediction.recompute')
             ) : (
-              'Lancer la prédiction'
+              t('prediction.launch')
             )}
           </Button>
           {prediction && (
@@ -150,13 +157,9 @@ export function OperationalPredictionPanel({
               variant="secondary"
               size="sm"
               className="flex-1"
-              onClick={() =>
-                askCopilot(
-                  'Explique la prédiction opérationnelle de ce fournisseur (retard et défauts) et donne 2 actions concrètes pour réduire le risque.',
-                )
-              }
+              onClick={() => askCopilot(t('prediction.copilotPrompt'))}
             >
-              <Sparkles className="mr-1.5 h-4 w-4" /> Demander au copilote
+              <Sparkles className="mr-1.5 h-4 w-4" /> {t('prediction.askCopilot')}
             </Button>
           )}
         </div>
