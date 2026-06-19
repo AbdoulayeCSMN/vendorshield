@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import { Check, FileText, Plus, ShieldCheck, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@kit/ui/badge';
 import { Button } from '@kit/ui/button';
@@ -32,15 +33,11 @@ import {
 } from '~/lib/vendorshield/actions/document.actions';
 import { type ComplianceSummary, DOC_TYPES } from '~/lib/vendorshield/documents';
 
-const TYPE_LABEL: Record<string, string> = Object.fromEntries(
-  DOC_TYPES.map((t) => [t.value, t.label]),
-);
-
-const STATUS_META: Record<string, { label: string; cls: string }> = {
-  valid: { label: 'Valide', cls: 'bg-green-100 text-green-800' },
-  expiring: { label: 'Expire bientôt', cls: 'bg-amber-100 text-amber-800' },
-  expired: { label: 'Expiré', cls: 'bg-red-100 text-red-800' },
-  no_expiry: { label: 'Sans expiration', cls: 'bg-gray-100 text-gray-700' },
+const STATUS_CLS: Record<string, string> = {
+  valid: 'bg-green-100 text-green-800',
+  expiring: 'bg-amber-100 text-amber-800',
+  expired: 'bg-red-100 text-red-800',
+  no_expiry: 'bg-gray-100 text-gray-700',
 };
 
 export function SupplierDocumentsPanel({
@@ -50,6 +47,7 @@ export function SupplierDocumentsPanel({
   supplierId: string;
   compliance: ComplianceSummary;
 }) {
+  const { t } = useTranslation('vendorshield');
   const router = useRouter();
   const [adding, setAdding] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -67,7 +65,7 @@ export function SupplierDocumentsPanel({
 
   const submit = () => {
     if (!form.doc_type || !form.name.trim()) {
-      toast.error('Type et nom requis');
+      toast.error(t('documents.typeNameRequired'));
       return;
     }
     startTransition(async () => {
@@ -76,7 +74,7 @@ export function SupplierDocumentsPanel({
         toast.error(res.error);
         return;
       }
-      toast.success('Document ajouté');
+      toast.success(t('documents.added'));
       setForm({ doc_type: '', name: '', issuer: '', reference: '', issued_date: '', expiry_date: '', file_url: '' });
       setAdding(false);
       router.refresh();
@@ -90,7 +88,7 @@ export function SupplierDocumentsPanel({
         toast.error(res.error);
         return;
       }
-      toast.success('Document supprimé');
+      toast.success(t('documents.removed'));
       router.refresh();
     });
   };
@@ -101,7 +99,7 @@ export function SupplierDocumentsPanel({
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-sm font-semibold">
             <ShieldCheck className="text-primary h-4 w-4" />
-            Conformité & documents
+            {t('documents.title')}
           </CardTitle>
           <Badge
             className={
@@ -112,18 +110,18 @@ export function SupplierDocumentsPanel({
                   : 'bg-red-100 text-red-800'
             }
           >
-            {compliance.coverage}% conforme
+            {t('documents.compliant', { pct: compliance.coverage })}
           </Badge>
         </div>
         <CardDescription className="text-xs">
-          Devoir de vigilance / CSRD ·{' '}
+          {t('documents.subtitle')} ·{' '}
           {compliance.expired_count > 0 && (
-            <span className="text-red-600">{compliance.expired_count} expiré(s) · </span>
+            <span className="text-red-600">{t('documents.expiredCount', { count: compliance.expired_count })} · </span>
           )}
           {compliance.expiring_count > 0 && (
-            <span className="text-amber-600">{compliance.expiring_count} à renouveler</span>
+            <span className="text-amber-600">{t('documents.expiringCount', { count: compliance.expiring_count })}</span>
           )}
-          {compliance.expired_count === 0 && compliance.expiring_count === 0 && 'à jour'}
+          {compliance.expired_count === 0 && compliance.expiring_count === 0 && t('documents.upToDate')}
         </CardDescription>
       </CardHeader>
 
@@ -138,7 +136,7 @@ export function SupplierDocumentsPanel({
               }`}
             >
               {r.present ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-              {TYPE_LABEL[r.doc_type]}
+              {t(`documents.docType.${r.doc_type}`)}
             </span>
           ))}
         </div>
@@ -157,13 +155,13 @@ export function SupplierDocumentsPanel({
                     <span className="truncate">{d.name}</span>
                   </div>
                   <div className="text-muted-foreground text-[11px]">
-                    {TYPE_LABEL[d.doc_type] ?? d.doc_type}
+                    {t(`documents.docType.${d.doc_type}`)}
                     {d.issuer ? ` · ${d.issuer}` : ''}
-                    {d.expiry_date ? ` · exp. ${d.expiry_date}` : ''}
+                    {d.expiry_date ? ` · ${t('documents.exp', { date: d.expiry_date })}` : ''}
                   </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-1">
-                  <Badge className={STATUS_META[d.status]?.cls}>{STATUS_META[d.status]?.label}</Badge>
+                  <Badge className={STATUS_CLS[d.status]}>{t(`documents.status.${d.status}`)}</Badge>
                   <Button
                     type="button"
                     size="icon"
@@ -179,7 +177,7 @@ export function SupplierDocumentsPanel({
             ))}
           </ul>
         ) : (
-          <p className="text-muted-foreground text-sm">Aucun document enregistré.</p>
+          <p className="text-muted-foreground text-sm">{t('documents.empty')}</p>
         )}
 
         {/* Formulaire d'ajout */}
@@ -187,57 +185,57 @@ export function SupplierDocumentsPanel({
           <div className="space-y-2 rounded-lg border p-3">
             <div className="grid grid-cols-2 gap-2">
               <div className="col-span-2">
-                <Label className="text-xs">Type</Label>
+                <Label className="text-xs">{t('documents.type')}</Label>
                 <Select value={form.doc_type} onValueChange={(v) => set('doc_type', v)}>
                   <SelectTrigger className="mt-1 h-8">
-                    <SelectValue placeholder="Type de document..." />
+                    <SelectValue placeholder={t('documents.typePlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    {DOC_TYPES.map((t) => (
-                      <SelectItem key={t.value} value={t.value}>
-                        {t.label}
+                    {DOC_TYPES.map((dt) => (
+                      <SelectItem key={dt.value} value={dt.value}>
+                        {t(`documents.docType.${dt.value}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="col-span-2">
-                <Label className="text-xs">Nom</Label>
-                <Input className="mt-1 h-8" value={form.name} onChange={(e) => set('name', e.target.value)} placeholder="Ex: Certificat ISO 9001 2024" />
+                <Label className="text-xs">{t('documents.name')}</Label>
+                <Input className="mt-1 h-8" value={form.name} onChange={(e) => set('name', e.target.value)} placeholder={t('documents.namePlaceholder')} />
               </div>
               <div>
-                <Label className="text-xs">Émetteur</Label>
+                <Label className="text-xs">{t('documents.issuer')}</Label>
                 <Input className="mt-1 h-8" value={form.issuer} onChange={(e) => set('issuer', e.target.value)} />
               </div>
               <div>
-                <Label className="text-xs">Référence</Label>
+                <Label className="text-xs">{t('documents.reference')}</Label>
                 <Input className="mt-1 h-8" value={form.reference} onChange={(e) => set('reference', e.target.value)} />
               </div>
               <div>
-                <Label className="text-xs">Émis le</Label>
+                <Label className="text-xs">{t('documents.issuedOn')}</Label>
                 <Input type="date" className="mt-1 h-8" value={form.issued_date} onChange={(e) => set('issued_date', e.target.value)} />
               </div>
               <div>
-                <Label className="text-xs">Expire le</Label>
+                <Label className="text-xs">{t('documents.expiresOn')}</Label>
                 <Input type="date" className="mt-1 h-8" value={form.expiry_date} onChange={(e) => set('expiry_date', e.target.value)} />
               </div>
               <div className="col-span-2">
-                <Label className="text-xs">Lien (URL)</Label>
+                <Label className="text-xs">{t('documents.link')}</Label>
                 <Input className="mt-1 h-8" value={form.file_url} onChange={(e) => set('file_url', e.target.value)} placeholder="https://..." />
               </div>
             </div>
             <div className="flex gap-2">
               <Button size="sm" className="flex-1" disabled={isPending} onClick={submit}>
-                {isPending ? 'Ajout...' : 'Enregistrer'}
+                {isPending ? t('documents.adding') : t('common.save')}
               </Button>
               <Button size="sm" variant="outline" onClick={() => setAdding(false)} disabled={isPending}>
-                Annuler
+                {t('common.cancel')}
               </Button>
             </div>
           </div>
         ) : (
           <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => setAdding(true)}>
-            <Plus className="mr-1.5 h-4 w-4" /> Ajouter un document
+            <Plus className="mr-1.5 h-4 w-4" /> {t('documents.add')}
           </Button>
         )}
       </CardContent>

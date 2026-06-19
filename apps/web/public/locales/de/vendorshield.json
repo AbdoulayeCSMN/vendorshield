@@ -247,5 +247,64 @@
       "done": "Erledigt",
       "cancelled": "Storniert"
     }
+  },
+  "documents": {
+    "title": "Konformität & Dokumente",
+    "compliant": "{{pct}}% konform",
+    "subtitle": "Sorgfaltspflicht / CSRD",
+    "expiredCount": "{{count}} abgelaufen",
+    "expiringCount": "{{count}} zu erneuern",
+    "upToDate": "aktuell",
+    "empty": "Kein Dokument erfasst.",
+    "exp": "Abl. {{date}}",
+    "add": "Dokument hinzufügen",
+    "adding": "Wird hinzugefügt...",
+    "type": "Typ",
+    "typePlaceholder": "Dokumenttyp...",
+    "name": "Name",
+    "namePlaceholder": "z. B. ISO-9001-Zertifikat 2024",
+    "issuer": "Aussteller",
+    "reference": "Referenz",
+    "issuedOn": "Ausgestellt am",
+    "expiresOn": "Läuft ab am",
+    "link": "Link (URL)",
+    "typeNameRequired": "Typ und Name erforderlich",
+    "added": "Dokument hinzugefügt",
+    "removed": "Dokument entfernt",
+    "status": {
+      "valid": "Gültig",
+      "expiring": "Läuft bald ab",
+      "expired": "Abgelaufen",
+      "no_expiry": "Ohne Ablauf"
+    },
+    "docType": {
+      "iso_9001": "ISO 9001 (Qualität)",
+      "iso_14001": "ISO 14001 (Umwelt)",
+      "iso_27001": "ISO 27001 (Informationssicherheit)",
+      "code_conduct": "Verhaltenskodex / Ethik",
+      "vigilance_plan": "Sorgfaltsplan",
+      "insurance": "Haftpflichtversicherung",
+      "contract": "Vertrag",
+      "audit_report": "Auditbericht",
+      "rgpd_dpa": "AVV / DSGVO",
+      "other": "Sonstige"
+    }
+  },
+  "questionnaire": {
+    "title": "Lieferanten-Selbstbewertung",
+    "desc": "Senden Sie einen Fragebogen, den der Lieferant ausfüllt (sicherer Link, ohne Konto).",
+    "linkCopied": "Link kopiert — an den Lieferanten senden",
+    "created": "Fragebogen erstellt — Link in die Zwischenablage kopiert",
+    "empty": "Kein Fragebogen gesendet.",
+    "send": "Fragebogen senden",
+    "creating": "Wird erstellt...",
+    "sentOn": "Gesendet am {{date}}",
+    "score": "Wert {{score}}/100",
+    "copyLink": "Link kopieren",
+    "status": {
+      "pending": "Ausstehend",
+      "submitted": "Erhalten",
+      "expired": "Abgelaufen"
+    }
   }
 }

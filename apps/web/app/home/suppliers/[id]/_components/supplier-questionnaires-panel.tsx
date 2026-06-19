@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import { ClipboardList, Copy, Loader2, Send, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@kit/ui/badge';
 import { Button } from '@kit/ui/button';
@@ -23,10 +24,10 @@ import {
   deleteQuestionnaireRequestAction,
 } from '~/lib/vendorshield/actions/questionnaire.actions';
 
-const STATUS_META: Record<string, { label: string; cls: string }> = {
-  pending: { label: 'En attente', cls: 'bg-amber-100 text-amber-800' },
-  submitted: { label: 'Reçu', cls: 'bg-green-100 text-green-800' },
-  expired: { label: 'Expiré', cls: 'bg-gray-100 text-gray-700' },
+const STATUS_CLS: Record<string, string> = {
+  pending: 'bg-amber-100 text-amber-800',
+  submitted: 'bg-green-100 text-green-800',
+  expired: 'bg-gray-100 text-gray-700',
 };
 
 function portalLink(token: string): string {
@@ -41,12 +42,13 @@ export function SupplierQuestionnairesPanel({
   supplierId: string;
   requests: QuestionnaireRequestRow[];
 }) {
+  const { t, i18n } = useTranslation('vendorshield');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const copy = (token: string) => {
     navigator.clipboard.writeText(portalLink(token));
-    toast.success('Lien copié — à envoyer au fournisseur');
+    toast.success(t('questionnaire.linkCopied'));
   };
 
   const create = () => {
@@ -57,7 +59,7 @@ export function SupplierQuestionnairesPanel({
         return;
       }
       await navigator.clipboard.writeText(portalLink(res.data.token)).catch(() => {});
-      toast.success('Questionnaire créé — lien copié dans le presse-papier');
+      toast.success(t('questionnaire.created'));
       router.refresh();
     });
   };
@@ -78,10 +80,10 @@ export function SupplierQuestionnairesPanel({
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
           <ClipboardList className="text-primary h-4 w-4" />
-          Auto-évaluation fournisseur
+          {t('questionnaire.title')}
         </CardTitle>
         <CardDescription className="text-xs">
-          Envoyez un questionnaire à remplir par le fournisseur (lien sécurisé, sans compte).
+          {t('questionnaire.desc')}
         </CardDescription>
       </CardHeader>
 
@@ -92,14 +94,14 @@ export function SupplierQuestionnairesPanel({
               <li key={r.id} className="flex items-center justify-between gap-2 rounded-lg border p-2">
                 <div className="min-w-0">
                   <div className="text-xs font-medium">
-                    Envoyé le {new Date(r.sent_at).toLocaleDateString('fr-FR')}
+                    {t('questionnaire.sentOn', { date: new Date(r.sent_at).toLocaleDateString(i18n.language) })}
                     {r.status === 'submitted' && r.score !== null && (
-                      <span className="text-muted-foreground"> · score {r.score}/100</span>
+                      <span className="text-muted-foreground"> · {t('questionnaire.score', { score: r.score })}</span>
                     )}
                   </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-1">
-                  <Badge className={STATUS_META[r.status]?.cls}>{STATUS_META[r.status]?.label}</Badge>
+                  <Badge className={STATUS_CLS[r.status]}>{t(`questionnaire.status.${r.status}`)}</Badge>
                   {r.status === 'pending' && (
                     <Button
                       type="button"
@@ -107,7 +109,7 @@ export function SupplierQuestionnairesPanel({
                       variant="ghost"
                       className="h-7 w-7"
                       onClick={() => copy(r.token)}
-                      title="Copier le lien"
+                      title={t('questionnaire.copyLink')}
                     >
                       <Copy className="h-3.5 w-3.5" />
                     </Button>
@@ -127,17 +129,17 @@ export function SupplierQuestionnairesPanel({
             ))}
           </ul>
         ) : (
-          <p className="text-muted-foreground text-sm">Aucun questionnaire envoyé.</p>
+          <p className="text-muted-foreground text-sm">{t('questionnaire.empty')}</p>
         )}
 
         <Button type="button" size="sm" className="w-full" disabled={isPending} onClick={create}>
           {isPending ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Création...
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t('questionnaire.creating')}
             </>
           ) : (
             <>
-              <Send className="mr-1.5 h-4 w-4" /> Envoyer un questionnaire
+              <Send className="mr-1.5 h-4 w-4" /> {t('questionnaire.send')}
             </>
           )}
         </Button>

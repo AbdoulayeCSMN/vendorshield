@@ -247,5 +247,64 @@
       "done": "Done",
       "cancelled": "Cancelled"
     }
+  },
+  "documents": {
+    "title": "Compliance & documents",
+    "compliant": "{{pct}}% compliant",
+    "subtitle": "Duty of vigilance / CSRD",
+    "expiredCount": "{{count}} expired",
+    "expiringCount": "{{count}} to renew",
+    "upToDate": "up to date",
+    "empty": "No document recorded.",
+    "exp": "exp. {{date}}",
+    "add": "Add a document",
+    "adding": "Adding...",
+    "type": "Type",
+    "typePlaceholder": "Document type...",
+    "name": "Name",
+    "namePlaceholder": "e.g. ISO 9001 certificate 2024",
+    "issuer": "Issuer",
+    "reference": "Reference",
+    "issuedOn": "Issued on",
+    "expiresOn": "Expires on",
+    "link": "Link (URL)",
+    "typeNameRequired": "Type and name required",
+    "added": "Document added",
+    "removed": "Document removed",
+    "status": {
+      "valid": "Valid",
+      "expiring": "Expiring soon",
+      "expired": "Expired",
+      "no_expiry": "No expiry"
+    },
+    "docType": {
+      "iso_9001": "ISO 9001 (Quality)",
+      "iso_14001": "ISO 14001 (Environment)",
+      "iso_27001": "ISO 27001 (Info security)",
+      "code_conduct": "Code of conduct / ethics",
+      "vigilance_plan": "Vigilance plan",
+      "insurance": "Liability insurance",
+      "contract": "Contract",
+      "audit_report": "Audit report",
+      "rgpd_dpa": "DPA / GDPR",
+      "other": "Other"
+    }
+  },
+  "questionnaire": {
+    "title": "Supplier self-assessment",
+    "desc": "Send a questionnaire for the supplier to fill (secure link, no account).",
+    "linkCopied": "Link copied — send it to the supplier",
+    "created": "Questionnaire created — link copied to clipboard",
+    "empty": "No questionnaire sent.",
+    "send": "Send a questionnaire",
+    "creating": "Creating...",
+    "sentOn": "Sent on {{date}}",
+    "score": "score {{score}}/100",
+    "copyLink": "Copy link",
+    "status": {
+      "pending": "Pending",
+      "submitted": "Received",
+      "expired": "Expired"
+    }
   }
 }

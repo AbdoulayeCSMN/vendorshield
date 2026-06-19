@@ -247,5 +247,64 @@
       "done": "An gama",
       "cancelled": "An soke"
     }
+  },
+  "documents": {
+    "title": "Bin doka & takardu",
+    "compliant": "{{pct}}% ya bi doka",
+    "subtitle": "Wajibcin sa ido / CSRD",
+    "expiredCount": "{{count}} sun ƙare",
+    "expiringCount": "{{count}} za a sabunta",
+    "upToDate": "na zamani",
+    "empty": "Babu takardar da aka ajiye.",
+    "exp": "ƙar. {{date}}",
+    "add": "Ƙara takarda",
+    "adding": "Ana ƙarawa...",
+    "type": "Nau’i",
+    "typePlaceholder": "Nau’in takarda...",
+    "name": "Suna",
+    "namePlaceholder": "misali: Takardar ISO 9001 2024",
+    "issuer": "Mai bayarwa",
+    "reference": "Lamba",
+    "issuedOn": "An bayar a",
+    "expiresOn": "Zai ƙare a",
+    "link": "Hanyar haɗi (URL)",
+    "typeNameRequired": "Ana buƙatar nau’i da suna",
+    "added": "An ƙara takarda",
+    "removed": "An cire takarda",
+    "status": {
+      "valid": "Mai inganci",
+      "expiring": "Zai ƙare nan ba da jimawa ba",
+      "expired": "Ya ƙare",
+      "no_expiry": "Babu ƙarewa"
+    },
+    "docType": {
+      "iso_9001": "ISO 9001 (Inganci)",
+      "iso_14001": "ISO 14001 (Muhalli)",
+      "iso_27001": "ISO 27001 (Tsaron bayanai)",
+      "code_conduct": "Ka’idar ɗabi’a",
+      "vigilance_plan": "Shirin sa ido",
+      "insurance": "Inshorar alhaki",
+      "contract": "Kwantiragi",
+      "audit_report": "Rahoton bita",
+      "rgpd_dpa": "DPA / GDPR",
+      "other": "Sauran"
+    }
+  },
+  "questionnaire": {
+    "title": "Kima na kai na mai kawo kaya",
+    "desc": "Aika tambayoyi don mai kawo kaya ya cika (hanyar haɗi mai tsaro, ba tare da asusu ba).",
+    "linkCopied": "An kwafi hanyar haɗi — aika wa mai kawo kaya",
+    "created": "An ƙirƙiri tambayoyi — an kwafi hanyar haɗi",
+    "empty": "Ba a aika tambayoyi ba.",
+    "send": "Aika tambayoyi",
+    "creating": "Ana ƙirƙira...",
+    "sentOn": "An aika a {{date}}",
+    "score": "maki {{score}}/100",
+    "copyLink": "Kwafi hanyar haɗi",
+    "status": {
+      "pending": "Ana jira",
+      "submitted": "An karɓa",
+      "expired": "Ya ƙare"
+    }
   }
 }

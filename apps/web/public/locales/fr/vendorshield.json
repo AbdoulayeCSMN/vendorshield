@@ -247,5 +247,64 @@
       "done": "Fait",
       "cancelled": "Annulé"
     }
+  },
+  "documents": {
+    "title": "Conformité & documents",
+    "compliant": "{{pct}}% conforme",
+    "subtitle": "Devoir de vigilance / CSRD",
+    "expiredCount": "{{count}} expiré(s)",
+    "expiringCount": "{{count}} à renouveler",
+    "upToDate": "à jour",
+    "empty": "Aucun document enregistré.",
+    "exp": "exp. {{date}}",
+    "add": "Ajouter un document",
+    "adding": "Ajout...",
+    "type": "Type",
+    "typePlaceholder": "Type de document...",
+    "name": "Nom",
+    "namePlaceholder": "Ex: Certificat ISO 9001 2024",
+    "issuer": "Émetteur",
+    "reference": "Référence",
+    "issuedOn": "Émis le",
+    "expiresOn": "Expire le",
+    "link": "Lien (URL)",
+    "typeNameRequired": "Type et nom requis",
+    "added": "Document ajouté",
+    "removed": "Document supprimé",
+    "status": {
+      "valid": "Valide",
+      "expiring": "Expire bientôt",
+      "expired": "Expiré",
+      "no_expiry": "Sans expiration"
+    },
+    "docType": {
+      "iso_9001": "ISO 9001 (Qualité)",
+      "iso_14001": "ISO 14001 (Environnement)",
+      "iso_27001": "ISO 27001 (Sécurité info)",
+      "code_conduct": "Code de conduite / éthique",
+      "vigilance_plan": "Plan de vigilance",
+      "insurance": "Assurance RC",
+      "contract": "Contrat",
+      "audit_report": "Rapport d'audit",
+      "rgpd_dpa": "DPA / RGPD",
+      "other": "Autre"
+    }
+  },
+  "questionnaire": {
+    "title": "Auto-évaluation fournisseur",
+    "desc": "Envoyez un questionnaire à remplir par le fournisseur (lien sécurisé, sans compte).",
+    "linkCopied": "Lien copié — à envoyer au fournisseur",
+    "created": "Questionnaire créé — lien copié dans le presse-papier",
+    "empty": "Aucun questionnaire envoyé.",
+    "send": "Envoyer un questionnaire",
+    "creating": "Création...",
+    "sentOn": "Envoyé le {{date}}",
+    "score": "score {{score}}/100",
+    "copyLink": "Copier le lien",
+    "status": {
+      "pending": "En attente",
+      "submitted": "Reçu",
+      "expired": "Expiré"
+    }
   }
 }
