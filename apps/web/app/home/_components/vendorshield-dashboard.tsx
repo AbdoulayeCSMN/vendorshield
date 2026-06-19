@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   AlertTriangle, ArrowUpRight, Bell, Building2, CheckCircle,
   Globe, Shield, ShieldAlert, Sparkles, X,
@@ -40,8 +42,12 @@ const riskTextClass = (level: keyof typeof RISK_COLORS) => {
   if (level === 'medium') return 'text-amber-600';
   return 'text-green-600';
 };
-const riskLabel = (s: number | null) =>
-  !s ? 'N/A' : s >= 70 ? 'Risque faible' : s >= 40 ? 'Risque modéré' : s >= 20 ? 'Risque élevé' : 'Risque critique';
+const riskLabel = (s: number | null, t: TFunction) =>
+  !s ? 'N/A'
+    : s >= 70 ? t('dashboard.riskLowFull')
+    : s >= 40 ? t('dashboard.riskMediumFull')
+    : s >= 20 ? t('dashboard.riskHighFull')
+    : t('dashboard.riskCriticalFull');
 function countryFlag(code: string) {
   const c = code.trim().toUpperCase();
   if (c.length !== 2) return '🏳';
@@ -234,9 +240,9 @@ function WorldMap({ countries, selected, onSelect }: {
 
 // ─── Matrice Criticité × Dépendance ──────────────────────────────────────────
 const CRIT_VALUES: Record<string, number> = { critical: 4, high: 3, medium: 2, low: 1 };
-const CRIT_LABELS = ['','Faible','Moyen','Élevé','Critique'];
 
 function MatrixTooltip({ active, payload }: { active?: boolean; payload?: {payload: SupplierNode}[] }) {
+  const { t } = useTranslation('vendorshield');
   if (!active || !payload?.length) return null;
   const s = payload[0]?.payload;
   if (!s) return null;
@@ -244,15 +250,17 @@ function MatrixTooltip({ active, payload }: { active?: boolean; payload?: {paylo
     <div className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg p-3 text-xs max-w-48">
       <p className="font-semibold mb-1 text-gray-900 dark:text-white">{s.name}</p>
       <p className="text-gray-500">{CATEGORY_LABELS[s.category as keyof typeof CATEGORY_LABELS] ?? s.category}</p>
-      <p className="mt-1">Score : <span className={`font-medium ${scoreTextClass(s.global_score)}`}>{s.global_score ?? '—'}/100</span></p>
-      <p>Dépense : <span className="font-medium">{s.annual_spend_eur ? formatEur(s.annual_spend_eur) : '—'}</span></p>
-      {s.is_sole_source && <p className="text-amber-600 font-medium mt-1">⚠ Sole source</p>}
-      {s.open_alerts > 0 && <p className="text-red-600">{s.open_alerts} alerte{s.open_alerts > 1 ? 's' : ''}</p>}
+      <p className="mt-1">{t('dashboard.matrixScore')} : <span className={`font-medium ${scoreTextClass(s.global_score)}`}>{s.global_score ?? '—'}/100</span></p>
+      <p>{t('dashboard.axisSpend')} : <span className="font-medium">{s.annual_spend_eur ? formatEur(s.annual_spend_eur) : '—'}</span></p>
+      {s.is_sole_source && <p className="text-amber-600 font-medium mt-1">⚠ {t('dashboard.matrixSoleSource')}</p>}
+      {s.open_alerts > 0 && <p className="text-red-600">{t('dashboard.matrixAlerts',{count:s.open_alerts})}</p>}
     </div>
   );
 }
 
 function CriticalityMatrix({ suppliers }: { suppliers: SupplierNode[] }) {
+  const { t } = useTranslation('vendorshield');
+  const CRIT_LABELS = ['', t('dashboard.riskLow'), t('dashboard.critMedium'), t('dashboard.riskHigh'), t('dashboard.riskCritical')];
   const data = suppliers.filter(s => s.global_score !== null).map(s => ({
     ...s,
     x: CRIT_VALUES[s.criticality] ?? 2,
@@ -266,10 +274,10 @@ function CriticalityMatrix({ suppliers }: { suppliers: SupplierNode[] }) {
           <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.1}/>
           <XAxis type="number" dataKey="x" domain={[0.5,4.5]} tickLine={false} axisLine={false}
             tick={{fontSize:10}} tickFormatter={v => CRIT_LABELS[Math.round(v)] ?? ''}
-            label={{value:'Criticité',position:'insideBottom',offset:-10,fontSize:10}}/>
+            label={{value:t('dashboard.axisCriticality'),position:'insideBottom',offset:-10,fontSize:10}}/>
           <YAxis type="number" dataKey="y" tickLine={false} axisLine={false} tick={{fontSize:9}}
             tickFormatter={v => v>=1000?`${(v/1000).toFixed(0)}M€`:`${v}k€`}
-            label={{value:'Dépense',angle:-90,position:'insideLeft',fontSize:10,offset:14}}/>
+            label={{value:t('dashboard.axisSpend'),angle:-90,position:'insideLeft',fontSize:10,offset:14}}/>
           <ZAxis type="number" dataKey="z" range={[40,320]}/>
           <Tooltip content={<MatrixTooltip/>}/>
           <Scatter data={data}>
@@ -286,6 +294,7 @@ function CriticalityMatrix({ suppliers }: { suppliers: SupplierNode[] }) {
 
 // ─── Radar dimensions ──────────────────────────────────────────────────────────
 function DimensionRadar({ suppliers }: { suppliers: SupplierNode[] }) {
+  const { t } = useTranslation('vendorshield');
   const avg = (key: 'financial_score'|'operational_score'|'geopolitical_score'|'esg_score') => {
     const vals = suppliers
       .map(s => s[key])
@@ -293,10 +302,10 @@ function DimensionRadar({ suppliers }: { suppliers: SupplierNode[] }) {
     return vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
   };
   const data = [
-    {subject:'Financier',    A:avg('financial_score')},
-    {subject:'Opérationnel', A:avg('operational_score')},
-    {subject:'Géopolitique', A:avg('geopolitical_score')},
-    {subject:'ESG',          A:avg('esg_score')},
+    {subject:t('dashboard.dimFinancial'),    A:avg('financial_score')},
+    {subject:t('dashboard.dimOperational'),  A:avg('operational_score')},
+    {subject:t('dashboard.dimGeopolitical'), A:avg('geopolitical_score')},
+    {subject:t('dashboard.dimEsg'),          A:avg('esg_score')},
   ];
   const globalAvg = Math.round(data.reduce((s,d)=>s+d.A,0)/4);
   const fill = scoreColor(globalAvg);
@@ -316,6 +325,7 @@ function DimensionRadar({ suppliers }: { suppliers: SupplierNode[] }) {
 
 // ─── Réseau canvas D3-like ────────────────────────────────────────────────────
 function SupplierNetwork({ suppliers }: { suppliers: SupplierNode[] }) {
+  const { t } = useTranslation('vendorshield');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef   = useRef<number>(0);
   const stateRef  = useRef<{nodes:{id:string;x:number;y:number;vx:number;vy:number;r:number;score:number|null;name:string;is_sole_source:boolean;open_alerts:number}[]; ready:boolean}>({nodes:[],ready:false});
@@ -421,11 +431,11 @@ function SupplierNetwork({ suppliers }: { suppliers: SupplierNode[] }) {
       <canvas ref={canvasRef} className="w-full h-full"/>
       {suppliers.length===0 && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <p className="text-sm text-gray-400">Aucun fournisseur à afficher</p>
+          <p className="text-sm text-gray-400">{t('dashboard.noSupplier')}</p>
         </div>
       )}
       <div className="absolute bottom-2 right-3 flex gap-2.5 text-[9px] text-gray-400 pointer-events-none">
-          {[['#22c55e','Faible'],['#f97316','Modéré'],['#ef4444','Élevé']].map(([c,l])=>(
+          {[['#22c55e',t('dashboard.riskLow')],['#f97316',t('dashboard.riskMedium')],['#ef4444',t('dashboard.riskHigh')]].map(([c,l])=>(
           <span key={l} className="flex items-center gap-1">
             <span className={`inline-block w-2.5 h-2.5 rounded-full ${c === '#22c55e' ? 'bg-green-500' : c === '#f97316' ? 'bg-orange-500' : 'bg-red-500'}`} />
             {l}
@@ -465,6 +475,7 @@ export function VendorShieldDashboard({
   kpis, riskDistribution, topSuppliers,
   recentAlerts, countryExposure, networkSuppliers, recentAnalyses,
 }: Props) {
+  const { t } = useTranslation('vendorshield');
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
 
   const selectedData  = selectedCountry ? countryExposure.find(c=>c.country_code===selectedCountry) : null;
@@ -481,9 +492,9 @@ export function VendorShieldDashboard({
           <div className="flex-1 min-w-0">
             <span className="text-sm font-semibold text-blue-800 dark:text-blue-300">{selectedData.country_name}</span>
             <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">
-              {selectedData.count} fournisseur{selectedData.count>1?'s':''} ·
-              Score moyen : {selectedData.avg_score??'—'}/100 ·
-              {selectedData.total_spend>0 ? ` Dépense : ${formatEur(selectedData.total_spend)}` : ''}
+              {t('dashboard.suppliersCount', { count: selectedData.count })} ·{' '}
+              {t('dashboard.avgScoreColon', { score: selectedData.avg_score ?? '—' })} ·
+              {selectedData.total_spend>0 ? ` ${t('dashboard.spend', { amount: formatEur(selectedData.total_spend) })}` : ''}
             </span>
           </div>
           <Button size="sm" variant="ghost" onClick={()=>setSelectedCountry(null)} className="h-7 w-7 p-0 shrink-0">
@@ -494,21 +505,21 @@ export function VendorShieldDashboard({
 
       {/* KPIs */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <KpiCard title="Fournisseurs actifs"
+        <KpiCard title={t('dashboard.kpiActiveSuppliers')}
           value={selectedCountry ? filtered.length : (kpis?.active_suppliers??'—')}
-          subtitle={selectedCountry ? `sur ${kpis?.active_suppliers??0} total` : `${kpis?.total_suppliers??0} au total`}
+          subtitle={selectedCountry ? t('dashboard.kpiOfTotal',{count:kpis?.active_suppliers??0}) : t('dashboard.kpiTotalCount',{count:kpis?.total_suppliers??0})}
           icon={<Building2 className="h-5 w-5 text-blue-600"/>} color="bg-blue-50 dark:bg-blue-950" href="/home/suppliers"/>
-        <KpiCard title="Score risque moyen"
+        <KpiCard title={t('dashboard.kpiAvgScore')}
           value={selectedCountry&&selectedData?.avg_score ? `${selectedData.avg_score}/100` : kpis?.avg_global_score?`${kpis.avg_global_score}/100`:'—'}
-          subtitle={selectedCountry&&selectedData?.avg_score ? riskLabel(selectedData.avg_score) : kpis?.avg_global_score?riskLabel(kpis.avg_global_score):'Non évalué'}
+          subtitle={selectedCountry&&selectedData?.avg_score ? riskLabel(selectedData.avg_score, t) : kpis?.avg_global_score?riskLabel(kpis.avg_global_score, t):t('dashboard.notRated')}
           icon={<Shield className="h-5 w-5 text-orange-600"/>} color="bg-orange-50 dark:bg-orange-950" href="/home/analytics"/>
-        <KpiCard title="Alertes ouvertes"
+        <KpiCard title={t('dashboard.kpiOpenAlerts')}
           value={selectedCountry ? filtered.reduce((s,x)=>s+x.open_alerts,0) : (kpis?.open_alerts_total??0)}
-          subtitle={selectedCountry?'dans ce pays':`dont ${kpis?.critical_alerts_total??0} critiques`}
+          subtitle={selectedCountry?t('dashboard.kpiInCountry'):t('dashboard.kpiOfWhichCritical',{count:kpis?.critical_alerts_total??0})}
           icon={<Bell className="h-5 w-5 text-red-600"/>} color="bg-red-50 dark:bg-red-950" href="/home/alerts"/>
-        <KpiCard title={selectedCountry?'Sole sources':'Fournisseurs critiques'}
+        <KpiCard title={selectedCountry?t('dashboard.kpiSoleSources'):t('dashboard.kpiCriticalSuppliers')}
           value={selectedCountry ? filtered.filter(s=>s.is_sole_source).length : (kpis?.critical_risk_count??0)+(kpis?.high_risk_count??0)}
-          subtitle={selectedCountry?'sole source dans ce pays':`${kpis?.critical_risk_count??0} critiques · ${kpis?.high_risk_count??0} élevés`}
+          subtitle={selectedCountry?t('dashboard.kpiSoleSourceInCountry'):t('dashboard.kpiCriticalHigh',{critical:kpis?.critical_risk_count??0,high:kpis?.high_risk_count??0})}
           icon={<ShieldAlert className="h-5 w-5 text-red-600"/>} color="bg-red-50 dark:bg-red-950" href="/home/suppliers?risk_level=critical"/>
       </div>
 
@@ -519,9 +530,9 @@ export function VendorShieldDashboard({
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-blue-500"/>Exposition géographique
+                  <Globe className="h-4 w-4 text-blue-500"/>{t('dashboard.geoExposure')}
                 </CardTitle>
-                <CardDescription className="text-xs">Cliquez sur un pays pour filtrer tous les graphiques</CardDescription>
+                <CardDescription className="text-xs">{t('dashboard.geoExposureDesc')}</CardDescription>
               </div>
               {selectedCountry && <Badge variant="secondary" className="text-xs shrink-0">{countryFlag(selectedCountry)} {selectedData?.country_name}</Badge>}
             </div>
@@ -533,8 +544,8 @@ export function VendorShieldDashboard({
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold">Distribution des risques</CardTitle>
-            <CardDescription className="text-xs">{totalRisk} fournisseurs évalués</CardDescription>
+            <CardTitle className="text-sm font-semibold">{t('dashboard.riskDistribution')}</CardTitle>
+            <CardDescription className="text-xs">{t('dashboard.suppliersEvaluated',{count:totalRisk})}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2.5">
             <div className="flex justify-center">
@@ -553,7 +564,7 @@ export function VendorShieldDashboard({
             {(['low','medium','high','critical'] as const).map(level=>{
               const item=riskDistribution.find(r=>r.level===level);
               const count=item?.count??0;
-              const labels={low:'Faible',medium:'Modéré',high:'Élevé',critical:'Critique'};
+              const labels={low:t('dashboard.riskLow'),medium:t('dashboard.riskMedium'),high:t('dashboard.riskHigh'),critical:t('dashboard.riskCritical')};
               return (
                 <div key={level}>
                   <div className="flex justify-between text-xs mb-0.5">
@@ -579,13 +590,13 @@ export function VendorShieldDashboard({
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="text-sm font-semibold">
-                  Réseau fournisseurs{selectedCountry&&` — ${selectedData?.country_name}`}
+                  {t('dashboard.networkTitle')}{selectedCountry&&` — ${selectedData?.country_name}`}
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Taille = dépense · Or = sole source · Badge = alertes
+                  {t('dashboard.networkDesc')}
                 </CardDescription>
               </div>
-              <span className="text-xs text-gray-400">{filtered.length} fournisseur{filtered.length!==1?'s':''}</span>
+              <span className="text-xs text-gray-400">{t('dashboard.suppliersCount',{count:filtered.length})}</span>
             </div>
           </CardHeader>
           <CardContent className="pt-0">
@@ -596,16 +607,16 @@ export function VendorShieldDashboard({
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold">
-              Radar {selectedCountry?selectedData?.country_name:'global'}
+              {t('dashboard.radarTitle',{label:selectedCountry?selectedData?.country_name:t('dashboard.radarGlobal')})}
             </CardTitle>
             <CardDescription className="text-xs">
-              Score moyen par dimension{selectedCountry?` (${filtered.length} fournisseurs)`:''}
+              {selectedCountry?t('dashboard.avgByDimensionCount',{count:filtered.length}):t('dashboard.avgByDimension')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {filtered.length>0
               ? <DimensionRadar suppliers={filtered}/>
-              : <div className="h-52 flex items-center justify-center text-sm text-gray-400">Aucun fournisseur</div>
+              : <div className="h-52 flex items-center justify-center text-sm text-gray-400">{t('dashboard.noSupplier')}</div>
             }
           </CardContent>
         </Card>
@@ -617,15 +628,15 @@ export function VendorShieldDashboard({
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-sm font-semibold">
-                Matrice Criticité × Dépendance{selectedCountry&&` — ${selectedData?.country_name}`}
+                {t('dashboard.critMatrix')}{selectedCountry&&` — ${selectedData?.country_name}`}
               </CardTitle>
               <CardDescription className="text-xs">
-                X = criticité · Y = dépense annuelle · Taille = risque · Or = sole source
+                {t('dashboard.critMatrixDesc')}
               </CardDescription>
             </div>
             <div className="hidden sm:flex gap-3 text-[10px] text-gray-400">
-              <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-red-500 inline-block"/>Risque élevé</span>
-              <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-green-500 inline-block"/>Risque faible</span>
+              <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-red-500 inline-block"/>{t('dashboard.riskHighFull')}</span>
+              <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-green-500 inline-block"/>{t('dashboard.riskLowFull')}</span>
             </div>
           </div>
         </CardHeader>
@@ -640,10 +651,10 @@ export function VendorShieldDashboard({
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-semibold">
-                {selectedCountry?`Fournisseurs — ${selectedData?.country_name}`:'Fournisseurs les plus risqués'}
+                {selectedCountry?t('dashboard.suppliersInCountry',{country:selectedData?.country_name}):t('dashboard.topRisky')}
               </CardTitle>
               <Link href="/home/suppliers?sort=global_score&order=asc" className="text-xs text-primary hover:underline flex items-center gap-1">
-                Voir tous <ArrowUpRight className="h-3 w-3"/>
+                {t('dashboard.seeAll')} <ArrowUpRight className="h-3 w-3"/>
               </Link>
             </div>
           </CardHeader>
@@ -662,7 +673,7 @@ export function VendorShieldDashboard({
               </Link>
             ))}
             {filtered.filter(s=>s.global_score!==null).length===0 && (
-              <p className="text-sm text-gray-400 text-center py-4">Aucun fournisseur évalué</p>
+              <p className="text-sm text-gray-400 text-center py-4">{t('dashboard.noSupplierEvaluated')}</p>
             )}
           </CardContent>
         </Card>
@@ -670,9 +681,9 @@ export function VendorShieldDashboard({
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-semibold">Alertes récentes</CardTitle>
+              <CardTitle className="text-sm font-semibold">{t('dashboard.recentAlerts')}</CardTitle>
               <Link href="/home/alerts" className="text-xs text-primary hover:underline flex items-center gap-1">
-                Voir tout <ArrowUpRight className="h-3 w-3"/>
+                {t('dashboard.seeAllShort')} <ArrowUpRight className="h-3 w-3"/>
               </Link>
             </div>
           </CardHeader>
@@ -680,7 +691,7 @@ export function VendorShieldDashboard({
             {recentAlerts.length===0 ? (
               <div className="flex flex-col items-center justify-center py-6 text-center">
                 <CheckCircle className="h-7 w-7 text-green-300 mb-1.5"/>
-                <p className="text-sm text-gray-500">Aucune alerte ouverte</p>
+                <p className="text-sm text-gray-500">{t('dashboard.noOpenAlert')}</p>
               </div>
             ) : (
               recentAlerts
@@ -705,9 +716,9 @@ export function VendorShieldDashboard({
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-semibold">Analyses IA récentes</CardTitle>
+            <CardTitle className="text-sm font-semibold">{t('dashboard.recentAiAnalyses')}</CardTitle>
             <Link href="/home/analytics" className="text-xs text-primary hover:underline flex items-center gap-1">
-              Voir tout <ArrowUpRight className="h-3 w-3"/>
+              {t('dashboard.seeAllShort')} <ArrowUpRight className="h-3 w-3"/>
             </Link>
           </div>
         </CardHeader>
@@ -715,7 +726,7 @@ export function VendorShieldDashboard({
           {recentAnalyses.length===0 ? (
             <div className="flex flex-col items-center justify-center py-6 text-center">
               <Sparkles className="h-7 w-7 text-purple-300 mb-1.5"/>
-              <p className="text-sm text-gray-500">Aucune analyse récente</p>
+              <p className="text-sm text-gray-500">{t('dashboard.noRecentAnalysis')}</p>
             </div>
           ) : (
             recentAnalyses.slice(0,4).map(analysis=>(
@@ -724,7 +735,7 @@ export function VendorShieldDashboard({
                 <div className="mt-1.5 h-2 w-2 rounded-full shrink-0 bg-purple-500"/>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{analysis.supplier_name}</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">{analysis.risk_signals?.length ?? 0} signaux détectés</p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">{t('dashboard.signalsDetected',{count:analysis.risk_signals?.length ?? 0})}</p>
                 </div>
                 <span suppressHydrationWarning className="text-[9px] text-gray-400 shrink-0">{relativeTime(analysis.created_at)}</span>
               </Link>
