@@ -49,6 +49,10 @@ import { getSupplierKpis } from '~/lib/vendorshield/kpis.server';
 import { getSupplierCompliance } from '~/lib/vendorshield/actions/document.actions';
 import { getSupplierQuestionnaires } from '~/lib/vendorshield/actions/questionnaire.actions';
 import { getSupplierCyberPosture } from '~/lib/vendorshield/cyber.server';
+import {
+  getSupplierActions,
+  getSupplierAudits,
+} from '~/lib/vendorshield/actions/workflow.actions';
 
 import { BankruptcyPanel } from './_components/bankruptcy-panel';
 import { ClimateRiskPanel } from './_components/climate-risk-panel';
@@ -57,6 +61,8 @@ import { SupplierDocumentsPanel } from './_components/supplier-documents-panel';
 import { SupplierKpiScorecard } from './_components/supplier-kpi-scorecard';
 import { SupplierQuestionnairesPanel } from './_components/supplier-questionnaires-panel';
 import { CyberPosturePanel } from './_components/cyber-posture-panel';
+import { SupplierAuditsPanel } from './_components/supplier-audits-panel';
+import { SupplierCapaPanel } from './_components/supplier-capa-panel';
 import { SupplierAiPanel } from './_components/supplier-ai-panel';
 import { SupplierDetail } from './_components/supplier-detail';
 import { SupplierTabs } from './_components/supplier-tabs';
@@ -80,6 +86,8 @@ async function SupplierDetailPage({ params }: Props) {
     compliance,
     questionnaires,
     cyberPosture,
+    audits,
+    capaActions,
   ] = await Promise.all([
     getSupplierById(id),
     getSupplierAnalyses(id, 5),
@@ -91,6 +99,8 @@ async function SupplierDetailPage({ params }: Props) {
     getSupplierCompliance(id),
     getSupplierQuestionnaires(id),
     getSupplierCyberPosture(id),
+    getSupplierAudits(id),
+    getSupplierActions(id),
   ]);
 
   if (!supplier) notFound();
@@ -121,7 +131,11 @@ async function SupplierDetailPage({ params }: Props) {
             </>
           }
           actions={
-            <SupplierQuestionnairesPanel supplierId={id} requests={questionnaires} />
+            <>
+              <SupplierQuestionnairesPanel supplierId={id} requests={questionnaires} />
+              <SupplierAuditsPanel supplierId={id} audits={audits} />
+              <SupplierCapaPanel supplierId={id} actions={capaActions} />
+            </>
           }
           network={
             <section id="supply-chain" className="scroll-mt-16">
