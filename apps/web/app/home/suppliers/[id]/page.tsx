@@ -59,6 +59,7 @@ import { SupplierQuestionnairesPanel } from './_components/supplier-questionnair
 import { CyberPosturePanel } from './_components/cyber-posture-panel';
 import { SupplierAiPanel } from './_components/supplier-ai-panel';
 import { SupplierDetail } from './_components/supplier-detail';
+import { SupplierTabs } from './_components/supplier-tabs';
 import { TierNetworkGraph } from './_components/tier-network-graph';
 
 interface Props {
@@ -98,31 +99,40 @@ async function SupplierDetailPage({ params }: Props) {
     <>
       <PageHeader title={supplier.name} description={<AppBreadcrumbs />} />
       <PageBody>
-        {/* Grille principale */}
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-          <div className="xl:col-span-2 space-y-6">
-            <SupplierDetail supplier={supplier} />
-            <SupplierKpiScorecard kpis={kpis} />
-          </div>
-          <div className="space-y-4">
-            <OperationalPredictionPanel supplierId={id} initial={deliveryPrediction} />
-            <ClimateRiskPanel supplierId={id} />
-            <SupplierDocumentsPanel supplierId={id} compliance={compliance} />
-            <CyberPosturePanel posture={cyberPosture} />
+        <SupplierTabs
+          overview={
+            <>
+              <SupplierDetail supplier={supplier} />
+              <SupplierKpiScorecard kpis={kpis} />
+            </>
+          }
+          risk={
+            <>
+              <OperationalPredictionPanel supplierId={id} initial={deliveryPrediction} />
+              <ClimateRiskPanel supplierId={id} />
+              <BankruptcyPanel supplierId={id} predictions={predictions} />
+              <SupplierAiPanel supplierId={id} pastAnalyses={analyses} configStatus={configStatus} />
+            </>
+          }
+          compliance={
+            <>
+              <SupplierDocumentsPanel supplierId={id} compliance={compliance} />
+              <CyberPosturePanel posture={cyberPosture} />
+            </>
+          }
+          actions={
             <SupplierQuestionnairesPanel supplierId={id} requests={questionnaires} />
-            <BankruptcyPanel supplierId={id} predictions={predictions} />
-            <SupplierAiPanel supplierId={id} pastAnalyses={analyses} configStatus={configStatus} />
-          </div>
-        </div>
-
-        {/* Section Supply Chain Graph */}
-        <section id="supply-chain" className="mt-6 scroll-mt-16">
-          <TierNetworkGraph
-            supplierId={id}
-            supplierName={supplier.name}
-            initialGraph={scGraph}
-          />
-        </section>
+          }
+          network={
+            <section id="supply-chain" className="scroll-mt-16">
+              <TierNetworkGraph
+                supplierId={id}
+                supplierName={supplier.name}
+                initialGraph={scGraph}
+              />
+            </section>
+          }
+        />
       </PageBody>
     </>
   );
