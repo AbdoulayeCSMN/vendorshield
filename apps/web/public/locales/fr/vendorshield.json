@@ -131,5 +131,42 @@
     "emptyFilteredDesc": "Essayez d'ajuster vos critères de recherche.",
     "emptyTitle": "Aucun fournisseur pour l'instant",
     "emptyDesc": "Commencez par ajouter votre premier fournisseur."
+  },
+  "kpi": {
+    "title": "Scorecard de performance",
+    "basedOn": "Sur {{count}} livraisons enregistrées",
+    "noData": "Importez un historique de livraisons pour activer les KPIs opérationnels",
+    "otd": "Ponctualité",
+    "otdHint": "livraisons à l'heure",
+    "conformity": "Conformité",
+    "conformityHint": "qualité sous seuil",
+    "incidents": "Incidents",
+    "incidentsHint": "alertes ouvertes",
+    "financialScore": "Score financier",
+    "dependency": "Dépendance",
+    "dependencyHint": "de la dépense"
+  },
+  "cyber": {
+    "title": "Posture cyber",
+    "desc": "Dérivée de l'ISO 27001 et du questionnaire d'auto-évaluation.",
+    "noData": "Aucun signal cyber. Envoyez un questionnaire ou ajoutez une certification ISO 27001.",
+    "signal": {
+      "iso27001": "Certification ISO 27001 valide",
+      "securityPolicy": "Politique de sécurité de l'information",
+      "noMajorIncident": "Aucun incident cyber majeur (24 mois)"
+    }
+  },
+  "climate": {
+    "title": "Risque climatique",
+    "descHorizon": "Prévisions Open-Meteo · horizon {{days}} j",
+    "descPending": "Prévisions Open-Meteo · aléas à venir",
+    "loading": "Analyse météo...",
+    "noHazard": "Aucun aléa climatique significatif détecté sur les {{days}} prochains jours.",
+    "hazard": {
+      "flood": "Fortes précipitations",
+      "heat": "Canicule",
+      "cold": "Grand froid",
+      "storm": "Vents violents"
+    }
   }
 }

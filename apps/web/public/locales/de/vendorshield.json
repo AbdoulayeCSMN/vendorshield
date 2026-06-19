@@ -131,5 +131,42 @@
     "emptyFilteredDesc": "Passen Sie Ihre Suchkriterien an.",
     "emptyTitle": "Noch kein Lieferant",
     "emptyDesc": "Fügen Sie zunächst Ihren ersten Lieferanten hinzu."
+  },
+  "kpi": {
+    "title": "Leistungs-Scorecard",
+    "basedOn": "Über {{count}} erfasste Lieferungen",
+    "noData": "Importieren Sie eine Lieferhistorie, um operative KPIs zu aktivieren",
+    "otd": "Pünktlichkeit",
+    "otdHint": "pünktliche Lieferungen",
+    "conformity": "Konformität",
+    "conformityHint": "Qualität unter Schwellenwert",
+    "incidents": "Vorfälle",
+    "incidentsHint": "offene Warnungen",
+    "financialScore": "Finanzwert",
+    "dependency": "Abhängigkeit",
+    "dependencyHint": "der Ausgaben"
+  },
+  "cyber": {
+    "title": "Cyber-Lage",
+    "desc": "Abgeleitet aus ISO 27001 und dem Selbstbewertungsfragebogen.",
+    "noData": "Kein Cyber-Signal. Senden Sie einen Fragebogen oder fügen Sie ein ISO-27001-Zertifikat hinzu.",
+    "signal": {
+      "iso27001": "Gültiges ISO-27001-Zertifikat",
+      "securityPolicy": "Informationssicherheitsrichtlinie",
+      "noMajorIncident": "Kein größerer Cyber-Vorfall (24 Monate)"
+    }
+  },
+  "climate": {
+    "title": "Klimarisiko",
+    "descHorizon": "Open-Meteo-Prognose · {{days}}-Tage-Horizont",
+    "descPending": "Open-Meteo-Prognose · bevorstehende Gefahren",
+    "loading": "Wetter wird analysiert...",
+    "noHazard": "Keine signifikante Klimagefahr in den nächsten {{days}} Tagen erkannt.",
+    "hazard": {
+      "flood": "Starkregen",
+      "heat": "Hitzewelle",
+      "cold": "Extreme Kälte",
+      "storm": "Sturmböen"
+    }
   }
 }

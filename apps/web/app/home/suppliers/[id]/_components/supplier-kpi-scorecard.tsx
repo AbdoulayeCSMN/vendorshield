@@ -1,3 +1,5 @@
+'use client';
+
 import {
   AlertTriangle,
   CheckCircle2,
@@ -5,6 +7,7 @@ import {
   PieChart,
   Wallet,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import {
   Card,
@@ -48,6 +51,7 @@ function Tile({
 }
 
 export function SupplierKpiScorecard({ kpis }: { kpis: SupplierKpis }) {
+  const { t } = useTranslation('vendorshield');
   const fmtPct = (v: number | null) => (v === null ? '—' : `${v}%`);
 
   // Dépendance : plus la part de dépense est élevée, plus le risque de
@@ -71,48 +75,48 @@ export function SupplierKpiScorecard({ kpis }: { kpis: SupplierKpis }) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold">Scorecard de performance</CardTitle>
+        <CardTitle className="text-sm font-semibold">{t('kpi.title')}</CardTitle>
         <CardDescription className="text-xs">
           {kpis.deliveries_count > 0
-            ? `Sur ${kpis.deliveries_count} livraisons enregistrées`
-            : 'Importez un historique de livraisons pour activer les KPIs opérationnels'}
+            ? t('kpi.basedOn', { count: kpis.deliveries_count })
+            : t('kpi.noData')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
           <Tile
             icon={Clock}
-            label="Ponctualité"
+            label={t('kpi.otd')}
             value={fmtPct(kpis.otd_rate)}
-            hint="livraisons à l'heure"
+            hint={t('kpi.otdHint')}
             color={pctColor(kpis.otd_rate)}
           />
           <Tile
             icon={CheckCircle2}
-            label="Conformité"
+            label={t('kpi.conformity')}
             value={fmtPct(kpis.conformity_rate)}
-            hint="qualité sous seuil"
+            hint={t('kpi.conformityHint')}
             color={pctColor(kpis.conformity_rate)}
           />
           <Tile
             icon={AlertTriangle}
-            label="Incidents"
+            label={t('kpi.incidents')}
             value={String(kpis.incident_count)}
-            hint="alertes ouvertes"
+            hint={t('kpi.incidentsHint')}
             color={incColor}
           />
           <Tile
             icon={Wallet}
-            label="Score financier"
+            label={t('kpi.financialScore')}
             value={kpis.financial_score === null ? '—' : `${kpis.financial_score}`}
             hint="/100"
             color={pctColor(kpis.financial_score, 70, 45)}
           />
           <Tile
             icon={PieChart}
-            label="Dépendance"
+            label={t('kpi.dependency')}
             value={kpis.spend_share === null ? '—' : `${kpis.spend_share}%`}
-            hint="de la dépense"
+            hint={t('kpi.dependencyHint')}
             color={depColor}
           />
         </div>

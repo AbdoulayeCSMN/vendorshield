@@ -1,4 +1,7 @@
+'use client';
+
 import { Check, ShieldAlert, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@kit/ui/badge';
 import {
@@ -11,15 +14,23 @@ import {
 
 import type { CyberPosture } from '~/lib/vendorshield/cyber.server';
 
-const LEVEL_META: Record<string, { label: string; cls: string }> = {
-  low: { label: 'Risque faible', cls: 'bg-green-100 text-green-800' },
-  medium: { label: 'Risque modéré', cls: 'bg-amber-100 text-amber-800' },
-  high: { label: 'Risque élevé', cls: 'bg-orange-100 text-orange-800' },
-  critical: { label: 'Risque critique', cls: 'bg-red-100 text-red-800' },
+const LEVEL_CLS: Record<string, string> = {
+  low: 'bg-green-100 text-green-800',
+  medium: 'bg-amber-100 text-amber-800',
+  high: 'bg-orange-100 text-orange-800',
+  critical: 'bg-red-100 text-red-800',
+};
+
+const LEVEL_KEY: Record<string, string> = {
+  low: 'riskLowFull',
+  medium: 'riskMediumFull',
+  high: 'riskHighFull',
+  critical: 'riskCriticalFull',
 };
 
 export function CyberPosturePanel({ posture }: { posture: CyberPosture }) {
-  const meta = LEVEL_META[posture.level] ?? LEVEL_META.medium!;
+  const { t } = useTranslation('vendorshield');
+  const cls = LEVEL_CLS[posture.level] ?? LEVEL_CLS.medium!;
 
   return (
     <Card>
@@ -27,12 +38,12 @@ export function CyberPosturePanel({ posture }: { posture: CyberPosture }) {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-sm font-semibold">
             <ShieldAlert className="text-primary h-4 w-4" />
-            Posture cyber
+            {t('cyber.title')}
           </CardTitle>
-          {posture.has_data && <Badge className={meta.cls}>{meta.label}</Badge>}
+          {posture.has_data && <Badge className={cls}>{t(`dashboard.${LEVEL_KEY[posture.level] ?? 'riskMediumFull'}`)}</Badge>}
         </div>
         <CardDescription className="text-xs">
-          Dérivée de l&apos;ISO 27001 et du questionnaire d&apos;auto-évaluation.
+          {t('cyber.desc')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -45,13 +56,13 @@ export function CyberPosturePanel({ posture }: { posture: CyberPosture }) {
                 ) : (
                   <X className="h-3.5 w-3.5 shrink-0 text-red-500" />
                 )}
-                <span className={s.ok ? '' : 'text-muted-foreground'}>{s.label}</span>
+                <span className={s.ok ? '' : 'text-muted-foreground'}>{t(`cyber.signal.${s.key}`)}</span>
               </li>
             ))}
           </ul>
         ) : (
           <p className="text-muted-foreground text-sm">
-            Aucun signal cyber. Envoyez un questionnaire ou ajoutez une certification ISO 27001.
+            {t('cyber.noData')}
           </p>
         )}
       </CardContent>

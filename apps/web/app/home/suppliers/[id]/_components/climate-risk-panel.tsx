@@ -10,6 +10,7 @@ import {
   Thermometer,
   Wind,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@kit/ui/badge';
 import {
@@ -26,11 +27,11 @@ import {
 } from '~/lib/vendorshield/climate.server';
 import { assessSupplierClimateAction } from '~/lib/vendorshield/actions/climate.actions';
 
-const RISK_META: Record<string, { label: string; cls: string }> = {
-  low: { label: 'Faible', cls: 'bg-green-100 text-green-800' },
-  medium: { label: 'Modéré', cls: 'bg-amber-100 text-amber-800' },
-  high: { label: 'Élevé', cls: 'bg-orange-100 text-orange-800' },
-  critical: { label: 'Critique', cls: 'bg-red-100 text-red-800' },
+const RISK_CLS: Record<string, string> = {
+  low: 'bg-green-100 text-green-800',
+  medium: 'bg-amber-100 text-amber-800',
+  high: 'bg-orange-100 text-orange-800',
+  critical: 'bg-red-100 text-red-800',
 };
 
 const HAZARD_ICON: Record<ClimateHazard['type'], React.ComponentType<{ className?: string }>> = {
@@ -41,6 +42,7 @@ const HAZARD_ICON: Record<ClimateHazard['type'], React.ComponentType<{ className
 };
 
 export function ClimateRiskPanel({ supplierId }: { supplierId: string }) {
+  const { t } = useTranslation('vendorshield');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<ClimateAssessment | null>(null);
@@ -60,27 +62,29 @@ export function ClimateRiskPanel({ supplierId }: { supplierId: string }) {
     };
   }, [supplierId]);
 
-  const risk = data ? RISK_META[data.level] ?? RISK_META.low! : null;
-
   return (
     <Card>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-sm font-semibold">
             <CloudSun className="text-primary h-4 w-4" />
-            Risque climatique
+            {t('climate.title')}
           </CardTitle>
-          {risk && <Badge className={risk.cls}>{risk.label}</Badge>}
+          {data && (
+            <Badge className={RISK_CLS[data.level] ?? RISK_CLS.low!}>
+              {t(`enums.riskLevel.${data.level}`)}
+            </Badge>
+          )}
         </div>
         <CardDescription className="text-xs">
-          Prévisions Open-Meteo · {data ? `horizon ${data.horizon_days} j` : 'aléas à venir'}
+          {data ? t('climate.descHorizon', { days: data.horizon_days }) : t('climate.descPending')}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-3">
         {loading ? (
           <div className="text-muted-foreground flex items-center gap-2 text-sm">
-            <Loader2 className="h-4 w-4 animate-spin" /> Analyse météo...
+            <Loader2 className="h-4 w-4 animate-spin" /> {t('climate.loading')}
           </div>
         ) : error ? (
           <p className="text-muted-foreground text-sm">{error}</p>
@@ -100,7 +104,7 @@ export function ClimateRiskPanel({ supplierId }: { supplierId: string }) {
                       <Icon
                         className={`h-4 w-4 ${h.severity === 'severe' ? 'text-red-500' : 'text-amber-500'}`}
                       />
-                      <span className="font-medium">{h.label}</span>
+                      <span className="font-medium">{t(`climate.hazard.${h.type}`)}</span>
                       <span className="text-muted-foreground">— {h.peak}</span>
                     </li>
                   );
@@ -108,7 +112,7 @@ export function ClimateRiskPanel({ supplierId }: { supplierId: string }) {
               </ul>
             ) : (
               <p className="text-muted-foreground text-xs">
-                Aucun aléa climatique significatif détecté sur les {data.horizon_days} prochains jours.
+                {t('climate.noHazard', { days: data.horizon_days })}
               </p>
             )}
           </>

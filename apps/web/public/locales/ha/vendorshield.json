@@ -131,5 +131,42 @@
     "emptyFilteredDesc": "Gwada gyara sharuɗɗan bincikenka.",
     "emptyTitle": "Babu mai kawo kaya tukuna",
     "emptyDesc": "Fara da ƙara mai kawo kaya na farko."
+  },
+  "kpi": {
+    "title": "Katin aikin",
+    "basedOn": "Bisa kaya da aka kawo {{count}}",
+    "noData": "Shigar da tarihin kawo kaya don kunna KPI na aiki",
+    "otd": "Kan lokaci",
+    "otdHint": "kaya kan lokaci",
+    "conformity": "Bin ka’ida",
+    "conformityHint": "inganci kasa da iyaka",
+    "incidents": "Abubuwan da suka faru",
+    "incidentsHint": "faɗakarwa a buɗe",
+    "financialScore": "Makin kuɗi",
+    "dependency": "Dogaro",
+    "dependencyHint": "na kashe kuɗi"
+  },
+  "cyber": {
+    "title": "Matsayin tsaron yanar gizo",
+    "desc": "An samo daga ISO 27001 da tambayoyin kima na kai.",
+    "noData": "Babu siginar tsaro. Aika tambayoyi ko ƙara takardar ISO 27001.",
+    "signal": {
+      "iso27001": "Takardar ISO 27001 mai inganci",
+      "securityPolicy": "Manufar tsaron bayanai",
+      "noMajorIncident": "Babu babban hatsarin yanar gizo (watanni 24)"
+    }
+  },
+  "climate": {
+    "title": "Haɗarin yanayi",
+    "descHorizon": "Hasashen Open-Meteo · kwanaki {{days}}",
+    "descPending": "Hasashen Open-Meteo · haɗari masu zuwa",
+    "loading": "Ana nazarin yanayi...",
+    "noHazard": "Ba a gano wani babban haɗarin yanayi a cikin kwanaki {{days}} masu zuwa ba.",
+    "hazard": {
+      "flood": "Ruwan sama mai yawa",
+      "heat": "Zafi mai tsanani",
+      "cold": "Sanyi mai tsanani",
+      "storm": "Iska mai ƙarfi"
+    }
   }
 }

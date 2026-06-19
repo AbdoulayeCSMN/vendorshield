@@ -10,7 +10,8 @@ import { docStatus } from '~/lib/vendorshield/documents';
  */
 
 export interface CyberSignal {
-  label: string;
+  /** Clé i18n (vendorshield:cyber.signal.<key>). */
+  key: string;
   ok: boolean;
 }
 
@@ -50,14 +51,12 @@ export async function getSupplierCyberPosture(supplierId: string): Promise<Cyber
   const hasPolicy = responses ? responses.cyber_policy === 'oui' : null;
   const hadIncident = responses ? responses.cyber_incident === 'oui' : null;
 
-  const signals: CyberSignal[] = [
-    { label: 'Certification ISO 27001 valide', ok: iso27001 },
-  ];
+  const signals: CyberSignal[] = [{ key: 'iso27001', ok: iso27001 }];
   if (hasPolicy !== null) {
-    signals.push({ label: 'Politique de sécurité de l’information', ok: hasPolicy });
+    signals.push({ key: 'securityPolicy', ok: hasPolicy });
   }
   if (hadIncident !== null) {
-    signals.push({ label: 'Aucun incident cyber majeur (24 mois)', ok: !hadIncident });
+    signals.push({ key: 'noMajorIncident', ok: !hadIncident });
   }
 
   const has_data = iso27001 || responses !== null;

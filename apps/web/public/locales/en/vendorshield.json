@@ -131,5 +131,42 @@
     "emptyFilteredDesc": "Try adjusting your search criteria.",
     "emptyTitle": "No supplier yet",
     "emptyDesc": "Start by adding your first supplier."
+  },
+  "kpi": {
+    "title": "Performance scorecard",
+    "basedOn": "Over {{count}} recorded deliveries",
+    "noData": "Import a delivery history to enable operational KPIs",
+    "otd": "On-time",
+    "otdHint": "on-time deliveries",
+    "conformity": "Conformity",
+    "conformityHint": "quality under threshold",
+    "incidents": "Incidents",
+    "incidentsHint": "open alerts",
+    "financialScore": "Financial score",
+    "dependency": "Dependency",
+    "dependencyHint": "of spend"
+  },
+  "cyber": {
+    "title": "Cyber posture",
+    "desc": "Derived from ISO 27001 and the self-assessment questionnaire.",
+    "noData": "No cyber signal. Send a questionnaire or add an ISO 27001 certificate.",
+    "signal": {
+      "iso27001": "Valid ISO 27001 certificate",
+      "securityPolicy": "Information security policy",
+      "noMajorIncident": "No major cyber incident (24 months)"
+    }
+  },
+  "climate": {
+    "title": "Climate risk",
+    "descHorizon": "Open-Meteo forecast · {{days}}-day horizon",
+    "descPending": "Open-Meteo forecast · upcoming hazards",
+    "loading": "Analysing weather...",
+    "noHazard": "No significant climate hazard detected over the next {{days}} days.",
+    "hazard": {
+      "flood": "Heavy rainfall",
+      "heat": "Heatwave",
+      "cold": "Extreme cold",
+      "storm": "High winds"
+    }
   }
 }
