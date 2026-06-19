@@ -8,6 +8,7 @@ import {
   SidebarNavigation,
 } from '@kit/ui/shadcn-sidebar';
 import { ModeToggle } from '@kit/ui/mode-toggle';
+import { LanguageSelector } from '@kit/ui/language-selector';
 
 import { AppLogo } from '~/components/app-logo';
 import { ProfileAccountDropdownContainer } from '~/components/personal-account-dropdown-container';
@@ -45,8 +46,11 @@ export function HomeSidebar(props: {
       </SidebarContent>
 
       <SidebarFooter>
-        {/* Toggle thème — masqué en mode icône */}
-        <div className="group-data-[collapsible=icon]:hidden px-2 pb-1">
+        {/* Langue + thème — masqués en mode icône */}
+        <div className="group-data-[collapsible=icon]:hidden flex items-center gap-2 px-2 pb-1">
+          <div className="flex-1">
+            <LanguageSelector />
+          </div>
           <ModeToggle />
         </div>
         <ProfileAccountDropdownContainer
