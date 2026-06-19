@@ -15,19 +15,17 @@ interface ChatMessage {
 
 const MAX_HISTORY = 12;
 
-// Chaîne de modèles : OpenRouter bascule automatiquement sur le suivant si le
-// premier est saturé (429) ou indisponible. Tous gratuits par défaut ;
-// surchargeable via OPENROUTER_MODELS (liste séparée par des virgules).
-// Chaîne de repli de modèles gratuits réellement disponibles (vérifiés en live).
-// OpenRouter route sur le suivant si un provider est saturé/indispo.
-// OpenRouter limite le tableau `models` à 3 éléments max → on tronque par sécurité.
+// Chaîne de modèles gratuits *instruct* (réponse directe, PAS de raisonnement —
+// les modèles de raisonnement polluent la sortie du copilote). OpenRouter
+// bascule sur le suivant si un provider est saturé (429). Surchargeable via
+// OPENROUTER_MODELS. Plafonné à 3 (limite OpenRouter).
 const MODELS = (
   process.env.OPENROUTER_MODELS ??
   process.env.OPENROUTER_MODEL ??
   [
-    'openai/gpt-oss-120b:free',
     'google/gemma-4-31b-it:free',
-    'nvidia/nemotron-3-super-120b-a12b:free',
+    'google/gemma-4-26b-a4b-it:free',
+    'meta-llama/llama-3.3-70b-instruct:free',
   ].join(',')
 )
   .split(',')
@@ -99,7 +97,17 @@ export async function POST(request: NextRequest) {
       ? body.context.supplierId
       : undefined;
 
-  const system = await buildCopilotSystemPrompt(supplierId);
+  // Le snapshot de données ne doit jamais faire planter le copilote : si un
+  // getter échoue (ex. table/colonne absente faute de migration), on bascule
+  // sur un prompt minimal.
+  let system: string;
+  try {
+    system = await buildCopilotSystemPrompt(supplierId);
+  } catch (err) {
+    console.error('[copilot] échec construction du contexte:', err);
+    system =
+      'Tu es le copilote VendorShield, assistant pour la gestion et l’anticipation du risque fournisseur. Réponds en français, de façon concise, professionnelle et actionnable.';
+  }
 
   const result = await callOpenRouter(apiKey, [
     { role: 'system', content: system },
