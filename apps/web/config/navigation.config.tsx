@@ -7,6 +7,7 @@ import {
   FileSearch,
   GitBranch,
   Home,
+  Layers,
   Settings,
   ShieldCheck,
   Target,
@@ -71,6 +72,11 @@ const routes = [
         label: 'Cartographie des risques',
         path: pathsConfig.app.riskMap,
         Icon: <Target className={iconClasses} />,
+      },
+      {
+        label: 'Exposition',
+        path: pathsConfig.app.exposure,
+        Icon: <Layers className={iconClasses} />,
       },
       {
         label: 'Supply Chain',
