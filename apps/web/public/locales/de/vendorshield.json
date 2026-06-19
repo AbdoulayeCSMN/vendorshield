@@ -185,5 +185,67 @@
     "launch": "Prognose starten",
     "askCopilot": "Copilot fragen",
     "copilotPrompt": "Erkläre die operative Prognose dieses Lieferanten (Verzug und Fehler) und gib 2 konkrete Maßnahmen zur Risikominderung."
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "error": "Fehler"
+  },
+  "audits": {
+    "title": "Audits",
+    "desc": "Lieferantenaudits planen und verfolgen.",
+    "empty": "Kein Audit.",
+    "scheduled": "Audit geplant",
+    "schedule": "Audit planen",
+    "start": "Starten",
+    "closePass": "Abschließen ✓ konform",
+    "closeFail": "✗ nicht konform",
+    "typePlaceholder": "Audit-Typ...",
+    "titlePlaceholder": "Titel",
+    "auditor": "Auditor",
+    "type": {
+      "quality": "Qualität",
+      "social": "Sozial / CSR",
+      "security": "Sicherheit",
+      "financial": "Finanziell",
+      "onsite": "Vor Ort"
+    },
+    "status": {
+      "planned": "Geplant",
+      "in_progress": "Laufend",
+      "completed": "Abgeschlossen",
+      "cancelled": "Storniert"
+    },
+    "result": {
+      "pass": "Konform",
+      "conditional": "Bedingt",
+      "fail": "Nicht konform"
+    }
+  },
+  "capa": {
+    "title": "Aktionspläne (CAPA)",
+    "desc": "Korrekturmaßnahmen und deren Verfolgung.",
+    "empty": "Keine Aktion.",
+    "created": "Aktion erstellt",
+    "new": "Neue Aktion",
+    "unassigned": "Nicht zugewiesen",
+    "due": "fällig {{date}}",
+    "changeStatus": "Status ändern",
+    "titlePlaceholder": "Titel der Aktion",
+    "owner": "Verantwortlich",
+    "priorityHigh": "Hohe Priorität",
+    "priorityMedium": "Mittlere Priorität",
+    "priorityLow": "Niedrige Priorität",
+    "priority": {
+      "high": "Hoch",
+      "medium": "Mittel",
+      "low": "Niedrig"
+    },
+    "status": {
+      "open": "Zu erledigen",
+      "in_progress": "Laufend",
+      "done": "Erledigt",
+      "cancelled": "Storniert"
+    }
   }
 }

@@ -185,5 +185,67 @@
     "launch": "Fara hasashe",
     "askCopilot": "Tambayi copilot",
     "copilotPrompt": "Bayyana hasashen aiki na wannan mai kawo kaya (jinkiri da lahani) kuma ka bada matakai 2 na rage haɗari."
+  },
+  "common": {
+    "save": "Ajiye",
+    "cancel": "Soke",
+    "error": "Kuskure"
+  },
+  "audits": {
+    "title": "Bita",
+    "desc": "Tsara da bin diddigin bita na mai kawo kaya.",
+    "empty": "Babu bita.",
+    "scheduled": "An tsara bita",
+    "schedule": "Tsara bita",
+    "start": "Fara",
+    "closePass": "Rufe ✓ ya dace",
+    "closeFail": "✗ bai dace ba",
+    "typePlaceholder": "Nau’in bita...",
+    "titlePlaceholder": "Take",
+    "auditor": "Mai bita",
+    "type": {
+      "quality": "Inganci",
+      "social": "Zamantakewa / CSR",
+      "security": "Tsaro",
+      "financial": "Kuɗi",
+      "onsite": "A wuri"
+    },
+    "status": {
+      "planned": "An tsara",
+      "in_progress": "Ana ci gaba",
+      "completed": "An kammala",
+      "cancelled": "An soke"
+    },
+    "result": {
+      "pass": "Ya dace",
+      "conditional": "Da sharaɗi",
+      "fail": "Bai dace ba"
+    }
+  },
+  "capa": {
+    "title": "Tsare-tsaren aiki (CAPA)",
+    "desc": "Matakan gyara da bin diddiginsu.",
+    "empty": "Babu aiki.",
+    "created": "An ƙirƙiri aiki",
+    "new": "Sabon aiki",
+    "unassigned": "Ba a ba kowa ba",
+    "due": "ranar ƙarshe {{date}}",
+    "changeStatus": "Canza matsayi",
+    "titlePlaceholder": "Take na aiki",
+    "owner": "Wanda ke da alhaki",
+    "priorityHigh": "Fifiko mai yawa",
+    "priorityMedium": "Matsakaicin fifiko",
+    "priorityLow": "Ƙarancin fifiko",
+    "priority": {
+      "high": "Babba",
+      "medium": "Matsakaici",
+      "low": "Ƙasa"
+    },
+    "status": {
+      "open": "Za a yi",
+      "in_progress": "Ana ci gaba",
+      "done": "An gama",
+      "cancelled": "An soke"
+    }
   }
 }

@@ -185,5 +185,67 @@
     "launch": "Run prediction",
     "askCopilot": "Ask the copilot",
     "copilotPrompt": "Explain this supplier's operational prediction (delays and defects) and give 2 concrete actions to reduce the risk."
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "error": "Error"
+  },
+  "audits": {
+    "title": "Audits",
+    "desc": "Plan and track supplier audits.",
+    "empty": "No audit.",
+    "scheduled": "Audit scheduled",
+    "schedule": "Schedule an audit",
+    "start": "Start",
+    "closePass": "Close ✓ pass",
+    "closeFail": "✗ fail",
+    "typePlaceholder": "Audit type...",
+    "titlePlaceholder": "Title",
+    "auditor": "Auditor",
+    "type": {
+      "quality": "Quality",
+      "social": "Social / CSR",
+      "security": "Security",
+      "financial": "Financial",
+      "onsite": "On-site"
+    },
+    "status": {
+      "planned": "Planned",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "result": {
+      "pass": "Pass",
+      "conditional": "Conditional",
+      "fail": "Fail"
+    }
+  },
+  "capa": {
+    "title": "Action plans (CAPA)",
+    "desc": "Corrective actions and their tracking.",
+    "empty": "No action.",
+    "created": "Action created",
+    "new": "New action",
+    "unassigned": "Unassigned",
+    "due": "due {{date}}",
+    "changeStatus": "Change status",
+    "titlePlaceholder": "Action title",
+    "owner": "Owner",
+    "priorityHigh": "High priority",
+    "priorityMedium": "Medium priority",
+    "priorityLow": "Low priority",
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "status": {
+      "open": "To do",
+      "in_progress": "In progress",
+      "done": "Done",
+      "cancelled": "Cancelled"
+    }
   }
 }

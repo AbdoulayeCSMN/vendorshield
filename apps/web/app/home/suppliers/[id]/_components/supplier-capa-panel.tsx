@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import { ListChecks, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@kit/ui/badge';
 import { Button } from '@kit/ui/button';
@@ -32,17 +33,17 @@ import {
 } from '~/lib/vendorshield/actions/workflow.actions';
 import { type CorrectiveAction } from '~/lib/vendorshield/workflow';
 
-const PRIORITY_META: Record<string, { label: string; cls: string }> = {
-  high: { label: 'Haute', cls: 'bg-red-100 text-red-800' },
-  medium: { label: 'Moyenne', cls: 'bg-amber-100 text-amber-800' },
-  low: { label: 'Basse', cls: 'bg-gray-100 text-gray-700' },
+const PRIORITY_CLS: Record<string, string> = {
+  high: 'bg-red-100 text-red-800',
+  medium: 'bg-amber-100 text-amber-800',
+  low: 'bg-gray-100 text-gray-700',
 };
 
-const STATUS_META: Record<string, { label: string; cls: string }> = {
-  open: { label: 'À faire', cls: 'bg-blue-100 text-blue-800' },
-  in_progress: { label: 'En cours', cls: 'bg-amber-100 text-amber-800' },
-  done: { label: 'Fait', cls: 'bg-green-100 text-green-800' },
-  cancelled: { label: 'Annulé', cls: 'bg-gray-100 text-gray-700' },
+const STATUS_CLS: Record<string, string> = {
+  open: 'bg-blue-100 text-blue-800',
+  in_progress: 'bg-amber-100 text-amber-800',
+  done: 'bg-green-100 text-green-800',
+  cancelled: 'bg-gray-100 text-gray-700',
 };
 
 const NEXT_STATUS: Record<string, string> = { open: 'in_progress', in_progress: 'done', done: 'open' };
@@ -54,6 +55,7 @@ export function SupplierCapaPanel({
   supplierId: string;
   actions: CorrectiveAction[];
 }) {
+  const { t } = useTranslation('vendorshield');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [adding, setAdding] = useState(false);
@@ -63,7 +65,7 @@ export function SupplierCapaPanel({
     startTransition(async () => {
       const res = await fn();
       if (!res.success) {
-        toast.error(res.error ?? 'Erreur');
+        toast.error(res.error ?? t('common.error'));
         return;
       }
       router.refresh();
@@ -75,7 +77,7 @@ export function SupplierCapaPanel({
       if (res.success) {
         setForm({ title: '', priority: 'medium', owner: '', due_date: '' });
         setAdding(false);
-        toast.success('Action créée');
+        toast.success(t('capa.created'));
       }
       return res;
     });
@@ -85,9 +87,9 @@ export function SupplierCapaPanel({
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
           <ListChecks className="text-primary h-4 w-4" />
-          Plans d&apos;action (CAPA)
+          {t('capa.title')}
         </CardTitle>
-        <CardDescription className="text-xs">Actions correctives et leur suivi.</CardDescription>
+        <CardDescription className="text-xs">{t('capa.desc')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {actions.length > 0 ? (
@@ -97,20 +99,20 @@ export function SupplierCapaPanel({
                 <div className="min-w-0">
                   <div className="truncate text-sm font-medium">{a.title}</div>
                   <div className="text-muted-foreground text-[11px]">
-                    {a.owner ? `${a.owner}` : 'Non assigné'}
-                    {a.due_date ? ` · échéance ${a.due_date}` : ''}
+                    {a.owner ? `${a.owner}` : t('capa.unassigned')}
+                    {a.due_date ? ` · ${t('capa.due', { date: a.due_date })}` : ''}
                   </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-1">
-                  <Badge className={PRIORITY_META[a.priority]?.cls}>{PRIORITY_META[a.priority]?.label}</Badge>
+                  <Badge className={PRIORITY_CLS[a.priority]}>{t(`capa.priority.${a.priority}`)}</Badge>
                   <button
                     type="button"
                     disabled={isPending}
                     onClick={() => run(() => updateActionStatusAction(a.id, supplierId, NEXT_STATUS[a.status] ?? 'open'))}
-                    title="Changer le statut"
+                    title={t('capa.changeStatus')}
                   >
-                    <Badge className={`${STATUS_META[a.status]?.cls} cursor-pointer`}>
-                      {STATUS_META[a.status]?.label}
+                    <Badge className={`${STATUS_CLS[a.status]} cursor-pointer`}>
+                      {t(`capa.status.${a.status}`)}
                     </Badge>
                   </button>
                   <Button type="button" size="icon" variant="ghost" className="h-7 w-7" disabled={isPending} onClick={() => run(() => deleteActionAction(a.id, supplierId))}>
@@ -121,32 +123,32 @@ export function SupplierCapaPanel({
             ))}
           </ul>
         ) : (
-          <p className="text-muted-foreground text-sm">Aucune action.</p>
+          <p className="text-muted-foreground text-sm">{t('capa.empty')}</p>
         )}
 
         {adding ? (
           <div className="space-y-2 rounded-lg border p-3">
-            <Input className="h-8" placeholder="Intitulé de l'action" value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} />
+            <Input className="h-8" placeholder={t('capa.titlePlaceholder')} value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} />
             <div className="grid grid-cols-2 gap-2">
               <Select value={form.priority} onValueChange={(v) => setForm((f) => ({ ...f, priority: v }))}>
                 <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="high">Priorité haute</SelectItem>
-                  <SelectItem value="medium">Priorité moyenne</SelectItem>
-                  <SelectItem value="low">Priorité basse</SelectItem>
+                  <SelectItem value="high">{t('capa.priorityHigh')}</SelectItem>
+                  <SelectItem value="medium">{t('capa.priorityMedium')}</SelectItem>
+                  <SelectItem value="low">{t('capa.priorityLow')}</SelectItem>
                 </SelectContent>
               </Select>
               <Input type="date" className="h-8" value={form.due_date} onChange={(e) => setForm((f) => ({ ...f, due_date: e.target.value }))} />
             </div>
-            <Input className="h-8" placeholder="Responsable" value={form.owner} onChange={(e) => setForm((f) => ({ ...f, owner: e.target.value }))} />
+            <Input className="h-8" placeholder={t('capa.owner')} value={form.owner} onChange={(e) => setForm((f) => ({ ...f, owner: e.target.value }))} />
             <div className="flex gap-2">
-              <Button size="sm" className="flex-1" disabled={isPending} onClick={submit}>Enregistrer</Button>
-              <Button size="sm" variant="outline" onClick={() => setAdding(false)}>Annuler</Button>
+              <Button size="sm" className="flex-1" disabled={isPending} onClick={submit}>{t('common.save')}</Button>
+              <Button size="sm" variant="outline" onClick={() => setAdding(false)}>{t('common.cancel')}</Button>
             </div>
           </div>
         ) : (
           <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => setAdding(true)}>
-            <Plus className="mr-1.5 h-4 w-4" /> Nouvelle action
+            <Plus className="mr-1.5 h-4 w-4" /> {t('capa.new')}
           </Button>
         )}
       </CardContent>

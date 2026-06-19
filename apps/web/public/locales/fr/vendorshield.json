@@ -185,5 +185,67 @@
     "launch": "Lancer la prédiction",
     "askCopilot": "Demander au copilote",
     "copilotPrompt": "Explique la prédiction opérationnelle de ce fournisseur (retard et défauts) et donne 2 actions concrètes pour réduire le risque."
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "error": "Erreur"
+  },
+  "audits": {
+    "title": "Audits",
+    "desc": "Planifiez et suivez les audits fournisseur.",
+    "empty": "Aucun audit.",
+    "scheduled": "Audit planifié",
+    "schedule": "Planifier un audit",
+    "start": "Démarrer",
+    "closePass": "Clôturer ✓ conforme",
+    "closeFail": "✗ non conforme",
+    "typePlaceholder": "Type d'audit...",
+    "titlePlaceholder": "Intitulé",
+    "auditor": "Auditeur",
+    "type": {
+      "quality": "Qualité",
+      "social": "Social / RSE",
+      "security": "Sécurité",
+      "financial": "Financier",
+      "onsite": "Sur site"
+    },
+    "status": {
+      "planned": "Planifié",
+      "in_progress": "En cours",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "result": {
+      "pass": "Conforme",
+      "conditional": "Sous réserve",
+      "fail": "Non conforme"
+    }
+  },
+  "capa": {
+    "title": "Plans d'action (CAPA)",
+    "desc": "Actions correctives et leur suivi.",
+    "empty": "Aucune action.",
+    "created": "Action créée",
+    "new": "Nouvelle action",
+    "unassigned": "Non assigné",
+    "due": "échéance {{date}}",
+    "changeStatus": "Changer le statut",
+    "titlePlaceholder": "Intitulé de l'action",
+    "owner": "Responsable",
+    "priorityHigh": "Priorité haute",
+    "priorityMedium": "Priorité moyenne",
+    "priorityLow": "Priorité basse",
+    "priority": {
+      "high": "Haute",
+      "medium": "Moyenne",
+      "low": "Basse"
+    },
+    "status": {
+      "open": "À faire",
+      "in_progress": "En cours",
+      "done": "Fait",
+      "cancelled": "Annulé"
+    }
   }
 }
