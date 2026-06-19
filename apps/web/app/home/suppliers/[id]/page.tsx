@@ -48,6 +48,7 @@ import { getSupplierById } from '~/lib/vendorshield/suppliers.server';
 import { getSupplierKpis } from '~/lib/vendorshield/kpis.server';
 import { getSupplierCompliance } from '~/lib/vendorshield/actions/document.actions';
 import { getSupplierQuestionnaires } from '~/lib/vendorshield/actions/questionnaire.actions';
+import { getSupplierCyberPosture } from '~/lib/vendorshield/cyber.server';
 
 import { BankruptcyPanel } from './_components/bankruptcy-panel';
 import { ClimateRiskPanel } from './_components/climate-risk-panel';
@@ -55,6 +56,7 @@ import { OperationalPredictionPanel } from './_components/operational-prediction
 import { SupplierDocumentsPanel } from './_components/supplier-documents-panel';
 import { SupplierKpiScorecard } from './_components/supplier-kpi-scorecard';
 import { SupplierQuestionnairesPanel } from './_components/supplier-questionnaires-panel';
+import { CyberPosturePanel } from './_components/cyber-posture-panel';
 import { SupplierAiPanel } from './_components/supplier-ai-panel';
 import { SupplierDetail } from './_components/supplier-detail';
 import { TierNetworkGraph } from './_components/tier-network-graph';
@@ -76,6 +78,7 @@ async function SupplierDetailPage({ params }: Props) {
     kpis,
     compliance,
     questionnaires,
+    cyberPosture,
   ] = await Promise.all([
     getSupplierById(id),
     getSupplierAnalyses(id, 5),
@@ -86,6 +89,7 @@ async function SupplierDetailPage({ params }: Props) {
     getSupplierKpis(id),
     getSupplierCompliance(id),
     getSupplierQuestionnaires(id),
+    getSupplierCyberPosture(id),
   ]);
 
   if (!supplier) notFound();
@@ -104,6 +108,7 @@ async function SupplierDetailPage({ params }: Props) {
             <OperationalPredictionPanel supplierId={id} initial={deliveryPrediction} />
             <ClimateRiskPanel supplierId={id} />
             <SupplierDocumentsPanel supplierId={id} compliance={compliance} />
+            <CyberPosturePanel posture={cyberPosture} />
             <SupplierQuestionnairesPanel supplierId={id} requests={questionnaires} />
             <BankruptcyPanel supplierId={id} predictions={predictions} />
             <SupplierAiPanel supplierId={id} pastAnalyses={analyses} configStatus={configStatus} />
