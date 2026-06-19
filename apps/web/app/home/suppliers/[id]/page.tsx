@@ -45,10 +45,12 @@ import { getSupplierPredictions } from '~/lib/vendorshield/actions/prediction.ac
 import { getDeliveryPrediction } from '~/lib/vendorshield/actions/operational-prediction.actions';
 import { getSupplyChainGraph } from '~/lib/vendorshield/actions/tier.actions';
 import { getSupplierById } from '~/lib/vendorshield/suppliers.server';
+import { getSupplierKpis } from '~/lib/vendorshield/kpis.server';
 
 import { BankruptcyPanel } from './_components/bankruptcy-panel';
 import { ClimateRiskPanel } from './_components/climate-risk-panel';
 import { OperationalPredictionPanel } from './_components/operational-prediction-panel';
+import { SupplierKpiScorecard } from './_components/supplier-kpi-scorecard';
 import { SupplierAiPanel } from './_components/supplier-ai-panel';
 import { SupplierDetail } from './_components/supplier-detail';
 import { TierNetworkGraph } from './_components/tier-network-graph';
@@ -60,7 +62,7 @@ interface Props {
 async function SupplierDetailPage({ params }: Props) {
   const { id } = await params;
 
-  const [supplier, analyses, configStatus, predictions, scGraph, deliveryPrediction] =
+  const [supplier, analyses, configStatus, predictions, scGraph, deliveryPrediction, kpis] =
     await Promise.all([
       getSupplierById(id),
       getSupplierAnalyses(id, 5),
@@ -68,6 +70,7 @@ async function SupplierDetailPage({ params }: Props) {
       getSupplierPredictions(id, 4),
       getSupplyChainGraph(id),
       getDeliveryPrediction(id),
+      getSupplierKpis(id),
     ]);
 
   if (!supplier) notFound();
@@ -78,8 +81,9 @@ async function SupplierDetailPage({ params }: Props) {
       <PageBody>
         {/* Grille principale */}
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-          <div className="xl:col-span-2">
+          <div className="xl:col-span-2 space-y-6">
             <SupplierDetail supplier={supplier} />
+            <SupplierKpiScorecard kpis={kpis} />
           </div>
           <div className="space-y-4">
             <OperationalPredictionPanel supplierId={id} initial={deliveryPrediction} />
