@@ -58,5 +58,78 @@
     "matrixSoleSource": "Sole source",
     "matrixAlerts": "{{count}} alerte",
     "matrixAlerts_other": "{{count}} alertes"
+  },
+  "tabs": {
+    "overview": "Vue d'ensemble",
+    "risk": "Risque & prédictions",
+    "compliance": "Conformité",
+    "actions": "Actions",
+    "network": "Supply chain"
+  },
+  "enums": {
+    "riskLevel": {
+      "low": "Faible",
+      "medium": "Moyen",
+      "high": "Élevé",
+      "critical": "Critique"
+    },
+    "criticality": {
+      "critical": "Critique",
+      "high": "Élevée",
+      "medium": "Moyenne",
+      "low": "Faible"
+    },
+    "status": {
+      "active": "Actif",
+      "under_review": "En révision",
+      "suspended": "Suspendu",
+      "inactive": "Inactif",
+      "blacklisted": "Liste noire"
+    },
+    "category": {
+      "raw_materials": "Matières premières",
+      "components": "Composants",
+      "logistics": "Logistique",
+      "services": "Services",
+      "technology": "Technologie",
+      "energy": "Énergie",
+      "chemicals": "Chimie",
+      "packaging": "Emballage",
+      "maintenance": "Maintenance",
+      "other": "Autre"
+    }
+  },
+  "suppliers": {
+    "search": "Rechercher un fournisseur...",
+    "fStatus": "Statut",
+    "fRisk": "Niveau risque",
+    "fCategory": "Catégorie",
+    "allStatuses": "Tous les statuts",
+    "allRisks": "Tous les risques",
+    "allCategories": "Toutes catégories",
+    "clear": "Effacer",
+    "results": "{{count}} résultat",
+    "results_other": "{{count}} résultats",
+    "hSupplier": "Fournisseur",
+    "hCategory": "Catégorie",
+    "hCriticality": "Criticité",
+    "hFinancial": "Fin.",
+    "hOperational": "Ops.",
+    "hGeo": "Géo.",
+    "hEsg": "ESG",
+    "hGlobalScore": "Score global",
+    "hRisk": "Risque",
+    "hAlerts": "Alertes",
+    "aViewDetail": "Voir le détail",
+    "aNewAssessment": "Nouvelle évaluation",
+    "aEdit": "Modifier",
+    "addSupplier": "Ajouter un fournisseur",
+    "pageOf": "Page {{page}} sur {{total}}",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "emptyFilteredTitle": "Aucun fournisseur ne correspond aux filtres",
+    "emptyFilteredDesc": "Essayez d'ajuster vos critères de recherche.",
+    "emptyTitle": "Aucun fournisseur pour l'instant",
+    "emptyDesc": "Commencez par ajouter votre premier fournisseur."
   }
 }

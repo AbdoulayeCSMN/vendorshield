@@ -58,5 +58,78 @@
     "matrixSoleSource": "Madogara ɗaya",
     "matrixAlerts": "faɗakarwa {{count}}",
     "matrixAlerts_other": "faɗakarwa {{count}}"
+  },
+  "tabs": {
+    "overview": "Bayani gabaɗaya",
+    "risk": "Haɗari & hasashe",
+    "compliance": "Bin doka",
+    "actions": "Ayyuka",
+    "network": "Sarkar samar da kaya"
+  },
+  "enums": {
+    "riskLevel": {
+      "low": "Ƙasa",
+      "medium": "Matsakaici",
+      "high": "Babba",
+      "critical": "Mai muhimmanci"
+    },
+    "criticality": {
+      "critical": "Mai muhimmanci",
+      "high": "Babba",
+      "medium": "Matsakaici",
+      "low": "Ƙasa"
+    },
+    "status": {
+      "active": "Mai aiki",
+      "under_review": "Ana bitar",
+      "suspended": "An dakatar",
+      "inactive": "Maras aiki",
+      "blacklisted": "Jerin baƙi"
+    },
+    "category": {
+      "raw_materials": "Kayan ɗanye",
+      "components": "Sassa",
+      "logistics": "Sufuri",
+      "services": "Ayyuka",
+      "technology": "Fasaha",
+      "energy": "Makamashi",
+      "chemicals": "Sinadarai",
+      "packaging": "Kunshi",
+      "maintenance": "Kulawa",
+      "other": "Sauran"
+    }
+  },
+  "suppliers": {
+    "search": "Nemo mai kawo kaya...",
+    "fStatus": "Matsayi",
+    "fRisk": "Matakin haɗari",
+    "fCategory": "Rukuni",
+    "allStatuses": "Dukkan matsayi",
+    "allRisks": "Dukkan haɗari",
+    "allCategories": "Dukkan rukunoni",
+    "clear": "Share",
+    "results": "sakamako {{count}}",
+    "results_other": "sakamako {{count}}",
+    "hSupplier": "Mai kawo kaya",
+    "hCategory": "Rukuni",
+    "hCriticality": "Muhimmanci",
+    "hFinancial": "Kuɗi",
+    "hOperational": "Aiki",
+    "hGeo": "Geo.",
+    "hEsg": "ESG",
+    "hGlobalScore": "Jimillar maki",
+    "hRisk": "Haɗari",
+    "hAlerts": "Faɗakarwa",
+    "aViewDetail": "Duba cikakke",
+    "aNewAssessment": "Sabon auna",
+    "aEdit": "Gyara",
+    "addSupplier": "Ƙara mai kawo kaya",
+    "pageOf": "Shafi {{page}} cikin {{total}}",
+    "prev": "Baya",
+    "next": "Gaba",
+    "emptyFilteredTitle": "Babu mai kawo kaya da ya dace da tacewa",
+    "emptyFilteredDesc": "Gwada gyara sharuɗɗan bincikenka.",
+    "emptyTitle": "Babu mai kawo kaya tukuna",
+    "emptyDesc": "Fara da ƙara mai kawo kaya na farko."
   }
 }

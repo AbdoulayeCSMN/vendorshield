@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from 'react-i18next';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@kit/ui/tabs';
 
 export function SupplierTabs({
@@ -15,14 +17,15 @@ export function SupplierTabs({
   network: React.ReactNode;
   actions: React.ReactNode;
 }) {
+  const { t } = useTranslation('vendorshield');
   return (
     <Tabs defaultValue="overview" className="w-full">
       <TabsList className="mb-4 flex w-full flex-wrap justify-start">
-        <TabsTrigger value="overview">Vue d&apos;ensemble</TabsTrigger>
-        <TabsTrigger value="risk">Risque &amp; prédictions</TabsTrigger>
-        <TabsTrigger value="compliance">Conformité</TabsTrigger>
-        <TabsTrigger value="actions">Actions</TabsTrigger>
-        <TabsTrigger value="network">Supply chain</TabsTrigger>
+        <TabsTrigger value="overview">{t('tabs.overview')}</TabsTrigger>
+        <TabsTrigger value="risk">{t('tabs.risk')}</TabsTrigger>
+        <TabsTrigger value="compliance">{t('tabs.compliance')}</TabsTrigger>
+        <TabsTrigger value="actions">{t('tabs.actions')}</TabsTrigger>
+        <TabsTrigger value="network">{t('tabs.network')}</TabsTrigger>
       </TabsList>
 
       <TabsContent value="overview" className="space-y-6">

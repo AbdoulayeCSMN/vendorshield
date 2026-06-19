@@ -4,6 +4,7 @@ import { useCallback, useTransition } from 'react';
 
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 
 import {
   AlertTriangle,
@@ -84,6 +85,7 @@ function ScorePill({ score }: { score: number | null }) {
 // ─── Risk level badge ─────────────────────────────────────────────────────────
 
 function RiskBadge({ level }: { level: RiskLevel | null }) {
+  const { t } = useTranslation('vendorshield');
   if (!level) return <span className="text-xs text-gray-400">N/A</span>;
 
   const cfg = {
@@ -112,7 +114,7 @@ function RiskBadge({ level }: { level: RiskLevel | null }) {
       className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium ${cls}`}
     >
       <Icon className="h-3 w-3" />
-      {RISK_LEVEL_LABELS[level]}
+      {t(`enums.riskLevel.${level}`)}
     </span>
   );
 }
@@ -153,6 +155,7 @@ export function SuppliersTable({
   pageCount,
   filters,
 }: SuppliersTableProps) {
+  const { t } = useTranslation('vendorshield');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -204,7 +207,7 @@ export function SuppliersTable({
         <div className="relative flex-1 min-w-[200px] max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Rechercher un fournisseur..."
+            placeholder={t('suppliers.search')}
             defaultValue={filters.q ?? ''}
             className="pl-9"
             onChange={(e) => {
@@ -226,13 +229,13 @@ export function SuppliersTable({
           onValueChange={(v) => updateParam('status', v)}
         >
           <SelectTrigger className="w-40">
-            <SelectValue placeholder="Statut" />
+            <SelectValue placeholder={t('suppliers.fStatus')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tous les statuts</SelectItem>
+            <SelectItem value="all">{t('suppliers.allStatuses')}</SelectItem>
             {(Object.keys(STATUS_LABELS) as SupplierStatus[]).map((s) => (
               <SelectItem key={s} value={s}>
-                {STATUS_LABELS[s]}
+                {t(`enums.status.${s}`)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -244,13 +247,13 @@ export function SuppliersTable({
           onValueChange={(v) => updateParam('risk_level', v)}
         >
           <SelectTrigger className="w-40">
-            <SelectValue placeholder="Niveau risque" />
+            <SelectValue placeholder={t('suppliers.fRisk')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tous les risques</SelectItem>
+            <SelectItem value="all">{t('suppliers.allRisks')}</SelectItem>
             {(['critical', 'high', 'medium', 'low'] as RiskLevel[]).map((l) => (
               <SelectItem key={l} value={l}>
-                {RISK_LEVEL_LABELS[l]}
+                {t(`enums.riskLevel.${l}`)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -262,13 +265,13 @@ export function SuppliersTable({
           onValueChange={(v) => updateParam('category', v)}
         >
           <SelectTrigger className="w-44">
-            <SelectValue placeholder="Catégorie" />
+            <SelectValue placeholder={t('suppliers.fCategory')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Toutes catégories</SelectItem>
+            <SelectItem value="all">{t('suppliers.allCategories')}</SelectItem>
             {(Object.keys(CATEGORY_LABELS) as SupplierCategory[]).map((c) => (
               <SelectItem key={c} value={c}>
-                {CATEGORY_LABELS[c]}
+                {t(`enums.category.${c}`)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -278,13 +281,13 @@ export function SuppliersTable({
         {hasActiveFilters && (
           <Button variant="ghost" size="sm" onClick={clearFilters}>
             <X className="mr-1 h-3.5 w-3.5" />
-            Effacer
+            {t('suppliers.clear')}
           </Button>
         )}
 
         {/* Compteur */}
         <span className="ml-auto text-sm text-gray-500">
-          {total} résultat{total !== 1 ? 's' : ''}
+          {t('suppliers.results', { count: total })}
         </span>
       </div>
 
@@ -303,42 +306,42 @@ export function SuppliersTable({
                     onClick={() => toggleSort('name')}
                     className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-900 dark:hover:text-white"
                   >
-                    Fournisseur
+                    {t('suppliers.hSupplier')}
                     <ArrowUpDown className="h-3 w-3" />
                   </button>
                 </TableHead>
                 <TableHead className="hidden md:table-cell">
-                  <span className="text-xs font-medium text-gray-500">Catégorie</span>
+                  <span className="text-xs font-medium text-gray-500">{t('suppliers.hCategory')}</span>
                 </TableHead>
                 <TableHead className="hidden lg:table-cell">
-                  <span className="text-xs font-medium text-gray-500">Criticité</span>
+                  <span className="text-xs font-medium text-gray-500">{t('suppliers.hCriticality')}</span>
                 </TableHead>
                 <TableHead className="text-center hidden xl:table-cell">
-                  <span className="text-xs font-medium text-gray-500">Fin.</span>
+                  <span className="text-xs font-medium text-gray-500">{t('suppliers.hFinancial')}</span>
                 </TableHead>
                 <TableHead className="text-center hidden xl:table-cell">
-                  <span className="text-xs font-medium text-gray-500">Ops.</span>
+                  <span className="text-xs font-medium text-gray-500">{t('suppliers.hOperational')}</span>
                 </TableHead>
                 <TableHead className="text-center hidden xl:table-cell">
-                  <span className="text-xs font-medium text-gray-500">Géo.</span>
+                  <span className="text-xs font-medium text-gray-500">{t('suppliers.hGeo')}</span>
                 </TableHead>
                 <TableHead className="text-center hidden xl:table-cell">
-                  <span className="text-xs font-medium text-gray-500">ESG</span>
+                  <span className="text-xs font-medium text-gray-500">{t('suppliers.hEsg')}</span>
                 </TableHead>
                 <TableHead className="text-center">
                   <button
                     onClick={() => toggleSort('global_score')}
                     className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-900 dark:hover:text-white mx-auto"
                   >
-                    Score global
+                    {t('suppliers.hGlobalScore')}
                     <ArrowUpDown className="h-3 w-3" />
                   </button>
                 </TableHead>
                 <TableHead className="text-center">
-                  <span className="text-xs font-medium text-gray-500">Risque</span>
+                  <span className="text-xs font-medium text-gray-500">{t('suppliers.hRisk')}</span>
                 </TableHead>
                 <TableHead className="hidden sm:table-cell">
-                  <span className="text-xs font-medium text-gray-500">Alertes</span>
+                  <span className="text-xs font-medium text-gray-500">{t('suppliers.hAlerts')}</span>
                 </TableHead>
                 <TableHead className="w-10" />
               </TableRow>
@@ -371,7 +374,7 @@ export function SuppliersTable({
                           {s.country_name ?? s.country_code ?? '—'}
                           {s.is_sole_source && (
                             <span className="ml-1.5 inline-flex rounded bg-amber-50 px-1 text-amber-700 text-[10px] font-medium border border-amber-200">
-                              Sole source
+                              {t('dashboard.matrixSoleSource')}
                             </span>
                           )}
                         </p>
@@ -382,13 +385,13 @@ export function SuppliersTable({
 
                   {/* Catégorie */}
                   <TableCell className="hidden md:table-cell text-sm text-gray-500">
-                    {CATEGORY_LABELS[s.category]}
+                    {t(`enums.category.${s.category}`)}
                   </TableCell>
 
                   {/* Criticité */}
                   <TableCell className="hidden lg:table-cell">
                     <span className="text-xs text-gray-600 dark:text-gray-400">
-                      {CRITICALITY_LABELS[s.criticality]}
+                      {t(`enums.criticality.${s.criticality}`)}
                     </span>
                   </TableCell>
 
@@ -442,24 +445,24 @@ export function SuppliersTable({
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="h-8 w-8">
                           <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Actions</span>
+                          <span className="sr-only">{t('tabs.actions')}</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
                           <Link href={`/home/suppliers/${s.id}`}>
-                            Voir le détail
+                            {t('suppliers.aViewDetail')}
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link href={`/home/risk-assessments/new?supplier=${s.id}`}>
-                            Nouvelle évaluation
+                            {t('suppliers.aNewAssessment')}
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                           <Link href={`/home/suppliers/${s.id}/edit`}>
-                            Modifier
+                            {t('suppliers.aEdit')}
                           </Link>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -476,7 +479,7 @@ export function SuppliersTable({
       {pageCount > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-gray-500">
-            Page {page} sur {pageCount}
+            {t('suppliers.pageOf', { page, total: pageCount })}
           </p>
           <div className="flex gap-2">
             <Button
@@ -486,7 +489,7 @@ export function SuppliersTable({
               onClick={() => updateParam('page', String(page - 1))}
             >
               <ChevronLeft className="h-4 w-4 mr-1" />
-              Précédent
+              {t('suppliers.prev')}
             </Button>
             <Button
               variant="outline"
@@ -494,7 +497,7 @@ export function SuppliersTable({
               disabled={page >= pageCount || isPending}
               onClick={() => updateParam('page', String(page + 1))}
             >
-              Suivant
+              {t('suppliers.next')}
               <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
@@ -513,6 +516,7 @@ function EmptyState({
   hasFilters: boolean;
   onClear: () => void;
 }) {
+  const { t } = useTranslation('vendorshield');
   return (
     <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
       <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-gray-50 dark:bg-gray-800">
@@ -521,25 +525,25 @@ function EmptyState({
       {hasFilters ? (
         <>
           <p className="text-sm font-medium text-gray-900 dark:text-white">
-            Aucun fournisseur ne correspond aux filtres
+            {t('suppliers.emptyFilteredTitle')}
           </p>
           <p className="mt-1 text-xs text-gray-400">
-            Essayez d'ajuster vos critères de recherche.
+            {t('suppliers.emptyFilteredDesc')}
           </p>
           <Button variant="outline" size="sm" className="mt-4" onClick={onClear}>
-            Effacer les filtres
+            {t('suppliers.clear')}
           </Button>
         </>
       ) : (
         <>
           <p className="text-sm font-medium text-gray-900 dark:text-white">
-            Aucun fournisseur pour l'instant
+            {t('suppliers.emptyTitle')}
           </p>
           <p className="mt-1 text-xs text-gray-400">
-            Commencez par ajouter votre premier fournisseur.
+            {t('suppliers.emptyDesc')}
           </p>
           <Button asChild size="sm" className="mt-4">
-            <Link href="/home/suppliers/new">Ajouter un fournisseur</Link>
+            <Link href="/home/suppliers/new">{t('suppliers.addSupplier')}</Link>
           </Button>
         </>
       )}

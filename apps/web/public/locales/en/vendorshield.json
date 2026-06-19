@@ -58,5 +58,78 @@
     "matrixSoleSource": "Sole source",
     "matrixAlerts": "{{count}} alert",
     "matrixAlerts_other": "{{count}} alerts"
+  },
+  "tabs": {
+    "overview": "Overview",
+    "risk": "Risk & predictions",
+    "compliance": "Compliance",
+    "actions": "Actions",
+    "network": "Supply chain"
+  },
+  "enums": {
+    "riskLevel": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "criticality": {
+      "critical": "Critical",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "status": {
+      "active": "Active",
+      "under_review": "Under review",
+      "suspended": "Suspended",
+      "inactive": "Inactive",
+      "blacklisted": "Blacklisted"
+    },
+    "category": {
+      "raw_materials": "Raw materials",
+      "components": "Components",
+      "logistics": "Logistics",
+      "services": "Services",
+      "technology": "Technology",
+      "energy": "Energy",
+      "chemicals": "Chemicals",
+      "packaging": "Packaging",
+      "maintenance": "Maintenance",
+      "other": "Other"
+    }
+  },
+  "suppliers": {
+    "search": "Search a supplier...",
+    "fStatus": "Status",
+    "fRisk": "Risk level",
+    "fCategory": "Category",
+    "allStatuses": "All statuses",
+    "allRisks": "All risks",
+    "allCategories": "All categories",
+    "clear": "Clear",
+    "results": "{{count}} result",
+    "results_other": "{{count}} results",
+    "hSupplier": "Supplier",
+    "hCategory": "Category",
+    "hCriticality": "Criticality",
+    "hFinancial": "Fin.",
+    "hOperational": "Ops.",
+    "hGeo": "Geo.",
+    "hEsg": "ESG",
+    "hGlobalScore": "Global score",
+    "hRisk": "Risk",
+    "hAlerts": "Alerts",
+    "aViewDetail": "View detail",
+    "aNewAssessment": "New assessment",
+    "aEdit": "Edit",
+    "addSupplier": "Add a supplier",
+    "pageOf": "Page {{page}} of {{total}}",
+    "prev": "Previous",
+    "next": "Next",
+    "emptyFilteredTitle": "No supplier matches the filters",
+    "emptyFilteredDesc": "Try adjusting your search criteria.",
+    "emptyTitle": "No supplier yet",
+    "emptyDesc": "Start by adding your first supplier."
   }
 }

@@ -58,5 +58,78 @@
     "matrixSoleSource": "Einzelquelle",
     "matrixAlerts": "{{count}} Warnung",
     "matrixAlerts_other": "{{count}} Warnungen"
+  },
+  "tabs": {
+    "overview": "Übersicht",
+    "risk": "Risiko & Prognosen",
+    "compliance": "Konformität",
+    "actions": "Aktionen",
+    "network": "Lieferkette"
+  },
+  "enums": {
+    "riskLevel": {
+      "low": "Niedrig",
+      "medium": "Mittel",
+      "high": "Hoch",
+      "critical": "Kritisch"
+    },
+    "criticality": {
+      "critical": "Kritisch",
+      "high": "Hoch",
+      "medium": "Mittel",
+      "low": "Niedrig"
+    },
+    "status": {
+      "active": "Aktiv",
+      "under_review": "In Prüfung",
+      "suspended": "Ausgesetzt",
+      "inactive": "Inaktiv",
+      "blacklisted": "Sperrliste"
+    },
+    "category": {
+      "raw_materials": "Rohstoffe",
+      "components": "Komponenten",
+      "logistics": "Logistik",
+      "services": "Dienstleistungen",
+      "technology": "Technologie",
+      "energy": "Energie",
+      "chemicals": "Chemie",
+      "packaging": "Verpackung",
+      "maintenance": "Wartung",
+      "other": "Sonstige"
+    }
+  },
+  "suppliers": {
+    "search": "Lieferant suchen...",
+    "fStatus": "Status",
+    "fRisk": "Risikostufe",
+    "fCategory": "Kategorie",
+    "allStatuses": "Alle Status",
+    "allRisks": "Alle Risiken",
+    "allCategories": "Alle Kategorien",
+    "clear": "Löschen",
+    "results": "{{count}} Ergebnis",
+    "results_other": "{{count}} Ergebnisse",
+    "hSupplier": "Lieferant",
+    "hCategory": "Kategorie",
+    "hCriticality": "Kritikalität",
+    "hFinancial": "Fin.",
+    "hOperational": "Ops.",
+    "hGeo": "Geo.",
+    "hEsg": "ESG",
+    "hGlobalScore": "Gesamtwert",
+    "hRisk": "Risiko",
+    "hAlerts": "Warnungen",
+    "aViewDetail": "Details ansehen",
+    "aNewAssessment": "Neue Bewertung",
+    "aEdit": "Bearbeiten",
+    "addSupplier": "Lieferant hinzufügen",
+    "pageOf": "Seite {{page}} von {{total}}",
+    "prev": "Zurück",
+    "next": "Weiter",
+    "emptyFilteredTitle": "Kein Lieferant entspricht den Filtern",
+    "emptyFilteredDesc": "Passen Sie Ihre Suchkriterien an.",
+    "emptyTitle": "Noch kein Lieferant",
+    "emptyDesc": "Fügen Sie zunächst Ihren ersten Lieferanten hinzu."
   }
 }
