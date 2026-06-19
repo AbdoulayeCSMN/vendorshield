@@ -456,7 +456,7 @@ function MiniScoreBar({ score }: { score: number | null }) {
 }
 
 function relativeTime(d: string) {
-  const m = Math.floor((Date.now()-new Date(d).getTime())/60000);
+  const m = Math.max(0, Math.floor((Date.now()-new Date(d).getTime())/60000));
   return m<1?'à l\'instant':m<60?`il y a ${m}min`:m<1440?`il y a ${Math.floor(m/60)}h`:`il y a ${Math.floor(m/1440)}j`;
 }
 
@@ -693,7 +693,7 @@ export function VendorShieldDashboard({
                       <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{alert.supplier?.name??alert.title}</p>
                       <p className="text-[10px] text-gray-400 mt-0.5 line-clamp-1">{alert.message}</p>
                     </div>
-                    <span className="text-[9px] text-gray-400 shrink-0">{relativeTime(alert.created_at)}</span>
+                    <span suppressHydrationWarning className="text-[9px] text-gray-400 shrink-0">{relativeTime(alert.created_at)}</span>
                   </div>
                 ))
             )}
@@ -726,7 +726,7 @@ export function VendorShieldDashboard({
                   <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{analysis.supplier_name}</p>
                   <p className="text-[10px] text-gray-400 mt-0.5">{analysis.risk_signals?.length ?? 0} signaux détectés</p>
                 </div>
-                <span className="text-[9px] text-gray-400 shrink-0">{relativeTime(analysis.created_at)}</span>
+                <span suppressHydrationWarning className="text-[9px] text-gray-400 shrink-0">{relativeTime(analysis.created_at)}</span>
               </Link>
             ))
           )}
