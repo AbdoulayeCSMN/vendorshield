@@ -47,12 +47,14 @@ import { getSupplyChainGraph } from '~/lib/vendorshield/actions/tier.actions';
 import { getSupplierById } from '~/lib/vendorshield/suppliers.server';
 import { getSupplierKpis } from '~/lib/vendorshield/kpis.server';
 import { getSupplierCompliance } from '~/lib/vendorshield/actions/document.actions';
+import { getSupplierQuestionnaires } from '~/lib/vendorshield/actions/questionnaire.actions';
 
 import { BankruptcyPanel } from './_components/bankruptcy-panel';
 import { ClimateRiskPanel } from './_components/climate-risk-panel';
 import { OperationalPredictionPanel } from './_components/operational-prediction-panel';
 import { SupplierDocumentsPanel } from './_components/supplier-documents-panel';
 import { SupplierKpiScorecard } from './_components/supplier-kpi-scorecard';
+import { SupplierQuestionnairesPanel } from './_components/supplier-questionnaires-panel';
 import { SupplierAiPanel } from './_components/supplier-ai-panel';
 import { SupplierDetail } from './_components/supplier-detail';
 import { TierNetworkGraph } from './_components/tier-network-graph';
@@ -64,17 +66,27 @@ interface Props {
 async function SupplierDetailPage({ params }: Props) {
   const { id } = await params;
 
-  const [supplier, analyses, configStatus, predictions, scGraph, deliveryPrediction, kpis, compliance] =
-    await Promise.all([
-      getSupplierById(id),
-      getSupplierAnalyses(id, 5),
-      getAiConfigStatus(),
-      getSupplierPredictions(id, 4),
-      getSupplyChainGraph(id),
-      getDeliveryPrediction(id),
-      getSupplierKpis(id),
-      getSupplierCompliance(id),
-    ]);
+  const [
+    supplier,
+    analyses,
+    configStatus,
+    predictions,
+    scGraph,
+    deliveryPrediction,
+    kpis,
+    compliance,
+    questionnaires,
+  ] = await Promise.all([
+    getSupplierById(id),
+    getSupplierAnalyses(id, 5),
+    getAiConfigStatus(),
+    getSupplierPredictions(id, 4),
+    getSupplyChainGraph(id),
+    getDeliveryPrediction(id),
+    getSupplierKpis(id),
+    getSupplierCompliance(id),
+    getSupplierQuestionnaires(id),
+  ]);
 
   if (!supplier) notFound();
 
@@ -92,6 +104,7 @@ async function SupplierDetailPage({ params }: Props) {
             <OperationalPredictionPanel supplierId={id} initial={deliveryPrediction} />
             <ClimateRiskPanel supplierId={id} />
             <SupplierDocumentsPanel supplierId={id} compliance={compliance} />
+            <SupplierQuestionnairesPanel supplierId={id} requests={questionnaires} />
             <BankruptcyPanel supplierId={id} predictions={predictions} />
             <SupplierAiPanel supplierId={id} pastAnalyses={analyses} configStatus={configStatus} />
           </div>
