@@ -1,0 +1,99 @@
+---
+title: "Deploy on Vercel"
+description: "Deploy VendorShield on Vercel and configure environment variables."
+---
+
+VendorShield deploys to Vercel. This page covers monorepo settings, environment variables,
+and the classic public-URL gotcha.
+
+## 1. Import the project
+
+In **Vercel → Add New → Project**, import the repo, then:
+
+| Setting | Value |
+|---|---|
+| Framework Preset | Next.js |
+| Root Directory | `apps/web` |
+| Install / Build | default (Vercel detects pnpm + the Turbo workspace) |
+
+## 2. Load environment variables
+
+In **Settings → Environment Variables**, you can **paste/import** a `.env` file. Paste this
+block, replacing with your values:
+
+```bash
+# --- REQUIRED (Supabase → Settings → API) ---
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# --- Public URL (see step 4) ---
+NEXT_PUBLIC_SITE_URL=https://your-project.vercel.app
+
+# --- AI ---
+MOCK_AI=false
+GROQ_API_KEY=gsk_...
+# OPENROUTER_API_KEY=sk-or-...   # optional fallback
+```
+
+<Warning>
+`SUPABASE_SERVICE_ROLE_KEY` bypasses RLS: put it **only** in Vercel (encrypted), never in a
+versioned file. If leaked, rotate immediately.
+</Warning>
+
+### Optional variables
+
+| To enable… | Variables |
+|---|---|
+| Alert emails | `RESEND_API_KEY`, `EMAIL_FROM`, `ALERTS_WEBHOOK_SECRET` |
+| Crons (monitoring + ML) | `MONITORING_SCAN_SECRET` or `CRON_SECRET` |
+| Stripe billing | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PRICE_*` |
+| Python ML service | `ML_SERVICE_URL`, `ML_SERVICE_API_KEY` |
+
+Full list: [Environment variables](/en/deployment/environment).
+
+## 3. Configure Supabase Auth
+
+<Warning>
+Without this step, sign-in and emails redirect to `localhost`.
+</Warning>
+
+In **Supabase → Authentication → URL Configuration**:
+- **Site URL**: `https://your-project.vercel.app`
+- **Redirect URLs**: add `https://your-project.vercel.app/**`
+
+## 4. The public-URL gotcha
+
+`NEXT_PUBLIC_SITE_URL` is only known **after** the first deployment.
+
+<Steps>
+  <Step title="First deploy">
+    Vercel assigns a URL `https://your-project.vercel.app`.
+  </Step>
+  <Step title="Set the URL">
+    Put it in `NEXT_PUBLIC_SITE_URL` (Vercel) and in Supabase Auth (step 3).
+  </Step>
+  <Step title="Redeploy">
+    **Deployments → ⋯ → Redeploy** to apply the new URL.
+  </Step>
+</Steps>
+
+## 5. Migrations & automation
+
+- **Migrations**: apply `apps/web/supabase/migrations/*.sql` to your Supabase project (SQL
+  Editor) — Vercel does not manage the database.
+- **Crons & emails**: see [Automation & cron](/en/deployment/automation). On Vercel, add a
+  `vercel.json`:
+  ```json
+  {
+    "crons": [
+      { "path": "/api/monitoring/scan", "schedule": "0 6 * * *" },
+      { "path": "/api/ml/retrain", "schedule": "30 5 * * *" }
+    ]
+  }
+  ```
+
+## 6. Custom domain (later)
+
+When you buy a domain: **Vercel → Settings → Domains** → add it, follow the DNS steps. Then
+update `NEXT_PUBLIC_SITE_URL` and the Supabase Auth URLs with the new domain.

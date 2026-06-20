@@ -37,6 +37,7 @@
           {
             "group": "Déploiement & automatisation",
             "pages": [
+              "deployment/vercel",
               "deployment/environment",
               "deployment/automation",
               "deployment/ml-service"
@@ -70,6 +71,7 @@
           {
             "group": "Deployment & automation",
             "pages": [
+              "en/deployment/vercel",
               "en/deployment/environment",
               "en/deployment/automation",
               "en/deployment/ml-service"
