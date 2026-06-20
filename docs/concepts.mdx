@@ -8,10 +8,19 @@ description: "Scoring, niveaux de risque, multi-tenant et modèle de données."
 Chaque fournisseur porte un **score global** (0 = risque maximal, 100 = risque minimal),
 agrégé à partir de **4 dimensions** et de **24 critères**.
 
-```
-S_dimension = Σ(score_i × poids_i) / Σ(poids_i)          # critères d'une dimension
-S_global    = Σ(S_dim_j × Poids_dim_j) / Σ(Poids actifs) # moyenne pondérée des dimensions
-```
+**Score d'une dimension** (moyenne pondérée de ses critères) :
+
+$$
+S_{\text{dimension}} = \frac{\displaystyle\sum_{i} \text{score}_i \cdot w_i}{\displaystyle\sum_{i} w_i}
+$$
+
+**Score global** (moyenne pondérée des dimensions actives) :
+
+$$
+S_{\text{global}} = \frac{\displaystyle\sum_{j} S_{\text{dim}_j} \cdot W_j}{\displaystyle\sum_{j} W_j}
+$$
+
+où $\text{score}_i$ est la note du critère $i$ (0–100), $w_i$ son poids, $S_{\text{dim}_j}$ le score de la dimension $j$ et $W_j$ son poids (seules les dimensions notées entrent dans la somme).
 
 Pondérations par défaut :
 

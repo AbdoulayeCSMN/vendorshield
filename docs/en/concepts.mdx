@@ -8,10 +8,19 @@ description: "Scoring, risk levels, multi-tenancy and the data model."
 Each supplier carries a **global score** (0 = maximum risk, 100 = minimum risk), aggregated
 from **4 dimensions** and **24 criteria**.
 
-```
-S_dimension = Σ(score_i × weight_i) / Σ(weight_i)          # criteria of a dimension
-S_global    = Σ(S_dim_j × Weight_dim_j) / Σ(active weights) # weighted average of dimensions
-```
+**Dimension score** (weighted average of its criteria):
+
+$$
+S_{\text{dimension}} = \frac{\displaystyle\sum_{i} \text{score}_i \cdot w_i}{\displaystyle\sum_{i} w_i}
+$$
+
+**Global score** (weighted average of the active dimensions):
+
+$$
+S_{\text{global}} = \frac{\displaystyle\sum_{j} S_{\text{dim}_j} \cdot W_j}{\displaystyle\sum_{j} W_j}
+$$
+
+where $\text{score}_i$ is criterion $i$'s rating (0–100), $w_i$ its weight, $S_{\text{dim}_j}$ the score of dimension $j$ and $W_j$ its weight (only rated dimensions enter the sum).
 
 Default weights:
 
