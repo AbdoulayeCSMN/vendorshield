@@ -33,24 +33,32 @@ const MODELS = (
   .filter(Boolean)
   .slice(0, 3);
 
-async function callOpenRouter(
-  apiKey: string,
-  messages: { role: string; content: string }[],
-): Promise<{ ok: true; res: Response } | { ok: false; status: number; detail: string }> {
-  const payload = JSON.stringify({
-    ...(MODELS.length > 1 ? { models: MODELS } : { model: MODELS[0] }),
-    stream: true,
-    temperature: 0.4,
-    max_tokens: 800,
-    // Pour les modèles de raisonnement (ex: gpt-oss) : raisonnement minimal pour
-    // accélérer et laisser plus de budget au contenu. Ignoré par les autres.
-    reasoning: { effort: 'low' },
-    messages,
-  });
+type LlmResult =
+  | { ok: true; res: Response }
+  | { ok: false; status: number; detail: string };
 
-  // Une seule tentative côté 429 : la limite du tier gratuit est partagée et ne
-  // se recharge pas en quelques secondes — retenter ne ferait qu'allonger
-  // l'attente. On échoue vite et on laisse l'utilisateur réessayer.
+type Msg = { role: string; content: string };
+
+// Groq — tier gratuit fiable et rapide (LPU), API compatible OpenAI.
+const GROQ_MODEL = process.env.GROQ_MODEL ?? 'llama-3.3-70b-versatile';
+
+async function callGroq(apiKey: string, messages: Msg[]): Promise<LlmResult> {
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      stream: true,
+      temperature: 0.4,
+      max_tokens: 800,
+      messages,
+    }),
+  });
+  if (res.ok && res.body) return { ok: true, res };
+  return { ok: false, status: res.status, detail: await res.text().catch(() => '') };
+}
+
+async function callOpenRouter(apiKey: string, messages: Msg[]): Promise<LlmResult> {
   const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -58,13 +66,37 @@ async function callOpenRouter(
       'Content-Type': 'application/json',
       'X-Title': 'VendorShield Copilot',
     },
-    body: payload,
+    body: JSON.stringify({
+      ...(MODELS.length > 1 ? { models: MODELS } : { model: MODELS[0] }),
+      stream: true,
+      temperature: 0.4,
+      max_tokens: 800,
+      // Modèles de raisonnement (gpt-oss) : raisonnement minimal → plus rapide.
+      reasoning: { effort: 'low' },
+      messages,
+    }),
   });
-
   if (res.ok && res.body) return { ok: true, res };
+  return { ok: false, status: res.status, detail: await res.text().catch(() => '') };
+}
 
-  const detail = await res.text().catch(() => '');
-  return { ok: false, status: res.status, detail };
+/**
+ * Priorité Groq (gratuit + fiable) ; repli OpenRouter `:free` si Groq absent ou
+ * en échec. Échec rapide (pas de retry) : le tier gratuit ne se recharge pas en
+ * quelques secondes.
+ */
+async function callLlm(messages: Msg[]): Promise<LlmResult> {
+  const groqKey = process.env.GROQ_API_KEY;
+  const openRouterKey = process.env.OPENROUTER_API_KEY;
+
+  if (groqKey) {
+    const groq = await callGroq(groqKey, messages);
+    if (groq.ok || !openRouterKey) return groq;
+    // Groq en échec → on tente OpenRouter.
+  }
+  if (openRouterKey) return callOpenRouter(openRouterKey, messages);
+
+  return { ok: false, status: 503, detail: 'no-provider' };
 }
 
 export async function POST(request: NextRequest) {
@@ -74,10 +106,9 @@ export async function POST(request: NextRequest) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) {
+  if (!process.env.GROQ_API_KEY && !process.env.OPENROUTER_API_KEY) {
     return Response.json(
-      { error: "Copilote indisponible : OPENROUTER_API_KEY n'est pas configurée." },
+      { error: 'Copilote indisponible : configurez GROQ_API_KEY ou OPENROUTER_API_KEY.' },
       { status: 503 },
     );
   }
@@ -112,13 +143,13 @@ export async function POST(request: NextRequest) {
       'Tu es le copilote VendorShield, assistant pour la gestion et l’anticipation du risque fournisseur. Réponds en français, de façon concise, professionnelle et actionnable.';
   }
 
-  const result = await callOpenRouter(apiKey, [
+  const result = await callLlm([
     { role: 'system', content: system },
     ...history,
   ]);
 
   if (!result.ok) {
-    console.error('[copilot] OpenRouter error', result.status, result.detail);
+    console.error('[copilot] LLM error', result.status, result.detail);
     if (result.status === 429) {
       return Response.json(
         { error: 'Trop de requêtes sur le modèle gratuit. Réessayez dans quelques secondes.' },
