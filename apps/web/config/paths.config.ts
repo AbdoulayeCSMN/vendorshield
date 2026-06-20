@@ -11,6 +11,7 @@ const PathsSchema = z.object({
   }),
   app: z.object({
     home: z.string().min(1),
+    copilot: z.string().min(1),
     profileSettings: z.string().min(1),
     suppliers: z.string().min(1),
     supplierDetail: z.string().min(1),
@@ -41,6 +42,7 @@ const pathsConfig = PathsSchema.parse({
   },
   app: {
     home: '/home',
+    copilot: '/home/copilot',
     profileSettings: '/home/settings',
     suppliers: '/home/suppliers',
     supplierDetail: '/home/suppliers/[id]',

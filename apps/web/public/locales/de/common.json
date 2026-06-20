@@ -76,7 +76,8 @@
     "exposure": "Risikoexposition",
     "subscription": "Abonnement",
     "auditLog": "Audit-Protokoll",
-    "organization": "Organisation"
+    "organization": "Organisation",
+    "copilot": "Copilot"
   },
   "roles": {
     "owner": {
