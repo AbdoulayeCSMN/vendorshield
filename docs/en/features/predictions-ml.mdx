@@ -18,6 +18,34 @@ Python ML service (FastAPI + MLflow)  ──HTTP──►  predictViaMlService()
 The app calls the Python service first; if it is unavailable it **falls back
 automatically** to the TypeScript model. The app therefore works **without** the ML service.
 
+## Prediction model
+
+**Delay probability** — logistic regression over features computed on an expanding window
+(no temporal leakage):
+
+$$
+P(\text{delay}) = \sigma(z), \qquad z = \mathbf{w}^{\top}\mathbf{x}, \qquad \sigma(z) = \frac{1}{1 + e^{-z}}
+$$
+
+where $\mathbf{x}$ gathers the bias, prior OTD, prior average delay, quantity, PPM and
+seasonality ($\sin$/$\cos$). Weights $\mathbf{w}$ are learned by **gradient descent**
+minimizing the log-likelihood with $L_2$ regularization:
+
+$$
+\mathcal{L}(\mathbf{w}) = -\frac{1}{n}\sum_{i=1}^{n}\Big[y_i\log \hat{p}_i + (1-y_i)\log(1-\hat{p}_i)\Big] + \lambda\lVert \mathbf{w}\rVert^{2}
+$$
+
+A factor's **contribution** $j$ (the driver shown to the user) is $c_j = w_j \cdot x_j$.
+
+**PPM threshold breach** — from the forecast PPM $\widehat{\text{PPM}}$ (linear trend) and the
+threshold $\tau$ (default $5000$):
+
+$$
+P(\text{breach}) = \sigma\!\left(1.7 \cdot \frac{\widehat{\text{PPM}} - \tau}{\sigma_{\text{res}}}\right)
+$$
+
+where $\sigma_{\text{res}}$ is the standard deviation of the trend residuals.
+
 ## Cold-start: value on day one
 
 <Note>

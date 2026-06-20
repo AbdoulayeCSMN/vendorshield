@@ -18,6 +18,34 @@ Service ML Python (FastAPI + MLflow)  ──HTTP──►  predictViaMlService()
 L'application appelle d'abord le service Python ; s'il est indisponible, elle **retombe
 automatiquement** sur le modèle TypeScript. L'app fonctionne donc **sans** le service ML.
 
+## Modèle de prédiction
+
+**Probabilité de retard** — régression logistique sur des features calculées en fenêtre
+expansive (sans fuite temporelle) :
+
+$$
+P(\text{retard}) = \sigma(z), \qquad z = \mathbf{w}^{\top}\mathbf{x}, \qquad \sigma(z) = \frac{1}{1 + e^{-z}}
+$$
+
+où $\mathbf{x}$ regroupe le biais, l'OTD antérieur, le retard moyen antérieur, la quantité,
+le PPM et la saisonnalité ($\sin$/$\cos$). Les poids $\mathbf{w}$ sont appris par **descente
+de gradient** minimisant la log-vraisemblance avec régularisation $L_2$ :
+
+$$
+\mathcal{L}(\mathbf{w}) = -\frac{1}{n}\sum_{i=1}^{n}\Big[y_i\log \hat{p}_i + (1-y_i)\log(1-\hat{p}_i)\Big] + \lambda\lVert \mathbf{w}\rVert^{2}
+$$
+
+La **contribution** d'un facteur $j$ (driver expliqué à l'utilisateur) est $c_j = w_j \cdot x_j$.
+
+**Dépassement du seuil PPM** — à partir du PPM projeté $\widehat{\text{PPM}}$ (tendance
+linéaire) et du seuil $\tau$ (défaut $5000$) :
+
+$$
+P(\text{dépassement}) = \sigma\!\left(1{,}7 \cdot \frac{\widehat{\text{PPM}} - \tau}{\sigma_{\text{rés}}}\right)
+$$
+
+où $\sigma_{\text{rés}}$ est l'écart-type des résidus de la tendance.
+
 ## Cold-start : valeur dès le 1er jour
 
 <Note>
