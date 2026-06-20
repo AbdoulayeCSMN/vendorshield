@@ -15,6 +15,7 @@ import {
 
 import { AlertsKpiBar } from './_components/alerts-kpi-bar';
 import { AlertsList } from './_components/alerts-list';
+import { ScanButton } from './_components/scan-button';
 
 interface Props {
   searchParams: Promise<{
@@ -50,6 +51,7 @@ async function AlertsPage({ searchParams }: Props) {
         description={`${kpis.open_total} alerte${kpis.open_total !== 1 ? 's' : ''} ouvertes`}
       >
         <div className="flex gap-2">
+          <ScanButton />
           <Button asChild variant="outline" size="sm">
             <Link href="/home/alerts/rules">Règles</Link>
           </Button>
