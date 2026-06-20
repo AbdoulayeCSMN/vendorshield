@@ -6,6 +6,7 @@ import { requireUser } from '@kit/supabase/require-user';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 
 import { denyIfDemo } from '~/lib/vendorshield/demo';
+import { getServiceRoleClient } from '~/lib/vendorshield/service-client';
 
 type ActionResult<T = null> =
   | { success: true; data: T; message?: string }
@@ -76,6 +77,14 @@ export async function commitImportAction(
   if (demo) return demo;
 
   const accountId = auth.data.id;
+
+  // Écritures via service-role : l'`account_id`/`imported_by` sont dérivés du
+  // serveur (auth.data.id), et data_imports.imported_by est une FK vers
+  // auth.users — qu'un client `authenticated` ne peut pas valider (erreur
+  // « permission denied for table users »). Le service-role contourne ce point
+  // et la RLS, sans risque puisque le compte est vérifié côté serveur.
+  const svc = getServiceRoleClient();
+
   const rows = Array.isArray(input.rows) ? input.rows : [];
   if (rows.length === 0) {
     return { success: false, error: 'Aucune ligne à importer.' };
@@ -100,7 +109,7 @@ export async function commitImportAction(
 
   // Trace l'import (statut en cours).
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: imp, error: impErr } = await (client as any)
+  const { data: imp, error: impErr } = await (svc as any)
     .from('data_imports')
     .insert({
       account_id: accountId,
@@ -138,13 +147,13 @@ export async function commitImportAction(
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: insErr } = await (client as any)
+  const { error: insErr } = await (svc as any)
     .from('supplier_deliveries')
     .insert(deliveries);
 
   if (insErr) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (client as any)
+    await (svc as any)
       .from('data_imports')
       .update({ import_status: 'failed', error_summary: insErr.message })
       .eq('id', importId);
@@ -152,7 +161,7 @@ export async function commitImportAction(
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (client as any)
+  await (svc as any)
     .from('data_imports')
     .update({ import_status: 'done' })
     .eq('id', importId);
