@@ -12,18 +12,10 @@ import { ModeToggle } from '@kit/ui/mode-toggle';
 import { LanguageSwitcher } from './language-switcher';
 
 import { AppLogo } from '~/components/app-logo';
+import { BrandMark } from '~/components/brand-mark';
 import { ProfileAccountDropdownContainer } from '~/components/personal-account-dropdown-container';
 import { navigationConfig } from '~/config/navigation.config';
 import { Tables } from '~/lib/database.types';
-
-function ShieldIcon() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M16 2L4 7V15C4 21.627 9.373 27.627 16 30C22.627 27.627 28 21.627 28 15V7L16 2Z" className="fill-primary"/>
-      <path d="M11 16l3.5 3.5L21 12" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
 
 export function HomeSidebar(props: {
   account?: Tables<'accounts'>;
@@ -37,7 +29,7 @@ export function HomeSidebar(props: {
             <AppLogo className={'max-w-full'} />
           </div>
           <div className={'hidden group-data-[collapsible=icon]:flex w-full justify-center'}>
-            <ShieldIcon />
+            <BrandMark className="h-7 w-7" />
           </div>
         </div>
       </SidebarHeader>

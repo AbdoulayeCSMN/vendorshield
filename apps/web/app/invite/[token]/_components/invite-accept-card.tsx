@@ -8,6 +8,7 @@ import { Check, Shield, Users } from 'lucide-react';
 import { Button } from '@kit/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@kit/ui/card';
 
+import { BrandMark } from '~/components/brand-mark';
 import { acceptInvitationAction } from '~/lib/vendorshield/actions/organization.actions';
 import { ROLE_LABELS, type OrgMemberRole } from '~/lib/vendorshield/types';
 
@@ -48,12 +49,7 @@ export function InviteAcceptCard({ invitation, token }: InviteAcceptCardProps) {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="flex items-center gap-2 justify-center mb-8">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <path d="M16 2L4 7V15C4 21.627 9.373 27.627 16 30C22.627 27.627 28 21.627 28 15V7L16 2Z"
-              className="fill-primary"/>
-            <path d="M11 16l3.5 3.5L21 12" stroke="white" strokeWidth="2.2"
-              strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <BrandMark className="h-8 w-8" />
           <span className="text-xl font-bold">Vendor<span className="text-primary">Shield</span></span>
         </div>
 
