@@ -1,0 +1,52 @@
+---
+title: "Alerts & monitoring"
+description: "Real-time threshold alerts and a scheduled monitoring scan."
+---
+
+## Two complementary mechanisms
+
+<CardGroup cols={2}>
+  <Card title="Threshold rules (real-time)" icon="bolt">
+    Whenever a supplier score changes, alert rules are evaluated by a SQL trigger.
+    Configurable in **Alerts → Rules**.
+  </Card>
+  <Card title="Scheduled monitoring" icon="radar">
+    A scan detects the **time-based** conditions triggers can't catch.
+  </Card>
+</CardGroup>
+
+## The monitoring scan
+
+The `run_monitoring_scan()` function detects and creates **deduplicated** alerts for:
+
+| Detection | Threshold | Severity |
+|---|---|---|
+| Documents expired / expiring | ≤ 30 days | critical if expired, otherwise warning |
+| Contracts nearing end | ≤ 60 days | critical if &lt; 14 days |
+| Stale assessments (critical suppliers) | > 12 months | warning |
+
+### Three ways to trigger it
+
+<Steps>
+  <Step title='"Scan now" button'>
+    On `/home/alerts`, runs the scan for your account (immediate).
+  </Step>
+  <Step title="External cron">
+    `POST/GET /api/monitoring/scan` (all accounts), secret-protected. See
+    [Automation](/en/deployment/automation).
+  </Step>
+  <Step title="pg_cron">
+    Scheduling directly inside Supabase.
+  </Step>
+</Steps>
+
+## Email notifications
+
+Each alert insert triggers a Supabase **Database Webhook** → `/api/alerts/webhook` → email
+via **Resend**. No alert is duplicated while it stays open.
+
+<Warning>
+Emails require a **deployed** app (Supabase must reach a public URL) + `RESEND_API_KEY` and
+`ALERTS_WEBHOOK_SECRET`. Locally, alerts show in the app but no email is sent. See
+[Automation](/en/deployment/automation).
+</Warning>

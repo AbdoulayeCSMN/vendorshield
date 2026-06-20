@@ -1,0 +1,55 @@
+---
+title: "Suppliers"
+description: "Registry, detailed records and per-supplier modules."
+---
+
+The **Suppliers** page (`/home/suppliers`) lists your whole portfolio with scores,
+criticality, country and spend, with filters and export.
+
+## The supplier record
+
+`/home/suppliers/[id]` gathers all risk modules as tabs:
+
+<CardGroup cols={2}>
+  <Card title="Overview & scores" icon="gauge">
+    The 5 scores (global + 4 dimensions) and risk level.
+  </Card>
+  <Card title="Assessments" icon="clipboard-check">
+    History of 24-criteria assessments.
+  </Card>
+  <Card title="Operational predictions" icon="chart-line">
+    Delivery-delay and defect (PPM) probability. See
+    [Predictions & ML](/en/features/predictions-ml).
+  </Card>
+  <Card title="Financial distress" icon="building-columns">
+    Bankruptcy risk estimate.
+  </Card>
+  <Card title="Climate risk" icon="cloud-bolt">
+    Exposure to climate hazards (Open-Meteo).
+  </Card>
+  <Card title="Cyber posture" icon="shield-halved">
+    Cyber exposure indicators.
+  </Card>
+  <Card title="Documents & compliance" icon="file-shield">
+    Certifications, expiry dates, CSRD.
+  </Card>
+  <Card title="Questionnaires" icon="list-check">
+    Questionnaires sent to the supplier via the portal.
+  </Card>
+  <Card title="Audits & CAPA" icon="magnifying-glass-chart">
+    Supplier audits and corrective action plans.
+  </Card>
+  <Card title="KPI scorecard" icon="file-pdf">
+    Supplier dashboard + PDF export.
+  </Card>
+</CardGroup>
+
+## Supplier portal
+
+A secure external link (`/portal/[token]`) lets the supplier **answer questionnaires
+without creating an account** — handy for compliance collection.
+
+## Create a supplier
+
+Manually via **Add a supplier** (`/home/suppliers/new`), or in bulk via
+[Imports](/en/features/imports).

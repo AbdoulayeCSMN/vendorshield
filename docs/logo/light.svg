@@ -1,0 +1,5 @@
+<svg width="192" height="32" viewBox="0 0 192 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M16 2L4 7V15C4 21.627 9.373 27.627 16 30C22.627 27.627 28 21.627 28 15V7L16 2Z" fill="#6366f1"/>
+  <path d="M10.5 11L16 21.5L21.5 11" stroke="#ffffff" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="38" y="21" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="17" font-weight="700" fill="#1e293b">VendorShield</text>
+</svg>

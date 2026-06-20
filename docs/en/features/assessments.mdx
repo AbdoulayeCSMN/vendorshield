@@ -1,0 +1,38 @@
+---
+title: "Risk assessments"
+description: "Score a supplier across 24 weighted criteria."
+---
+
+**Assessments** (`/home/risk-assessments`) are the official engine for scores. An assessment
+scores a supplier across **24 criteria** grouped into 4 dimensions.
+
+## The 4 dimensions
+
+<CardGroup cols={2}>
+  <Card title="Financial" icon="building-columns">
+    Financial strength, liquidity, dependency, credit rating…
+  </Card>
+  <Card title="Operational" icon="gears">
+    Quality, lead times, capacity, business continuity…
+  </Card>
+  <Card title="Geopolitical" icon="earth-americas">
+    Country risk, sanctions, stability, logistics…
+  </Card>
+  <Card title="ESG" icon="leaf">
+    Environment, social, governance, compliance.
+  </Card>
+</CardGroup>
+
+## Lifecycle
+
+```
+draft → in_progress → completed → approved
+```
+
+On completion, the computed scores are **propagated to the supplier** (see
+[Concepts](/en/concepts#where-scores-come-from)).
+
+## When to reassess?
+
+[Automatic monitoring](/en/features/alerts-monitoring) flags **critical suppliers not
+assessed in more than 12 months** to keep scores reliable.

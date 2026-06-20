@@ -1,0 +1,76 @@
+---
+title: "Automation & cron"
+description: "Alert emails, daily monitoring and ML retraining."
+---
+
+VendorShield relies on three automations. They are **optional**: the app works without them,
+but they deliver the recurring value (proactive alerts, fresh predictions).
+
+## 1. Alert emails (Database Webhook)
+
+<Steps>
+  <Step title="Resend">
+    Create an account at [resend.com](https://resend.com), get the `re_…` key, then set
+    `RESEND_API_KEY` and `EMAIL_FROM`.
+  </Step>
+  <Step title="Secret">
+    Set `ALERTS_WEBHOOK_SECRET` (long random string).
+  </Step>
+  <Step title="Supabase webhook">
+    Dashboard → **Database → Webhooks** → table `public.alerts`, event **Insert**, HTTP
+    POST to `https://YOUR-DOMAIN/api/alerts/webhook`, header
+    `x-webhook-secret = ALERTS_WEBHOOK_SECRET`.
+  </Step>
+</Steps>
+
+<Warning>
+Supabase must reach a **public URL** — works in production, not on `localhost`.
+</Warning>
+
+## 2. Daily monitoring
+
+Endpoint: `POST/GET /api/monitoring/scan` (all accounts). Choose **one** option:
+
+<Tabs>
+  <Tab title="pg_cron (recommended)">
+    Host-independent. Paste once in the SQL Editor:
+    ```sql
+    create extension if not exists pg_cron;
+
+    select cron.schedule(
+      'vendorshield-daily-monitoring',
+      '0 6 * * *',
+      $$ select public.run_monitoring_scan(); $$
+    );
+    ```
+  </Tab>
+  <Tab title="Vercel Cron">
+    In `vercel.json`:
+    ```json
+    { "crons": [{ "path": "/api/monitoring/scan", "schedule": "0 6 * * *" }] }
+    ```
+    Set `CRON_SECRET` (or `MONITORING_SCAN_SECRET`).
+  </Tab>
+</Tabs>
+
+## 3. Daily ML retraining
+
+Endpoint: `POST/GET /api/ml/retrain` (recomputes predictions for all accounts + global
+cold-start). Same authentication as monitoring.
+
+<Tabs>
+  <Tab title="Vercel Cron">
+    ```json
+    { "crons": [{ "path": "/api/ml/retrain", "schedule": "30 5 * * *" }] }
+    ```
+  </Tab>
+  <Tab title="Manual trigger">
+    The **"Recompute predictions"** button on `/home/suppliers` (your account).
+  </Tab>
+</Tabs>
+
+## Required migration
+
+Monitoring needs the `run_monitoring_scan` function. Apply the migration
+`apps/web/supabase/migrations/20250710000000_monitoring_scan.sql` to your database before
+using "Scan now" or the cron.

@@ -1,0 +1,58 @@
+---
+title: "Introduction"
+description: "VendorShield — AI-powered supplier risk management (SRM)."
+---
+
+**VendorShield** is a B2B SaaS platform that helps procurement and supply chain teams —
+especially in manufacturing — **score, monitor and anticipate** the risks across their
+supplier portfolio: financial health, operational performance, geopolitics, ESG, cyber
+and climate.
+
+## What VendorShield delivers
+
+<CardGroup cols={2}>
+  <Card title="Multi-dimension scoring" icon="gauge-high">
+    A global risk score per supplier across 4 dimensions (financial, operational,
+    geopolitical, ESG) from 24 weighted criteria.
+  </Card>
+  <Card title="Frictionless import" icon="file-import">
+    Import any CSV/Excel/JSON file — column mapping is AI-assisted.
+  </Card>
+  <Card title="Automatic monitoring" icon="bell">
+    Proactive alerts on expiring documents/contracts, stale assessments and score drops —
+    by email.
+  </Card>
+  <Card title="Prediction & copilot" icon="robot">
+    Delivery-delay, defect and financial-distress prediction, plus an LLM copilot aware of
+    your whole scope.
+  </Card>
+</CardGroup>
+
+## Guiding principle
+
+<Note>
+VendorShield is **zero-touch**: a new customer imports their data and gets value **on day
+one**, without manual data engineering. The 24-criteria scoring is rule-based (instant);
+predictive ML kicks in with history, with a fallback to an anonymized global model.
+</Note>
+
+## Stack at a glance
+
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js 15 (App Router, RSC) + React 19 + Tailwind v4 |
+| Backend | Supabase (PostgreSQL, Auth, Storage, Edge Functions, RLS) |
+| LLM copilot | Groq → OpenRouter fallback (streaming) |
+| ML | Python service (FastAPI + MLflow) + TypeScript fallback model |
+| i18n | French (default), English, German, Hausa |
+
+## Where to start
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/en/quickstart">
+    Install and run the app locally.
+  </Card>
+  <Card title="Key concepts" icon="book" href="/en/concepts">
+    Understand scoring, risk levels and the data model.
+  </Card>
+</CardGroup>

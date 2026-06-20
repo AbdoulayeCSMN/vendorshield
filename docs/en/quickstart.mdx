@@ -1,0 +1,81 @@
+---
+title: "Quickstart"
+description: "Install, configure and run VendorShield locally."
+---
+
+## Prerequisites
+
+- **Node.js** 20+
+- **pnpm** 9+
+- A **Supabase** project (local via Docker, or remote)
+
+## Installation
+
+<Steps>
+  <Step title="Clone and install">
+    ```bash
+    git clone https://github.com/AbdoulayeCSMN/vendorshield.git
+    cd vendorshield
+    pnpm install
+    ```
+  </Step>
+  <Step title="Configure the environment">
+    Copy the template and fill in your keys:
+    ```bash
+    cp apps/web/.env.example apps/web/.env.local
+    ```
+    At minimum:
+    ```bash
+    NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+    SUPABASE_SERVICE_ROLE_KEY=eyJ...
+    ```
+    <Tip>
+    Add `GROQ_API_KEY` to enable the copilot and AI-assisted import mapping. See
+    [Environment variables](/en/deployment/environment).
+    </Tip>
+  </Step>
+  <Step title="Apply migrations">
+    <Tabs>
+      <Tab title="Local Supabase">
+        ```bash
+        pnpm run supabase:web:reset
+        ```
+      </Tab>
+      <Tab title="Remote Supabase">
+        Paste the contents of `apps/web/supabase/migrations/*.sql` into the Supabase
+        **SQL Editor**, in chronological order.
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="Run">
+    ```bash
+    pnpm run dev
+    ```
+    The app runs at [http://localhost:3000](http://localhost:3000).
+  </Step>
+</Steps>
+
+## Load demo data
+
+The repo ships synthetic suppliers under `test-data/`:
+
+<Tabs>
+  <Tab title="Via the app (recommended)">
+    Go to **Imports** → choose **Supplier records** → upload
+    `test-data/synthetic-suppliers.csv`. The mapping is pre-filled by AI.
+  </Tab>
+  <Tab title="Via SQL">
+    Run `test-data/wipe-and-seed-suppliers.sql` in the SQL Editor to wipe and re-insert
+    40 synthetic suppliers.
+  </Tab>
+</Tabs>
+
+## Checks
+
+```bash
+pnpm --filter web typecheck
+pnpm --filter web build
+```
+
+<Check>Typecheck and build pass with no errors.</Check>

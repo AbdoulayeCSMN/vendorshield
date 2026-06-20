@@ -1,0 +1,41 @@
+---
+title: "Exposure & multi-sourcing"
+description: "Spend-at-Risk, concentration, stress-test and diversification advice."
+---
+
+The **Exposure** page (`/home/exposure`) gives a portfolio-level view of risk.
+
+## Exposure metrics
+
+| Metric | Meaning |
+|---|---|
+| **Spend-at-Risk** | Σ (spend × incident probability). Share of spend actually exposed. |
+| **Concentration (HHI)** | Herfindahl index on spend shares (low / moderate / high). |
+| **Top-3 dependency** | Share of spend on the 3 largest suppliers (stress-test). |
+| **Sole-sources** | Count and spend of single-source suppliers. |
+
+## Multi-sourcing & diversification
+
+The engine flags **dependency risks** and proposes a concrete action:
+
+<CardGroup cols={2}>
+  <Card title="Critical sole-source" icon="triangle-exclamation">
+    Critical supplier with no alternative → **qualify a second source**.
+  </Card>
+  <Card title="Alternatives exist" icon="code-branch">
+    Several suppliers in the category → **split the volume**.
+  </Card>
+</CardGroup>
+
+For each case, VendorShield counts the **qualified alternatives** in the same category
+(sorted by lowest risk) and shows them as links.
+
+### AI strategic advice
+
+The **"AI strategic advice"** button turns these facts into a **prioritized diversification
+plan** (markdown), via Groq → OpenRouter.
+
+<Note>
+The advice invents nothing: it cites only your real suppliers and figures. Without an LLM
+key, the factual recommendations remain displayed.
+</Note>

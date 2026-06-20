@@ -1,0 +1,66 @@
+---
+title: "Imports & AI mapping"
+description: "Import suppliers and deliveries from any format."
+---
+
+The **Imports** page (`/home/imports`) loads **CSV, Excel or JSON** files. You choose what
+you import:
+
+<CardGroup cols={2}>
+  <Card title="Supplier records" icon="building">
+    Creates suppliers (name, country, category, spend, scores…).
+  </Card>
+  <Card title="Deliveries" icon="truck">
+    Transaction history, automatically matched to existing suppliers. Feeds the
+    operational ML.
+  </Card>
+</CardGroup>
+
+## AI-assisted column mapping
+
+The classic onboarding blocker — "my columns aren't in the right format" — is removed: at
+the **Mapping** step, an LLM maps your headers to VendorShield fields automatically.
+
+<Steps>
+  <Step title="Upload">
+    Upload your file; the real headers are detected.
+  </Step>
+  <Step title="Mapping (pre-filled)">
+    The AI proposes the mapping — for example:
+
+    | Source column | Target field |
+    |---|---|
+    | "Raison sociale" | `name` |
+    | "Famille achat" | `category` |
+    | "CA annuel (k€)" | `annual_spend_eur` |
+    | "Note ESG" | `esg_score` |
+
+    Each row remains **editable**.
+  </Step>
+  <Step title="Quality & confirm">
+    A quality report flags missing values; you confirm the import.
+  </Step>
+</Steps>
+
+<Note>
+Mapping uses **Groq** (fallback **OpenRouter**). With no LLM key configured, a
+**deterministic synonym** fallback takes over — import still works.
+</Note>
+
+## Recognized fields (suppliers)
+
+`name` (required), `registration_number`, `country_code`, `country_name`, `city`,
+`category`, `criticality`, `status`, `annual_spend_eur`, `employee_count`, `founded_year`,
+`credit_rating`, `is_sole_source`, `website`, and the scores
+(`global_score`, `financial_score`, `operational_score`, `geopolitical_score`, `esg_score`).
+
+<Tip>
+`category`, `criticality` and `status` are validated against their allowed values (a default
+is applied otherwise), and scores are clamped to 0–100.
+</Tip>
+
+## Security
+
+Writes run with the **service-role** on the server, with an `account_id` derived from the
+authenticated user — never from client input. This also avoids the "permission denied for
+table users" error tied to foreign keys to `auth.users`.

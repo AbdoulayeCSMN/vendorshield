@@ -8,35 +8,78 @@
     "light": "#818cf8",
     "dark": "#4f46e5"
   },
+  "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
   "navigation": {
-    "groups": [
+    "languages": [
       {
-        "group": "Démarrer",
-        "pages": ["introduction", "quickstart", "concepts"]
-      },
-      {
-        "group": "Fonctionnalités",
-        "pages": [
-          "features/suppliers",
-          "features/imports",
-          "features/assessments",
-          "features/alerts-monitoring",
-          "features/exposure-sourcing",
-          "features/predictions-ml",
-          "features/copilot"
+        "language": "fr",
+        "groups": [
+          {
+            "group": "Démarrer",
+            "pages": ["introduction", "quickstart", "concepts"]
+          },
+          {
+            "group": "Fonctionnalités",
+            "pages": [
+              "features/suppliers",
+              "features/imports",
+              "features/assessments",
+              "features/alerts-monitoring",
+              "features/exposure-sourcing",
+              "features/predictions-ml",
+              "features/copilot"
+            ]
+          },
+          {
+            "group": "Déploiement & automatisation",
+            "pages": [
+              "deployment/environment",
+              "deployment/automation",
+              "deployment/ml-service"
+            ]
+          },
+          {
+            "group": "Référence",
+            "pages": ["reference/api", "troubleshooting"]
+          }
         ]
       },
       {
-        "group": "Déploiement & automatisation",
-        "pages": [
-          "deployment/environment",
-          "deployment/automation",
-          "deployment/ml-service"
+        "language": "en",
+        "groups": [
+          {
+            "group": "Get started",
+            "pages": ["en/introduction", "en/quickstart", "en/concepts"]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "en/features/suppliers",
+              "en/features/imports",
+              "en/features/assessments",
+              "en/features/alerts-monitoring",
+              "en/features/exposure-sourcing",
+              "en/features/predictions-ml",
+              "en/features/copilot"
+            ]
+          },
+          {
+            "group": "Deployment & automation",
+            "pages": [
+              "en/deployment/environment",
+              "en/deployment/automation",
+              "en/deployment/ml-service"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": ["en/reference/api", "en/troubleshooting"]
+          }
         ]
-      },
-      {
-        "group": "Référence",
-        "pages": ["reference/api"]
       }
     ]
   },

@@ -1,0 +1,63 @@
+---
+title: "Troubleshooting (FAQ)"
+description: "Common pitfalls and how to fix them."
+---
+
+## "permission denied for table users" on import
+
+**Cause**: a write (e.g. `data_imports`) with a foreign key to `auth.users` executed with a
+user client — the `authenticated` role isn't allowed to validate that FK.
+
+**Fix**: import writes now run with the **service-role** on the server, with a
+server-derived `account_id`. Make sure `SUPABASE_SERVICE_ROLE_KEY` is set.
+
+## I imported a CSV but see no suppliers
+
+You probably imported in **Deliveries** mode (which matches existing suppliers) instead of
+**Supplier records**. On `/home/imports`, choose **Supplier records** to create suppliers.
+See [Imports](/en/features/imports).
+
+## "function run_monitoring_scan does not exist"
+
+The monitoring migration isn't applied. Run
+`apps/web/supabase/migrations/20250710000000_monitoring_scan.sql` in the SQL Editor.
+
+## Alert emails aren't sent
+
+<Steps>
+  <Step title="Local?">
+    Expected: Supabase can't reach `localhost`. Emails only work in **production** (public
+    URL).
+  </Step>
+  <Step title="Resend configured?">
+    Check `RESEND_API_KEY` and `EMAIL_FROM`. For arbitrary recipients, your domain must be
+    **verified** in Resend.
+  </Step>
+  <Step title="Webhook created?">
+    Database Webhook on `public.alerts` (INSERT) → `/api/alerts/webhook` with header
+    `x-webhook-secret = ALERTS_WEBHOOK_SECRET`.
+  </Step>
+</Steps>
+
+## The copilot doesn't respond / "Copilot error"
+
+- Set `GROQ_API_KEY` (recommended) or `OPENROUTER_API_KEY`.
+- OpenRouter's free models may return **429** (shared limit); Groq is more reliable. The app
+  switches from Groq to OpenRouter automatically.
+
+## The cron endpoint returns 503 or 401
+
+- **503**: no secret configured → set `MONITORING_SCAN_SECRET` (or `CRON_SECRET`).
+- **401**: invalid secret → check the `x-monitoring-secret` header (or
+  `Authorization: Bearer <CRON_SECRET>`).
+
+## Predictions show "import history first"
+
+Operational prediction needs **deliveries**. Import history in **Deliveries** mode. For a new
+account with no data, the **global cold-start** provides an initial estimate. See
+[Predictions & ML](/en/features/predictions-ml).
+
+## Wrong language / language switcher
+
+The UI is French by default, with English, German and Hausa. Use the **language switcher**
+in the sidebar.

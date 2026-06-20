@@ -1,0 +1,65 @@
+---
+title: "Dépannage (FAQ)"
+description: "Les pièges courants et comment les résoudre."
+---
+
+## « permission denied for table users » à l'import
+
+**Cause** : une écriture (ex. `data_imports`) avec une clé étrangère vers `auth.users`
+exécutée avec un client utilisateur — le rôle `authenticated` n'a pas le droit de valider
+cette FK.
+
+**Solution** : les écritures d'import se font désormais en **service-role** côté serveur,
+avec un `account_id` dérivé du serveur. Assurez-vous que `SUPABASE_SERVICE_ROLE_KEY` est
+bien renseignée.
+
+## J'ai importé un CSV mais je ne vois aucun fournisseur
+
+Vous avez probablement importé en mode **Livraisons** (qui rapproche des fournisseurs
+existants) au lieu de **Fiches fournisseurs**. Sur `/home/imports`, choisissez
+**Fiches fournisseurs** pour créer les fournisseurs. Voir [Imports](/features/imports).
+
+## « function run_monitoring_scan does not exist »
+
+La migration de surveillance n'est pas appliquée. Exécutez
+`apps/web/supabase/migrations/20250710000000_monitoring_scan.sql` dans le SQL Editor.
+
+## Les emails d'alerte ne partent pas
+
+<Steps>
+  <Step title="En local ?">
+    Normal : Supabase ne peut pas joindre `localhost`. Les emails ne fonctionnent qu'en
+    **production** (URL publique).
+  </Step>
+  <Step title="Resend configuré ?">
+    Vérifiez `RESEND_API_KEY` et `EMAIL_FROM`. Pour des destinataires arbitraires, votre
+    domaine doit être **vérifié** dans Resend.
+  </Step>
+  <Step title="Webhook créé ?">
+    Database Webhook sur `public.alerts` (INSERT) → `/api/alerts/webhook` avec l'en-tête
+    `x-webhook-secret = ALERTS_WEBHOOK_SECRET`.
+  </Step>
+</Steps>
+
+## Le copilote ne répond pas / « Erreur du copilote »
+
+- Renseignez `GROQ_API_KEY` (recommandé) ou `OPENROUTER_API_KEY`.
+- Les modèles gratuits d'OpenRouter peuvent renvoyer **429** (limite partagée) ; Groq est
+  plus fiable. L'app bascule automatiquement de Groq vers OpenRouter.
+
+## L'endpoint de cron renvoie 503 ou 401
+
+- **503** : aucun secret configuré → définissez `MONITORING_SCAN_SECRET` (ou `CRON_SECRET`).
+- **401** : secret invalide → vérifiez l'en-tête `x-monitoring-secret` (ou
+  `Authorization: Bearer <CRON_SECRET>`).
+
+## Les prédictions affichent « importez d'abord un historique »
+
+La prédiction opérationnelle a besoin de **livraisons**. Importez un historique en mode
+**Livraisons**. Pour un nouveau compte sans données, le **cold-start global** fournit une
+estimation initiale. Voir [Prédictions & ML](/features/predictions-ml).
+
+## Mauvaise langue / sélecteur de langue
+
+L'interface est en français par défaut, avec anglais, allemand et haoussa. Utilisez le
+**sélecteur de langue** dans la barre latérale.

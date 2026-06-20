@@ -1,0 +1,41 @@
+---
+title: 'Copilot "Aboki"'
+description: "An LLM assistant aware of the whole scope and the real account state."
+---
+
+**Aboki** is VendorShield's copilot: an assistant for procurement and supply chain
+directors, available as a **widget** (screen corner) and a **dedicated page**
+(`/home/copilot`).
+
+## What it knows
+
+<CardGroup cols={2}>
+  <Card title="The whole scope" icon="map">
+    Every page and module (imports, exposure, multi-sourcing, audits, CAPA, compliance,
+    cyber, climate…) — it points to the right page.
+  </Card>
+  <Card title="The real account state" icon="database">
+    KPIs, top risky suppliers, open alerts, exposure (Spend-at-Risk, HHI, sole-sources)
+    and, on a record, the consulted supplier's context.
+  </Card>
+</CardGroup>
+
+## Guardrails
+
+<Note>
+The copilot uses **only** the real data injected into its context (account-scoped via RLS).
+It is instructed to **never invent** figures or suppliers, and to suggest the right page
+when information is missing.
+</Note>
+
+## Technical
+
+- Models: **Groq** (`llama-3.3-70b-versatile`) first, **OpenRouter** fallback.
+- **Streaming** responses, **markdown** rendering (tables, lists), browser-side history
+  persistence.
+- Endpoint: `POST /api/copilot`. See [API reference](/en/reference/api).
+
+## Configuration
+
+Set `GROQ_API_KEY` (recommended) and/or `OPENROUTER_API_KEY`. See
+[Environment variables](/en/deployment/environment).

@@ -1,0 +1,81 @@
+---
+title: "Key concepts"
+description: "Scoring, risk levels, multi-tenancy and the data model."
+---
+
+## Risk scoring
+
+Each supplier carries a **global score** (0 = maximum risk, 100 = minimum risk), aggregated
+from **4 dimensions** and **24 criteria**.
+
+```
+S_dimension = Σ(score_i × weight_i) / Σ(weight_i)          # criteria of a dimension
+S_global    = Σ(S_dim_j × Weight_dim_j) / Σ(active weights) # weighted average of dimensions
+```
+
+Default weights:
+
+| Dimension | Weight |
+|---|---|
+| Financial | 30% |
+| Operational | 30% |
+| Geopolitical | 20% |
+| ESG | 20% |
+
+<Note>
+Scoring is **rule-based**: a supplier has a score as soon as an assessment is completed,
+**without ML training**. That is what makes value immediate for a new customer.
+</Note>
+
+## Risk levels
+
+`risk_level` is derived automatically from `global_score` by a SQL trigger:
+
+| Global score | Level |
+|---|---|
+| ≥ 70 | `low` |
+| 40–69 | `medium` |
+| 20–39 | `high` |
+| &lt; 20 | `critical` |
+
+## Where scores come from
+
+<Steps>
+  <Step title="24-criteria assessment">
+    An analyst scores the supplier across the 24 criteria (**Assessments** page).
+  </Step>
+  <Step title="Compute">
+    `compute_assessment_scores()` computes the assessment's scores.
+  </Step>
+  <Step title="Propagate">
+    The `sync_supplier_scores()` trigger updates the supplier's scores, then
+    `compute_risk_level()` derives the risk level.
+  </Step>
+</Steps>
+
+Scores can also be **imported** directly (if the customer already has them) or enriched by
+**AI / OSINT** analysis.
+
+## Multi-tenancy & isolation
+
+VendorShield is multi-tenant. Every row is isolated by `account_id` via PostgreSQL **RLS
+policies** — a user only sees their own account's data.
+
+<Warning>
+Sensitive server writes (import, monitoring, ML) use the **service-role** on the server
+only, with an `account_id` always derived from the authenticated user — never from client
+input.
+</Warning>
+
+## Data model (excerpt)
+
+| Table | Role |
+|---|---|
+| `suppliers` | Registry + 5 denormalized scores |
+| `risk_assessments` / `risk_factors` | Assessments and their 24 criteria |
+| `alerts` / `alert_rules` | Alerts and threshold rules |
+| `supplier_deliveries` | Delivery history (operational ML input) |
+| `delivery_predictions` | Stored delay/PPM predictions |
+| `documents` | Attachments + expiry dates (compliance) |
+| `data_imports` | Import traceability |
+| `audit_log` | Immutable journal |

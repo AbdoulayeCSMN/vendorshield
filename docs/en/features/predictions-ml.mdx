@@ -1,0 +1,50 @@
+---
+title: "Predictions & ML"
+description: "Delay/PPM prediction, global cold-start and automatic retraining."
+---
+
+VendorShield predicts **operational risk** per supplier — **delivery-delay** and **defect
+(PPM)** probability — from delivery history.
+
+## Architecture
+
+```
+Python ML service (FastAPI + MLflow)  ──HTTP──►  predictViaMlService()
+        │                                              │ (automatic fallback)
+        ▼                                              ▼
+   served prediction                         Embedded TypeScript model
+```
+
+The app calls the Python service first; if it is unavailable it **falls back
+automatically** to the TypeScript model. The app therefore works **without** the ML service.
+
+## Cold-start: value on day one
+
+<Note>
+A new account has no history. Instead of failing, VendorShield uses an **anonymized global
+model** (aggregate cross-account coefficients, **no tenant identifier exposed**) to produce
+an initial prediction (capped confidence). As soon as the account has enough data, a
+dedicated model takes over automatically.
+</Note>
+
+## When models train
+
+| Trigger | Scope |
+|---|---|
+| "Recompute prediction" button (supplier record) | One supplier |
+| "Recompute predictions" button (suppliers list) | The whole account |
+| Cron `POST/GET /api/ml/retrain` | All accounts |
+| New account with no history | Global model (cold-start) |
+
+Batch retraining is **fast and free** (no LLM call, deterministic explanation). See
+[Automation](/en/deployment/automation) for scheduling.
+
+## Privacy
+
+The global model only learns **aggregate coefficients**; it neither stores nor exposes any
+named data from another customer. Each account only sees its own predictions (RLS).
+
+## Financial distress
+
+A **bankruptcy risk** prediction is available per supplier (dedicated tab on the record),
+powered by the `bankruptcy-predictor` Edge Function.

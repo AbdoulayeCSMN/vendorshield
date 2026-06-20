@@ -1,0 +1,58 @@
+---
+title: "API reference"
+description: "Internal endpoints: copilot, monitoring, ML, webhook."
+---
+
+These routes are served by the Next.js app (`apps/web/app/api/`).
+
+## Copilot
+
+<ResponseField name="POST /api/copilot" type="endpoint">
+  Conversation with the "Aboki" copilot. **Streaming** response (text deltas). The context
+  (account state) is injected server-side, account-scoped via RLS. Models: Groq → OpenRouter
+  fallback.
+</ResponseField>
+
+## Monitoring
+
+<ResponseField name="POST/GET /api/monitoring/scan" type="endpoint">
+  Runs `run_monitoring_scan()` for **all accounts**. Creates deduplicated alerts (expiring
+  documents/contracts, stale assessments).
+
+  **Authentication**: header `x-monitoring-secret: <MONITORING_SCAN_SECRET>`, or
+  `Authorization: Bearer <CRON_SECRET>` (Vercel Cron).
+
+  **Response**: `{ "ok": true, "created": <count> }`
+</ResponseField>
+
+## ML retraining
+
+<ResponseField name="POST/GET /api/ml/retrain" type="endpoint">
+  Recomputes operational predictions for all accounts (global cold-start when history is
+  insufficient).
+
+  **Authentication**: same as monitoring.
+
+  **Response**: `{ "ok": true, "accounts": <n>, "suppliers": <n> }`
+</ResponseField>
+
+## Alerts webhook
+
+<ResponseField name="POST /api/alerts/webhook" type="endpoint">
+  Receives Supabase Database Webhooks on INSERT into `alerts` and sends the email via
+  Resend.
+
+  **Authentication**: header `x-webhook-secret: <ALERTS_WEBHOOK_SECRET>`.
+</ResponseField>
+
+<Note>
+Cron endpoints return **503** if no secret is configured and **401** if the secret is
+invalid — for safety, they stay inactive until configured.
+</Note>
+
+## Example call (cron)
+
+```bash
+curl -X POST https://YOUR-DOMAIN/api/monitoring/scan \
+  -H "x-monitoring-secret: $MONITORING_SCAN_SECRET"
+```

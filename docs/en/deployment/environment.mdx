@@ -1,0 +1,61 @@
+---
+title: "Environment variables"
+description: "All variables, required and optional."
+---
+
+Set these in `apps/web/.env.local` (dev) and in your host's environment (prod). The
+reference template is `apps/web/.env.example`.
+
+## Required
+
+| Variable | Role |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public (client) key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service-role key — server writes (import, monitoring, ML) |
+
+<Warning>
+`SUPABASE_SERVICE_ROLE_KEY` is **secret**. Never commit it or expose it client-side. If
+leaked, rotate it immediately in the Supabase dashboard.
+</Warning>
+
+## AI (copilot & import mapping)
+
+| Variable | Role |
+|---|---|
+| `GROQ_API_KEY` | Copilot + AI import mapping (recommended) |
+| `OPENROUTER_API_KEY` | Fallback when Groq is unavailable |
+
+Without an LLM key, the copilot is inactive and import mapping falls back to deterministic
+matching.
+
+## Alert emails (optional)
+
+| Variable | Role |
+|---|---|
+| `RESEND_API_KEY` | Email sending (resend.com) |
+| `EMAIL_FROM` | Sender address, e.g. `VendorShield <alerts@domain.com>` |
+| `ALERTS_WEBHOOK_SECRET` | Shared secret for the Supabase Database Webhook |
+
+<Note>
+With Resend, only send to arbitrary recipients after **verifying your domain** (DNS
+SPF/DKIM). To test, use `EMAIL_FROM=VendorShield <onboarding@resend.dev>` (sends only to
+your own address).
+</Note>
+
+## Scheduled jobs (optional)
+
+| Variable | Role |
+|---|---|
+| `MONITORING_SCAN_SECRET` | Protects `/api/monitoring/scan` and `/api/ml/retrain` (`x-monitoring-secret` header) |
+| `CRON_SECRET` | Alternative via Vercel Cron (`Authorization: Bearer …`) |
+
+## Python ML service (optional)
+
+In `services/ml/.env` (`VS_ML_` prefix):
+
+| Variable | Role |
+|---|---|
+| `VS_ML_DATABASE_URL` | Read-only DSN to the Supabase database |
+| `VS_ML_API_KEY` | Protects the `/predict` endpoint |
+| `VS_ML_MLFLOW_EXPERIMENT` | MLflow experiment name |
