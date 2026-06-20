@@ -66,6 +66,143 @@ function norm(s: unknown): string {
  * performance) et trace l'import dans data_imports. Rapproche chaque ligne d'un
  * fournisseur existant (par nom ou numéro d'enregistrement) quand c'est possible.
  */
+// ─── Import de fiches FOURNISSEURS ────────────────────────────────────────────
+
+const SUPPLIER_CATEGORIES = new Set([
+  'raw_materials', 'components', 'logistics', 'services', 'technology',
+  'energy', 'chemicals', 'packaging', 'maintenance', 'other',
+]);
+const SUPPLIER_CRITICALITIES = new Set(['critical', 'high', 'medium', 'low']);
+const SUPPLIER_STATUSES = new Set([
+  'active', 'under_review', 'suspended', 'inactive', 'blacklisted',
+]);
+
+function toInt(v: unknown): number | null {
+  const n = toNumber(v);
+  return n === null ? null : Math.round(n);
+}
+function toBool(v: unknown): boolean {
+  const s = String(v ?? '').trim().toLowerCase();
+  return s === 'true' || s === '1' || s === 'yes' || s === 'oui' || s === 'vrai';
+}
+function clampScore(v: unknown): number | null {
+  const n = toInt(v);
+  return n === null ? null : Math.max(0, Math.min(100, n));
+}
+
+export interface CommitSupplierImportResult {
+  importId: string | null;
+  imported: number;
+  skipped: number;
+}
+
+/**
+ * Importe des FICHES FOURNISSEURS depuis un fichier mappé. La colonne `name`
+ * est obligatoire ; le reste est optionnel (catégorie/criticité/statut validés
+ * contre leurs enums, scores bornés 0-100). Écriture en service-role
+ * (account_id dérivé du serveur ; suppliers.created_by → FK auth.users).
+ */
+export async function commitSupplierImportAction(
+  input: CommitImportInput,
+): Promise<ActionResult<CommitSupplierImportResult>> {
+  const client = getSupabaseServerClient();
+  const auth = await requireUser(client);
+  if (auth.error) return { success: false, error: 'Non authentifié' };
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
+  const accountId = auth.data.id;
+  const svc = getServiceRoleClient();
+  const rows = Array.isArray(input.rows) ? input.rows : [];
+  if (rows.length === 0) return { success: false, error: 'Aucune ligne à importer.' };
+
+  const map = (key: string) => input.columnMapping[key] || key;
+  const val = (row: Record<string, unknown>, key: string) => row[map(key)];
+
+  let skipped = 0;
+  const suppliers: Record<string, unknown>[] = [];
+  for (const row of rows) {
+    const name = String(val(row, 'name') ?? '').trim();
+    if (!name) {
+      skipped++;
+      continue;
+    }
+    const category = String(val(row, 'category') ?? '').trim().toLowerCase();
+    const criticality = String(val(row, 'criticality') ?? '').trim().toLowerCase();
+    const status = String(val(row, 'status') ?? '').trim().toLowerCase();
+
+    suppliers.push({
+      account_id: accountId,
+      name,
+      legal_name: String(val(row, 'legal_name') ?? '').trim() || null,
+      registration_number: String(val(row, 'registration_number') ?? '').trim() || null,
+      website: String(val(row, 'website') ?? '').trim() || null,
+      country_code: String(val(row, 'country_code') ?? '').trim().toUpperCase().slice(0, 2) || null,
+      country_name: String(val(row, 'country_name') ?? '').trim() || null,
+      city: String(val(row, 'city') ?? '').trim() || null,
+      category: SUPPLIER_CATEGORIES.has(category) ? category : 'other',
+      criticality: SUPPLIER_CRITICALITIES.has(criticality) ? criticality : 'medium',
+      status: SUPPLIER_STATUSES.has(status) ? status : 'active',
+      annual_spend_eur: toInt(val(row, 'annual_spend_eur')),
+      employee_count: toInt(val(row, 'employee_count')),
+      founded_year: toInt(val(row, 'founded_year')),
+      credit_rating: String(val(row, 'credit_rating') ?? '').trim() || null,
+      is_sole_source: toBool(val(row, 'is_sole_source')),
+      global_score: clampScore(val(row, 'global_score')),
+      financial_score: clampScore(val(row, 'financial_score')),
+      operational_score: clampScore(val(row, 'operational_score')),
+      geopolitical_score: clampScore(val(row, 'geopolitical_score')),
+      esg_score: clampScore(val(row, 'esg_score')),
+      created_by: accountId,
+    });
+  }
+
+  if (suppliers.length === 0) {
+    return { success: false, error: 'Aucune ligne valide (colonne « name » manquante ?).' };
+  }
+
+  // Trace l'import.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: imp } = await (svc as any)
+    .from('data_imports')
+    .insert({
+      account_id: accountId,
+      filename: input.filename || 'suppliers',
+      file_type: input.fileType || 'csv',
+      total_rows: rows.length,
+      valid_rows: suppliers.length,
+      error_rows: skipped,
+      import_status: 'processing',
+      quality_score: input.qualityScore ?? 100,
+      imported_by: accountId,
+    })
+    .select('id')
+    .single();
+  const importId = (imp?.id as string) ?? null;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: insErr } = await (svc as any).from('suppliers').insert(suppliers);
+  if (insErr) {
+    if (importId) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (svc as any)
+        .from('data_imports')
+        .update({ import_status: 'failed', error_summary: insErr.message })
+        .eq('id', importId);
+    }
+    return { success: false, error: insErr.message };
+  }
+
+  if (importId) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (svc as any).from('data_imports').update({ import_status: 'done' }).eq('id', importId);
+  }
+
+  revalidatePath('/home/suppliers');
+  revalidatePath('/home');
+  return { success: true, data: { importId, imported: suppliers.length, skipped } };
+}
+
 export async function commitImportAction(
   input: CommitImportInput,
 ): Promise<ActionResult<CommitImportResult>> {

@@ -10,7 +10,12 @@ import { UploadZone } from './upload-zone';
 import { ColumnMapping } from './column-mapping';
 import { QualityReport, ValidationError } from './quality-report';
 import { ImportHistory } from './import-history';
-import { commitImportAction } from '~/lib/vendorshield/actions/import.actions';
+import {
+  commitImportAction,
+  commitSupplierImportAction,
+} from '~/lib/vendorshield/actions/import.actions';
+
+type ImportType = 'suppliers' | 'deliveries';
 
 interface ValidationResult {
   total_rows: number;
@@ -23,6 +28,7 @@ interface ValidationResult {
 }
 
 export default function ImportsPage() {
+  const [importType, setImportType] = useState<ImportType>('suppliers');
   const [step, setStep] = useState<'upload' | 'mapping' | 'quality' | 'confirm'>('upload');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [parsedRows, setParsedRows] = useState<any[]>([]);
@@ -57,26 +63,37 @@ export default function ImportsPage() {
 
     setImportStatus('importing');
     try {
-      const result = await commitImportAction({
+      const payload = {
         rows: parsedRows,
         columnMapping,
         filename: uploadedFile.name,
         fileType: uploadedFile.name.split('.').pop()?.toLowerCase() || 'csv',
         qualityScore: validationResult.quality_score,
-      });
+      };
 
-      if (!result.success) {
-        toast.error(result.error);
-        setImportStatus('idle');
-        return;
+      if (importType === 'suppliers') {
+        const result = await commitSupplierImportAction(payload);
+        if (!result.success) {
+          toast.error(result.error);
+          setImportStatus('idle');
+          return;
+        }
+        toast.success(
+          `${result.data.imported} fournisseur(s) importé(s)` +
+            (result.data.skipped > 0 ? ` · ${result.data.skipped} ignoré(s) (nom manquant)` : ''),
+        );
+      } else {
+        const result = await commitImportAction(payload);
+        if (!result.success) {
+          toast.error(result.error);
+          setImportStatus('idle');
+          return;
+        }
+        toast.success(
+          `${result.data.imported} lignes importées · ${result.data.matched} rattachées à un fournisseur` +
+            (result.data.unmatched > 0 ? ` · ${result.data.unmatched} non rapprochées` : ''),
+        );
       }
-
-      toast.success(
-        `${result.data.imported} lignes importées · ${result.data.matched} rattachées à un fournisseur` +
-          (result.data.unmatched > 0
-            ? ` · ${result.data.unmatched} non rapprochées`
-            : ''),
-      );
 
       setUploadedFile(null);
       setParsedRows([]);
@@ -139,6 +156,32 @@ export default function ImportsPage() {
         <TabsContent value="upload">
           <Card className="p-6">
             <h2 className="text-lg font-semibold mb-4">Étape 1 : Charger un fichier</h2>
+
+            {/* Type d'import */}
+            <div className="mb-5">
+              <p className="text-sm font-medium text-gray-700 mb-2">Que voulez-vous importer ?</p>
+              <div className="grid grid-cols-2 gap-3 max-w-md">
+                {([
+                  { v: 'suppliers', t: 'Fiches fournisseurs', d: 'Créer des fournisseurs (nom, pays, scores…)' },
+                  { v: 'deliveries', t: 'Livraisons', d: 'Historique de transactions (rapproché aux fournisseurs)' },
+                ] as const).map((opt) => (
+                  <button
+                    key={opt.v}
+                    type="button"
+                    onClick={() => setImportType(opt.v)}
+                    className={`rounded-lg border p-3 text-left transition-colors ${
+                      importType === opt.v
+                        ? 'border-primary bg-primary/5 ring-1 ring-primary'
+                        : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    <p className="text-sm font-semibold">{opt.t}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{opt.d}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <UploadZone onFileUpload={handleFileUpload} onValidationResult={handleValidationResult} />
           </Card>
         </TabsContent>
