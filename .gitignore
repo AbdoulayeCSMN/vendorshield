@@ -25,6 +25,8 @@ pnpm-debug.log*
 .env.development.local
 .env.test.local
 .env.production.local
+# …mais on autorise le template (placeholders uniquement)
+!.env.example
 
 # vercel
 .vercel
@@ -35,6 +37,7 @@ next-env.d.ts
 
 # IDE / editors
 .vscode/
+.claude
 .idea/
 *.swp
 *.swo
