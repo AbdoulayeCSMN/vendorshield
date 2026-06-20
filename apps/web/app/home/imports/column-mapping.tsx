@@ -1,49 +1,116 @@
 'use client';
 
-import { useState } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@kit/ui/table';
+import { useEffect, useMemo, useState } from 'react';
+
+import { Loader2, Sparkles } from 'lucide-react';
+
+import { Button } from '@kit/ui/button';
+
+import { suggestColumnMappingAction } from '~/lib/vendorshield/actions/import-mapping.actions';
+import { fieldsFor } from '~/lib/vendorshield/import-fields';
 
 interface ColumnMappingProps {
-  file: File;
-  onComplete: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  rows: any[];
+  importType: 'suppliers' | 'deliveries';
+  onComplete: (mapping: Record<string, string>) => void;
 }
 
-export function ColumnMapping({ file }: ColumnMappingProps) {
-  const [mappings, setMappings] = useState<Record<string, string>>({});
+export function ColumnMapping({ rows, importType, onComplete }: ColumnMappingProps) {
+  const headers = useMemo(
+    () => (rows.length ? Object.keys(rows[0]).filter((h) => h !== 'row_number') : []),
+    [rows],
+  );
+  const fields = fieldsFor(importType);
+
+  const [mapping, setMapping] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
+  const [aiSuggested, setAiSuggested] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    suggestColumnMappingAction({ headers, sampleRows: rows.slice(0, 5), importType })
+      .then((res) => {
+        if (!active) return;
+        if (res.success) {
+          setMapping(res.mapping);
+          setAiSuggested(res.source === 'llm');
+        }
+      })
+      .finally(() => active && setLoading(false));
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [headers.join('|'), importType]);
+
+  const setField = (key: string, src: string) =>
+    setMapping((m) => {
+      const c = { ...m };
+      if (src) c[key] = src;
+      else delete c[key];
+      return c;
+    });
+
+  const missingRequired = fields.filter((f) => f.required && !mapping[f.key]);
+
+  if (loading) {
+    return (
+      <div className="text-muted-foreground flex items-center gap-2 py-8 text-sm">
+        <Loader2 className="h-4 w-4 animate-spin" /> Détection automatique des colonnes par l'IA…
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-gray-600">
-        Faites correspondre les colonnes de votre fichier aux champs VendorShield
-      </p>
-      
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Colonne source</TableHead>
-              <TableHead>Champ cible</TableHead>
-              <TableHead>Obligatoire</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell>Supplier ID</TableCell>
-              <TableCell>supplier_id</TableCell>
-              <TableCell>Oui</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Delivery Date</TableCell>
-              <TableCell>delivery_date</TableCell>
-              <TableCell>Oui</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>PPM</TableCell>
-              <TableCell>ppm</TableCell>
-              <TableCell>Non</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-600">
+          Associez les colonnes de votre fichier aux champs VendorShield. Modifiable si besoin.
+        </p>
+        {aiSuggested && (
+          <span className="text-primary inline-flex items-center gap-1 text-xs font-medium">
+            <Sparkles className="h-3.5 w-3.5" /> Pré-rempli par l'IA
+          </span>
+        )}
+      </div>
+
+      <div className="divide-y rounded-lg border">
+        {fields.map((f) => (
+          <div key={f.key} className="flex items-center gap-3 px-3 py-2">
+            <div className="w-1/2 min-w-0">
+              <span className="text-sm font-medium">{f.label}</span>
+              {f.required && <span className="ml-1 text-red-500">*</span>}
+            </div>
+            <select
+              value={mapping[f.key] ?? ''}
+              onChange={(e) => setField(f.key, e.target.value)}
+              className={`border-input bg-background h-8 flex-1 rounded-md border px-2 text-sm ${
+                f.required && !mapping[f.key] ? 'border-red-300' : ''
+              }`}
+            >
+              <option value="">— Ignorer —</option>
+              {headers.map((h) => (
+                <option key={h} value={h}>
+                  {h}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
+      </div>
+
+      {missingRequired.length > 0 && (
+        <p className="text-xs text-red-600">
+          Champ(s) obligatoire(s) non mappé(s) : {missingRequired.map((f) => f.label).join(', ')}
+        </p>
+      )}
+
+      <div className="flex justify-end">
+        <Button onClick={() => onComplete(mapping)} disabled={missingRequired.length > 0}>
+          Continuer
+        </Button>
       </div>
     </div>
   );

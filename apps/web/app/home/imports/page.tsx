@@ -192,8 +192,15 @@ export default function ImportsPage() {
             <h2 className="text-lg font-semibold mb-4">Étape 2 : Mapper les colonnes</h2>
             {uploadedFile && (
               <Fragment>
-                <ColumnMapping file={uploadedFile} onComplete={handleMappingComplete} />
-                <div className="flex gap-3 mt-6">
+                <ColumnMapping
+                  rows={parsedRows}
+                  importType={importType}
+                  onComplete={(m) => {
+                    setColumnMapping(m);
+                    handleMappingComplete();
+                  }}
+                />
+                <div className="mt-4">
                   <Button
                     variant="outline"
                     onClick={() => {
@@ -203,7 +210,6 @@ export default function ImportsPage() {
                   >
                     Retour
                   </Button>
-                  <Button onClick={handleMappingComplete}>Continuer</Button>
                 </div>
               </Fragment>
             )}
