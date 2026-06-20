@@ -179,6 +179,51 @@ export interface AssessmentTrendItem {
   avg_score: number | null;
 }
 
+// ─── Tendance des alertes (par semaine) ───────────────────────────────────────
+
+export interface AlertsTrendPoint {
+  label: string; // ex: "12/06"
+  count: number;
+}
+
+export async function getAlertsTrend(weeks = 8): Promise<AlertsTrendPoint[]> {
+  const client = getSupabaseServerClient();
+  const since = new Date(Date.now() - weeks * 7 * 86_400_000);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = await (client as any)
+    .from('alerts')
+    .select('created_at')
+    .gte('created_at', since.toISOString());
+
+  // Bucket par semaine (lundi de début de semaine).
+  const startOfWeek = (d: Date) => {
+    const x = new Date(d);
+    const day = (x.getDay() + 6) % 7; // 0 = lundi
+    x.setHours(0, 0, 0, 0);
+    x.setDate(x.getDate() - day);
+    return x;
+  };
+
+  const counts = new Map<number, number>();
+  for (const row of (data ?? []) as { created_at: string }[]) {
+    const k = startOfWeek(new Date(row.created_at)).getTime();
+    counts.set(k, (counts.get(k) ?? 0) + 1);
+  }
+
+  const out: AlertsTrendPoint[] = [];
+  const cursor = startOfWeek(new Date());
+  for (let i = weeks - 1; i >= 0; i--) {
+    const wk = new Date(cursor);
+    wk.setDate(wk.getDate() - i * 7);
+    const key = wk.getTime();
+    out.push({
+      label: `${wk.getDate()}/${wk.getMonth() + 1}`,
+      count: counts.get(key) ?? 0,
+    });
+  }
+  return out;
+}
+
 export async function getAssessmentTrend(): Promise<AssessmentTrendItem[]> {
   const client = getSupabaseServerClient();
   const since = new Date();
