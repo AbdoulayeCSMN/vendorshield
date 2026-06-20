@@ -1,0 +1,38 @@
+---
+title: "Évaluations de risque"
+description: "Noter un fournisseur sur 24 critères pondérés."
+---
+
+Les **évaluations** (`/home/risk-assessments`) sont le moteur officiel des scores. Une
+évaluation note un fournisseur sur **24 critères** répartis en 4 dimensions.
+
+## Les 4 dimensions
+
+<CardGroup cols={2}>
+  <Card title="Financier" icon="building-columns">
+    Solidité financière, liquidité, dépendance, notation de crédit…
+  </Card>
+  <Card title="Opérationnel" icon="gears">
+    Qualité, délais, capacité, continuité d'activité…
+  </Card>
+  <Card title="Géopolitique" icon="earth-americas">
+    Risque pays, sanctions, stabilité, logistique…
+  </Card>
+  <Card title="ESG" icon="leaf">
+    Environnement, social, gouvernance, conformité.
+  </Card>
+</CardGroup>
+
+## Cycle de vie
+
+```
+draft → in_progress → completed → approved
+```
+
+À la complétion, les scores calculés sont **propagés au fournisseur** (voir
+[Concepts](/concepts#dou-viennent-les-scores)).
+
+## Quand réévaluer ?
+
+La [surveillance automatique](/features/alerts-monitoring) signale les fournisseurs
+**critiques non évalués depuis plus de 12 mois** afin de garder les scores fiables.

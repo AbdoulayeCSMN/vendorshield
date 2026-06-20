@@ -1,0 +1,78 @@
+---
+title: "Automatisation & cron"
+description: "Emails d'alerte, surveillance quotidienne et ré-entraînement ML."
+---
+
+VendorShield s'appuie sur trois automatisations. Elles sont **optionnelles** : l'app
+fonctionne sans, mais elles apportent la valeur récurrente (alertes proactives, prédictions
+fraîches).
+
+## 1. Emails d'alerte (Database Webhook)
+
+<Steps>
+  <Step title="Resend">
+    Créez un compte [resend.com](https://resend.com), récupérez la clé `re_…`, puis
+    renseignez `RESEND_API_KEY` et `EMAIL_FROM`.
+  </Step>
+  <Step title="Secret">
+    Définissez `ALERTS_WEBHOOK_SECRET` (chaîne aléatoire longue).
+  </Step>
+  <Step title="Webhook Supabase">
+    Dashboard → **Database → Webhooks** → table `public.alerts`, événement **Insert**,
+    HTTP POST vers `https://VOTRE-DOMAINE/api/alerts/webhook`, header
+    `x-webhook-secret = ALERTS_WEBHOOK_SECRET`.
+  </Step>
+</Steps>
+
+<Warning>
+Supabase doit joindre une **URL publique** — fonctionne en production, pas sur
+`localhost`.
+</Warning>
+
+## 2. Surveillance quotidienne
+
+Endpoint : `POST/GET /api/monitoring/scan` (tous les comptes). Choisissez **une** option :
+
+<Tabs>
+  <Tab title="pg_cron (recommandé)">
+    Indépendant de l'hébergeur. À coller une fois dans le SQL Editor :
+    ```sql
+    create extension if not exists pg_cron;
+
+    select cron.schedule(
+      'vendorshield-daily-monitoring',
+      '0 6 * * *',
+      $$ select public.run_monitoring_scan(); $$
+    );
+    ```
+  </Tab>
+  <Tab title="Vercel Cron">
+    Dans `vercel.json` :
+    ```json
+    { "crons": [{ "path": "/api/monitoring/scan", "schedule": "0 6 * * *" }] }
+    ```
+    Définissez `CRON_SECRET` (ou `MONITORING_SCAN_SECRET`).
+  </Tab>
+</Tabs>
+
+## 3. Ré-entraînement ML quotidien
+
+Endpoint : `POST/GET /api/ml/retrain` (recalcule les prédictions de tous les comptes +
+cold-start global). Même mécanisme d'authentification que la surveillance.
+
+<Tabs>
+  <Tab title="Vercel Cron">
+    ```json
+    { "crons": [{ "path": "/api/ml/retrain", "schedule": "30 5 * * *" }] }
+    ```
+  </Tab>
+  <Tab title="Déclenchement manuel">
+    Bouton **« Recalculer les prédictions »** sur `/home/suppliers` (votre compte).
+  </Tab>
+</Tabs>
+
+## Migration requise
+
+La surveillance nécessite la fonction `run_monitoring_scan`. Appliquez la migration
+`apps/web/supabase/migrations/20250710000000_monitoring_scan.sql` sur votre base avant
+d'utiliser « Scanner maintenant » ou le cron.

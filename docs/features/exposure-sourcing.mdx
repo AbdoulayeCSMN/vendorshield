@@ -1,0 +1,41 @@
+---
+title: "Exposition & multi-sourcing"
+description: "Spend-at-Risk, concentration, stress-test et conseils de diversification."
+---
+
+La page **Exposition** (`/home/exposure`) donne une vue portefeuille du risque.
+
+## Indicateurs d'exposition
+
+| Indicateur | Signification |
+|---|---|
+| **Spend-at-Risk** | Σ (dépense × probabilité d'incident). Part de la dépense réellement exposée. |
+| **Concentration (HHI)** | Indice de Herfindahl sur les parts de dépense (faible / modérée / élevée). |
+| **Dépendance top 3** | Part de la dépense sur les 3 plus gros fournisseurs (stress-test). |
+| **Mono-sources** | Nombre et dépense des fournisseurs en source unique. |
+
+## Multi-sourcing & diversification
+
+Le moteur repère les **risques de dépendance** et propose une action concrète :
+
+<CardGroup cols={2}>
+  <Card title="Mono-source critique" icon="triangle-exclamation">
+    Fournisseur critique sans alternative → **qualifier une 2ᵉ source**.
+  </Card>
+  <Card title="Alternatives existantes" icon="code-branch">
+    Plusieurs fournisseurs dans la catégorie → **répartir le volume**.
+  </Card>
+</CardGroup>
+
+Pour chaque cas, VendorShield compte les **alternatives qualifiées** dans la même catégorie
+(triées par risque le plus faible) et les affiche, cliquables.
+
+### Conseil stratégique IA
+
+Le bouton **« Conseil stratégique IA »** transforme ces faits en un **plan de diversification
+priorisé** (markdown), via Groq → OpenRouter.
+
+<Note>
+Le conseil n'invente rien : il ne cite que vos fournisseurs et chiffres réels. Sans clé LLM,
+les recommandations factuelles restent affichées.
+</Note>

@@ -1,0 +1,51 @@
+---
+title: "Prédictions & ML"
+description: "Prédiction de retard/PPM, cold-start global et ré-entraînement automatique."
+---
+
+VendorShield prédit le **risque opérationnel** par fournisseur — probabilité de **retard
+de livraison** et de **défauts (PPM)** — à partir de l'historique des livraisons.
+
+## Architecture
+
+```
+Service ML Python (FastAPI + MLflow)  ──HTTP──►  predictViaMlService()
+        │                                              │ (repli automatique)
+        ▼                                              ▼
+   prédiction servie                          Modèle TypeScript embarqué
+```
+
+L'application appelle d'abord le service Python ; s'il est indisponible, elle **retombe
+automatiquement** sur le modèle TypeScript. L'app fonctionne donc **sans** le service ML.
+
+## Cold-start : valeur dès le 1er jour
+
+<Note>
+Un nouveau compte n'a pas d'historique. Plutôt que d'échouer, VendorShield utilise un
+**modèle global anonymisé** (coefficients agrégés inter-comptes, **aucun identifiant de
+tenant exposé**) pour produire une prédiction initiale (confiance plafonnée). Dès que le
+compte a assez de données, un modèle dédié prend le relais automatiquement.
+</Note>
+
+## Quand les modèles s'entraînent
+
+| Déclencheur | Portée |
+|---|---|
+| Bouton « Recalculer la prédiction » (fiche fournisseur) | Un fournisseur |
+| Bouton « Recalculer les prédictions » (liste fournisseurs) | Tout le compte |
+| Cron `POST/GET /api/ml/retrain` | Tous les comptes |
+| Nouveau compte sans historique | Modèle global (cold-start) |
+
+Le ré-entraînement batch est **rapide et gratuit** (sans appel LLM, explication
+déterministe). Voir [Automatisation](/deployment/automation) pour la planification.
+
+## Confidentialité
+
+Le modèle global n'apprend que des **coefficients agrégés** ; il ne stocke ni n'expose
+aucune donnée nominative d'un autre client. Chaque compte ne voit que ses propres
+prédictions (RLS).
+
+## Défaillance financière
+
+Une prédiction de **risque de faillite** est disponible par fournisseur (onglet dédié sur
+la fiche), alimentée par l'Edge Function `bankruptcy-predictor`.

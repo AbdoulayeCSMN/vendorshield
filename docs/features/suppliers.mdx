@@ -1,0 +1,55 @@
+---
+title: "Fournisseurs"
+description: "Référentiel, fiches détaillées et modules par fournisseur."
+---
+
+La page **Fournisseurs** (`/home/suppliers`) liste tout votre portefeuille avec scores,
+criticité, pays et dépense, avec filtres et export.
+
+## La fiche fournisseur
+
+`/home/suppliers/[id]` regroupe, en onglets, l'ensemble des modules de risque :
+
+<CardGroup cols={2}>
+  <Card title="Aperçu & scores" icon="gauge">
+    Les 5 scores (global + 4 dimensions) et le niveau de risque.
+  </Card>
+  <Card title="Évaluations" icon="clipboard-check">
+    Historique des évaluations 24 critères.
+  </Card>
+  <Card title="Prédictions opérationnelles" icon="chart-line">
+    Probabilité de retard de livraison et de défauts (PPM). Voir
+    [Prédictions & ML](/features/predictions-ml).
+  </Card>
+  <Card title="Défaillance financière" icon="building-columns">
+    Estimation du risque de faillite.
+  </Card>
+  <Card title="Risque climatique" icon="cloud-bolt">
+    Exposition aux aléas climatiques (Open-Meteo).
+  </Card>
+  <Card title="Posture cyber" icon="shield-halved">
+    Indicateurs de surface d'exposition cyber.
+  </Card>
+  <Card title="Documents & conformité" icon="file-shield">
+    Certifications, dates d'expiration, CSRD.
+  </Card>
+  <Card title="Questionnaires" icon="list-check">
+    Questionnaires envoyés au fournisseur via le portail.
+  </Card>
+  <Card title="Audits & CAPA" icon="magnifying-glass-chart">
+    Audits fournisseurs et plans d'action correctifs.
+  </Card>
+  <Card title="KPI scorecard" icon="file-pdf">
+    Tableau de bord du fournisseur + export PDF.
+  </Card>
+</CardGroup>
+
+## Portail fournisseur
+
+Un lien externe sécurisé (`/portal/[token]`) permet au fournisseur de **répondre aux
+questionnaires sans créer de compte** — utile pour la collecte de conformité.
+
+## Créer un fournisseur
+
+Manuellement via **Ajouter un fournisseur** (`/home/suppliers/new`), ou en masse via
+l'[Import](/features/imports).

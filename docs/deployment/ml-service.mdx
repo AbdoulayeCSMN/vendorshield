@@ -1,0 +1,45 @@
+---
+title: "Service ML Python"
+description: "Entraînement et service des prédictions opérationnelles (FastAPI + MLflow)."
+---
+
+Le service ML (`services/ml/`) entraîne et sert les prédictions de risque opérationnel via
+**MLflow**. Il est **optionnel** : sans lui, l'application utilise son modèle TypeScript
+embarqué.
+
+## Quand l'utiliser
+
+<CardGroup cols={2}>
+  <Card title="Sans le service" icon="circle-check">
+    Le modèle TypeScript embarqué suffit. Aucune infrastructure à gérer.
+  </Card>
+  <Card title="Avec le service" icon="server">
+    Modèles plus riches, suivi MLflow, validation croisée. Pour les déploiements à volume.
+  </Card>
+</CardGroup>
+
+## Configuration
+
+```bash
+cd services/ml
+cp .env.example .env
+```
+
+| Variable | Rôle |
+|---|---|
+| `VS_ML_DATABASE_URL` | DSN lecture seule (`postgresql+psycopg://…`) vers Supabase |
+| `VS_ML_API_KEY` | Clé envoyée par l'app dans l'en-tête `X-API-Key` |
+| `VS_ML_MLFLOW_EXPERIMENT` | Nom de l'expérience MLflow |
+| `VS_ML_MIN_SUPPLIER_HISTORY` | Historique minimal par fournisseur (défaut 8) |
+| `VS_ML_PPM_BREACH_THRESHOLD` | Seuil de dépassement PPM (défaut 5000) |
+
+## Intégration
+
+L'application appelle le service via `predictViaMlService()`. En cas d'indisponibilité ou
+d'erreur, elle **retombe silencieusement** sur le modèle TypeScript — aucune interruption
+côté utilisateur.
+
+<Tip>
+Consultez `services/ml/README.md` pour les commandes d'entraînement et de lancement de
+l'API.
+</Tip>

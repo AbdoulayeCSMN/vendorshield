@@ -1,0 +1,67 @@
+---
+title: "Imports & mapping IA"
+description: "Importer fournisseurs et livraisons depuis n'importe quel format."
+---
+
+La page **Imports** (`/home/imports`) permet de charger des fichiers **CSV, Excel ou JSON**.
+Vous choisissez ce que vous importez :
+
+<CardGroup cols={2}>
+  <Card title="Fiches fournisseurs" icon="building">
+    Crée des fournisseurs (nom, pays, catégorie, dépense, scores…).
+  </Card>
+  <Card title="Livraisons" icon="truck">
+    Historique de transactions, rapproché automatiquement aux fournisseurs existants.
+    Alimente le ML opérationnel.
+  </Card>
+</CardGroup>
+
+## Mapping de colonnes assisté par IA
+
+Le frein classique de l'onboarding — « mes colonnes ne sont pas au bon format » —
+est supprimé : à l'étape **Mapping**, un LLM associe automatiquement vos en-têtes aux
+champs VendorShield.
+
+<Steps>
+  <Step title="Upload">
+    Chargez votre fichier ; les en-têtes réels sont détectés.
+  </Step>
+  <Step title="Mapping (pré-rempli)">
+    L'IA propose la correspondance — par exemple :
+
+    | Colonne source | Champ cible |
+    |---|---|
+    | « Raison sociale » | `name` |
+    | « Famille achat » | `category` |
+    | « CA annuel (k€) » | `annual_spend_eur` |
+    | « Note ESG » | `esg_score` |
+
+    Chaque ligne reste **modifiable**.
+  </Step>
+  <Step title="Qualité & confirmation">
+    Un rapport de qualité signale les valeurs manquantes ; vous confirmez l'import.
+  </Step>
+</Steps>
+
+<Note>
+Le mapping utilise **Groq** (repli **OpenRouter**). Sans clé LLM configurée, un repli
+**déterministe par synonymes** prend le relais — l'import fonctionne quand même.
+</Note>
+
+## Champs reconnus (fournisseurs)
+
+`name` (obligatoire), `registration_number`, `country_code`, `country_name`, `city`,
+`category`, `criticality`, `status`, `annual_spend_eur`, `employee_count`, `founded_year`,
+`credit_rating`, `is_sole_source`, `website`, et les scores
+(`global_score`, `financial_score`, `operational_score`, `geopolitical_score`, `esg_score`).
+
+<Tip>
+`category`, `criticality` et `status` sont validés contre leurs valeurs autorisées
+(sinon une valeur par défaut est appliquée), et les scores sont bornés 0–100.
+</Tip>
+
+## Sécurité
+
+Les écritures se font en **service-role** côté serveur, avec un `account_id` dérivé de
+l'utilisateur authentifié — jamais d'une entrée client. Cela évite aussi l'erreur
+« permission denied for table users » liée aux clés étrangères vers `auth.users`.

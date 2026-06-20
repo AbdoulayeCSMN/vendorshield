@@ -1,0 +1,82 @@
+---
+title: "Concepts clés"
+description: "Scoring, niveaux de risque, multi-tenant et modèle de données."
+---
+
+## Le scoring de risque
+
+Chaque fournisseur porte un **score global** (0 = risque maximal, 100 = risque minimal),
+agrégé à partir de **4 dimensions** et de **24 critères**.
+
+```
+S_dimension = Σ(score_i × poids_i) / Σ(poids_i)          # critères d'une dimension
+S_global    = Σ(S_dim_j × Poids_dim_j) / Σ(Poids actifs) # moyenne pondérée des dimensions
+```
+
+Pondérations par défaut :
+
+| Dimension | Poids |
+|---|---|
+| Financier | 30 % |
+| Opérationnel | 30 % |
+| Géopolitique | 20 % |
+| ESG | 20 % |
+
+<Note>
+Le scoring est **à base de règles** : un fournisseur a un score dès qu'une évaluation
+est complétée, **sans entraînement ML**. C'est ce qui rend la valeur immédiate pour un
+nouveau client.
+</Note>
+
+## Niveaux de risque
+
+`risk_level` est dérivé automatiquement de `global_score` par un trigger SQL :
+
+| Score global | Niveau |
+|---|---|
+| ≥ 70 | `low` |
+| 40–69 | `medium` |
+| 20–39 | `high` |
+| &lt; 20 | `critical` |
+
+## D'où viennent les scores ?
+
+<Steps>
+  <Step title="Évaluation 24 critères">
+    Un analyste note le fournisseur sur les 24 critères (page **Évaluations**).
+  </Step>
+  <Step title="Calcul">
+    `compute_assessment_scores()` calcule les scores de l'évaluation.
+  </Step>
+  <Step title="Propagation">
+    Le trigger `sync_supplier_scores()` met à jour les scores du fournisseur, puis
+    `compute_risk_level()` en déduit le niveau de risque.
+  </Step>
+</Steps>
+
+Les scores peuvent aussi être **importés** directement (si le client les possède déjà)
+ou enrichis par analyse **IA / OSINT**.
+
+## Multi-tenant & isolation
+
+VendorShield est multi-tenant. Chaque ligne est isolée par `account_id` via les
+**politiques RLS** de PostgreSQL — un utilisateur ne voit que les données de son compte.
+
+<Warning>
+Les écritures serveur sensibles (import, surveillance, ML) utilisent le **service-role**
+côté serveur uniquement, avec un `account_id` toujours dérivé de l'utilisateur authentifié
+— jamais d'une entrée client.
+</Warning>
+
+## Modèle de données (extrait)
+
+| Table | Rôle |
+|---|---|
+| `suppliers` | Référentiel + 5 scores dénormalisés |
+| `risk_assessments` / `risk_factors` | Évaluations et leurs 24 critères |
+| `alerts` / `alert_rules` | Alertes et règles de seuil |
+| `supplier_deliveries` | Historique de livraisons (entrée du ML opérationnel) |
+| `delivery_predictions` | Prédictions retard/PPM stockées |
+| `documents` | Pièces jointes + dates d'expiration (conformité) |
+| `data_imports` | Traçabilité des imports |
+| `audit_log` | Journal immuable |

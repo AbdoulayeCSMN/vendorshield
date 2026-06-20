@@ -1,0 +1,48 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "VendorShield",
+  "description": "Documentation de VendorShield — plateforme SaaS de gestion et d'anticipation des risques fournisseurs.",
+  "colors": {
+    "primary": "#6366f1",
+    "light": "#818cf8",
+    "dark": "#4f46e5"
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Démarrer",
+        "pages": ["introduction", "quickstart", "concepts"]
+      },
+      {
+        "group": "Fonctionnalités",
+        "pages": [
+          "features/suppliers",
+          "features/imports",
+          "features/assessments",
+          "features/alerts-monitoring",
+          "features/exposure-sourcing",
+          "features/predictions-ml",
+          "features/copilot"
+        ]
+      },
+      {
+        "group": "Déploiement & automatisation",
+        "pages": [
+          "deployment/environment",
+          "deployment/automation",
+          "deployment/ml-service"
+        ]
+      },
+      {
+        "group": "Référence",
+        "pages": ["reference/api"]
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/AbdoulayeCSMN/vendorshield"
+    }
+  }
+}

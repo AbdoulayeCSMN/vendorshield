@@ -1,0 +1,81 @@
+---
+title: "Démarrage rapide"
+description: "Installer, configurer et lancer VendorShield en local."
+---
+
+## Prérequis
+
+- **Node.js** 20+
+- **pnpm** 9+
+- Un projet **Supabase** (local via Docker, ou distant)
+
+## Installation
+
+<Steps>
+  <Step title="Cloner et installer">
+    ```bash
+    git clone https://github.com/AbdoulayeCSMN/vendorshield.git
+    cd vendorshield
+    pnpm install
+    ```
+  </Step>
+  <Step title="Configurer l'environnement">
+    Copiez le template puis renseignez vos clés :
+    ```bash
+    cp apps/web/.env.example apps/web/.env.local
+    ```
+    Au minimum :
+    ```bash
+    NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+    SUPABASE_SERVICE_ROLE_KEY=eyJ...
+    ```
+    <Tip>
+    Ajoutez `GROQ_API_KEY` pour activer le copilote et le mapping d'import par IA.
+    Voir [Variables d'environnement](/deployment/environment).
+    </Tip>
+  </Step>
+  <Step title="Appliquer les migrations">
+    <Tabs>
+      <Tab title="Supabase local">
+        ```bash
+        pnpm run supabase:web:reset
+        ```
+      </Tab>
+      <Tab title="Supabase distant">
+        Collez le contenu des fichiers `apps/web/supabase/migrations/*.sql`
+        dans le **SQL Editor** du dashboard Supabase, dans l'ordre chronologique.
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="Lancer">
+    ```bash
+    pnpm run dev
+    ```
+    L'application est disponible sur [http://localhost:3000](http://localhost:3000).
+  </Step>
+</Steps>
+
+## Charger des données de démonstration
+
+Le dépôt fournit des fournisseurs synthétiques sous `test-data/` :
+
+<Tabs>
+  <Tab title="Via l'app (recommandé)">
+    Allez sur **Imports** → choisissez **Fiches fournisseurs** → chargez
+    `test-data/synthetic-suppliers.csv`. Le mapping est pré-rempli par l'IA.
+  </Tab>
+  <Tab title="Via SQL">
+    Exécutez `test-data/wipe-and-seed-suppliers.sql` dans le SQL Editor pour
+    vider et réinsérer 40 fournisseurs synthétiques.
+  </Tab>
+</Tabs>
+
+## Vérifications
+
+```bash
+pnpm --filter web typecheck
+pnpm --filter web build
+```
+
+<Check>Le typecheck et le build passent sans erreur.</Check>

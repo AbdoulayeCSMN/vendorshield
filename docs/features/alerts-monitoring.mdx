@@ -1,0 +1,54 @@
+---
+title: "Alertes & surveillance"
+description: "Alertes de seuil en temps réel et scan de surveillance planifié."
+---
+
+## Deux mécanismes complémentaires
+
+<CardGroup cols={2}>
+  <Card title="Règles de seuil (temps réel)" icon="bolt">
+    Dès qu'un score de fournisseur change, les règles d'alerte sont évaluées par trigger
+    SQL. Configurables dans **Alertes → Règles**.
+  </Card>
+  <Card title="Surveillance planifiée" icon="radar">
+    Un scan détecte les conditions **temporelles** que les triggers ne captent pas.
+  </Card>
+</CardGroup>
+
+## Le scan de surveillance
+
+La fonction `run_monitoring_scan()` détecte et crée des alertes **dédupliquées** pour :
+
+| Détection | Seuil | Sévérité |
+|---|---|---|
+| Documents expirés / expirant | ≤ 30 jours | critique si expiré, sinon avertissement |
+| Contrats arrivant à échéance | ≤ 60 jours | critique si &lt; 14 jours |
+| Évaluations périmées (fournisseurs critiques) | > 12 mois | avertissement |
+
+### Trois façons de le déclencher
+
+<Steps>
+  <Step title="Bouton « Scanner maintenant »">
+    Sur `/home/alerts`, lance le scan pour votre compte (immédiat).
+  </Step>
+  <Step title="Cron externe">
+    `POST/GET /api/monitoring/scan` (tous les comptes), protégé par secret. Voir
+    [Automatisation](/deployment/automation).
+  </Step>
+  <Step title="pg_cron">
+    Planification directement dans Supabase.
+  </Step>
+</Steps>
+
+## Notifications email
+
+Chaque insertion d'alerte déclenche un **Database Webhook** Supabase →
+`/api/alerts/webhook` → email via **Resend**. Aucune alerte n'est dupliquée tant qu'elle
+reste ouverte.
+
+<Warning>
+Les emails nécessitent une application **déployée** (Supabase doit joindre une URL
+publique) + `RESEND_API_KEY` et `ALERTS_WEBHOOK_SECRET`. En local, les alertes
+s'affichent dans l'app mais l'email n'est pas envoyé. Voir
+[Automatisation](/deployment/automation).
+</Warning>

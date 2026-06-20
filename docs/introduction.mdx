@@ -1,0 +1,60 @@
+---
+title: "Introduction"
+description: "VendorShield — gestion et anticipation des risques fournisseurs (SRM) propulsée par l'IA."
+---
+
+**VendorShield** est une plateforme SaaS B2B qui aide les directions achats et supply chain —
+en particulier dans l'industrie — à **noter, surveiller et anticiper** les risques de leur
+portefeuille fournisseurs : santé financière, performance opérationnelle, géopolitique, ESG,
+cyber et climat.
+
+## Ce que VendorShield apporte
+
+<CardGroup cols={2}>
+  <Card title="Scoring multi-dimensions" icon="gauge-high">
+    Score de risque global par fournisseur sur 4 dimensions (financier, opérationnel,
+    géopolitique, ESG) à partir de 24 critères pondérés.
+  </Card>
+  <Card title="Import sans friction" icon="file-import">
+    Importez n'importe quel fichier CSV/Excel/JSON — le mapping des colonnes est
+    assisté par IA.
+  </Card>
+  <Card title="Surveillance automatique" icon="bell">
+    Alertes proactives sur les documents/contrats qui expirent, les évaluations
+    périmées et les chutes de score — par email.
+  </Card>
+  <Card title="Prédiction & copilote" icon="robot">
+    Prédiction de retard de livraison, de défauts et de défaillance financière, plus
+    un copilote LLM conscient de tout votre périmètre.
+  </Card>
+</CardGroup>
+
+## Principe directeur
+
+<Note>
+VendorShield est conçu **zéro-touch** : un nouveau client importe ses données et obtient
+de la valeur **dès le premier jour**, sans data engineering manuel. Le scoring 24 critères
+est à base de règles (immédiat) ; le ML prédictif s'active avec l'historique, avec un repli
+sur un modèle global anonymisé.
+</Note>
+
+## Stack en bref
+
+| Couche | Technologie |
+|---|---|
+| Frontend | Next.js 15 (App Router, RSC) + React 19 + Tailwind v4 |
+| Backend | Supabase (PostgreSQL, Auth, Storage, Edge Functions, RLS) |
+| Copilote LLM | Groq → repli OpenRouter (streaming) |
+| ML | Service Python (FastAPI + MLflow) + repli modèle TypeScript |
+| i18n | Français (défaut), anglais, allemand, haoussa |
+
+## Par où commencer ?
+
+<CardGroup cols={2}>
+  <Card title="Démarrage rapide" icon="rocket" href="/quickstart">
+    Installer et lancer l'application en local.
+  </Card>
+  <Card title="Concepts clés" icon="book" href="/concepts">
+    Comprendre le scoring, les niveaux de risque et le modèle de données.
+  </Card>
+</CardGroup>

@@ -1,0 +1,58 @@
+---
+title: "Référence API"
+description: "Endpoints internes : copilote, surveillance, ML, webhook."
+---
+
+Ces routes sont servies par l'application Next.js (`apps/web/app/api/`).
+
+## Copilote
+
+<ResponseField name="POST /api/copilot" type="endpoint">
+  Conversation avec le copilote « Aboki ». Réponse en **streaming** (deltas texte).
+  Le contexte (état du compte) est injecté côté serveur, account-scoped via RLS.
+  Modèles : Groq → repli OpenRouter.
+</ResponseField>
+
+## Surveillance
+
+<ResponseField name="POST/GET /api/monitoring/scan" type="endpoint">
+  Lance `run_monitoring_scan()` pour **tous les comptes**. Crée des alertes dédupliquées
+  (documents/contrats expirants, évaluations périmées).
+
+  **Authentification** : en-tête `x-monitoring-secret: <MONITORING_SCAN_SECRET>`, ou
+  `Authorization: Bearer <CRON_SECRET>` (Vercel Cron).
+
+  **Réponse** : `{ "ok": true, "created": <nombre> }`
+</ResponseField>
+
+## Ré-entraînement ML
+
+<ResponseField name="POST/GET /api/ml/retrain" type="endpoint">
+  Recalcule les prédictions opérationnelles de tous les comptes (cold-start global si
+  l'historique est insuffisant).
+
+  **Authentification** : identique à la surveillance.
+
+  **Réponse** : `{ "ok": true, "accounts": <n>, "suppliers": <n> }`
+</ResponseField>
+
+## Webhook d'alertes
+
+<ResponseField name="POST /api/alerts/webhook" type="endpoint">
+  Reçoit les Database Webhooks Supabase sur INSERT dans `alerts` et envoie l'email via
+  Resend.
+
+  **Authentification** : en-tête `x-webhook-secret: <ALERTS_WEBHOOK_SECRET>`.
+</ResponseField>
+
+<Note>
+Les endpoints de cron renvoient **503** si aucun secret n'est configuré et **401** si le
+secret est invalide — par sécurité, ils restent inactifs tant qu'ils ne sont pas configurés.
+</Note>
+
+## Exemple d'appel (cron)
+
+```bash
+curl -X POST https://VOTRE-DOMAINE/api/monitoring/scan \
+  -H "x-monitoring-secret: $MONITORING_SCAN_SECRET"
+```

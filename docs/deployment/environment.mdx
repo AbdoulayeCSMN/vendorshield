@@ -1,0 +1,61 @@
+---
+title: "Variables d'environnement"
+description: "Toutes les variables, obligatoires et optionnelles."
+---
+
+Renseignez ces variables dans `apps/web/.env.local` (dev) et dans l'environnement de votre
+hébergeur (prod). Le template de référence est `apps/web/.env.example`.
+
+## Obligatoires
+
+| Variable | Rôle |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | URL du projet Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé publique (client) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clé service-role — écritures serveur (import, surveillance, ML) |
+
+<Warning>
+`SUPABASE_SERVICE_ROLE_KEY` est **secrète**. Ne la committez jamais et ne l'exposez pas
+côté client. En cas de fuite, faites une rotation immédiate dans le dashboard Supabase.
+</Warning>
+
+## IA (copilote & mapping d'import)
+
+| Variable | Rôle |
+|---|---|
+| `GROQ_API_KEY` | Copilote + mapping d'import par IA (recommandé) |
+| `OPENROUTER_API_KEY` | Repli si Groq indisponible |
+
+Sans clé LLM, le copilote est inactif et le mapping d'import bascule sur le repli
+déterministe.
+
+## Emails d'alerte (optionnel)
+
+| Variable | Rôle |
+|---|---|
+| `RESEND_API_KEY` | Envoi des emails (resend.com) |
+| `EMAIL_FROM` | Adresse expéditeur, ex. `VendorShield <alertes@domaine.com>` |
+| `ALERTS_WEBHOOK_SECRET` | Secret partagé du Database Webhook Supabase |
+
+<Note>
+Avec Resend, n'envoyez à des destinataires arbitraires qu'après avoir **vérifié votre
+domaine** (DNS SPF/DKIM). Pour tester, `EMAIL_FROM=VendorShield <onboarding@resend.dev>`
+(n'envoie qu'à votre propre adresse).
+</Note>
+
+## Tâches planifiées (optionnel)
+
+| Variable | Rôle |
+|---|---|
+| `MONITORING_SCAN_SECRET` | Protège `/api/monitoring/scan` et `/api/ml/retrain` (en-tête `x-monitoring-secret`) |
+| `CRON_SECRET` | Alternative via Vercel Cron (`Authorization: Bearer …`) |
+
+## Service ML Python (optionnel)
+
+Dans `services/ml/.env` (préfixe `VS_ML_`) :
+
+| Variable | Rôle |
+|---|---|
+| `VS_ML_DATABASE_URL` | DSN lecture seule vers la base Supabase |
+| `VS_ML_API_KEY` | Protège l'endpoint `/predict` |
+| `VS_ML_MLFLOW_EXPERIMENT` | Nom de l'expérience MLflow |
