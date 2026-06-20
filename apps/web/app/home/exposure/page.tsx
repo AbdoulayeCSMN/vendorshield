@@ -14,8 +14,10 @@ import {
 
 import { withI18n } from '~/lib/i18n/with-i18n';
 import { getOrganizationExposure } from '~/lib/vendorshield/exposure.server';
+import { getMultiSourcingRecommendations } from '~/lib/vendorshield/multi-sourcing.server';
 
 import { ExposureSpendChart } from './_components/exposure-spend-chart';
+import { MultiSourcingPanel } from './_components/multi-sourcing-panel';
 
 const eur = (n: number) =>
   new Intl.NumberFormat('fr-FR', { notation: 'compact', style: 'currency', currency: 'EUR' }).format(n);
@@ -53,7 +55,10 @@ function Tile({
 }
 
 async function ExposurePage() {
-  const e = await getOrganizationExposure();
+  const [e, sourcing] = await Promise.all([
+    getOrganizationExposure(),
+    getMultiSourcingRecommendations(),
+  ]);
   const conc = CONC_LABEL[e.concentration_level] ?? CONC_LABEL.low!;
 
   return (
@@ -154,6 +159,9 @@ async function ExposurePage() {
             </p>
           </CardContent>
         </Card>
+
+        {/* Multi-sourcing & diversification */}
+        <MultiSourcingPanel data={sourcing} />
       </PageBody>
     </>
   );
