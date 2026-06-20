@@ -7,6 +7,7 @@ import {
   getAnalyticsDashboard,
   getTopRiskySuppliers,
 } from '~/lib/vendorshield/analytics.server';
+import { getOrganizationExposure } from '~/lib/vendorshield/exposure.server';
 
 /**
  * Carte des capacités / navigation — permet au copilote de guider l'utilisateur
@@ -14,23 +15,37 @@ import {
  */
 const CAPABILITIES = `
 PAGES DE L'APPLICATION (propose des liens markdown quand c'est utile) :
-- [Tableau de bord](/home) — vue d'ensemble des risques
-- [Fournisseurs](/home/suppliers) — liste, scores, fiches détaillées
-- [Ajouter un fournisseur](/home/suppliers/new)
-- [Imports](/home/imports) — importer un fichier Excel/CSV de fournisseurs ou de livraisons
-- [Évaluations de risque](/home/risk-assessments) — notation sur 24 critères
-- [Alertes](/home/alerts) et [Règles d'alerte](/home/alerts/rules)
-- [Analytics](/home/analytics) — tendances et exposition
+- [Tableau de bord](/home) — vue d'ensemble des risques, tendances, carte du monde
+- [Fournisseurs](/home/suppliers) — liste, scores, fiches détaillées · [Ajouter](/home/suppliers/new)
+- [Imports](/home/imports) — importer un fichier Excel/CSV/JSON de **fiches fournisseurs OU de livraisons** ; le mapping des colonnes est **assisté par IA** (accepte n'importe quels en-têtes)
+- [Évaluations de risque](/home/risk-assessments) — notation sur 24 critères (alimente les scores)
+- [Alertes](/home/alerts) — surveillance, bouton « Scanner maintenant » · [Règles d'alerte](/home/alerts/rules) · [Alerte manuelle](/home/alerts/new)
+- [Analytics](/home/analytics) — tendances, comparaisons, exposition
 - [Cartographie des risques](/home/risk-map) — matrice probabilité × impact
-- [Exposition](/home/exposure) — Spend-at-Risk, concentration, stress-test portefeuille
-- [Supply chain](/home/supply-chain) — graphe multi-niveaux
-- [Facturation](/home/billing)
+- [Exposition](/home/exposure) — Spend-at-Risk, concentration (HHI), stress-test, **Multi-sourcing & diversification** (conseil stratégique IA)
+- [Supply chain](/home/supply-chain) — graphe multi-niveaux (tiers)
+- [Journal d'audit](/home/audit-log) — traçabilité des actions
+- [Copilote](/home/copilot) — assistant dédié (cette conversation)
+- [Onboarding](/onboarding) — démarrage guidé · [Paramètres](/home/settings) · [Organisation](/home/organization) · [Facturation](/home/billing)
+- Portail fournisseur (lien externe sécurisé /portal/...) — le fournisseur répond aux questionnaires sans compte
 
-CAPACITÉS IA :
-- Score de risque global par fournisseur (financier, opérationnel, géopolitique, ESG)
-- Prédiction de retard de livraison et de défauts (PPM) — panneau "Prédictions opérationnelles" sur la fiche fournisseur
-- Prédiction de défaillance financière
-- Scorecard PDF par fournisseur, alertes email automatiques
+MODULES SUR LA FICHE FOURNISSEUR (onglets de /home/suppliers/[id]) :
+- Aperçu & scores 5 dimensions (global, financier, opérationnel, géopolitique, ESG)
+- Évaluations 24 critères · Alertes du fournisseur · Contacts
+- **Prédictions opérationnelles** (retard de livraison & défauts PPM) — cold-start global pour les nouveaux comptes
+- **Prédiction de défaillance financière** (faillite)
+- **Risque climatique** (Open-Meteo) · **Posture cyber**
+- **Documents & conformité** (certifications, dates d'expiration, CSRD)
+- **Questionnaires** (envoyés via le portail) · **Audits** & **plans d'action correctifs (CAPA)**
+- **KPI scorecard** + export **PDF** · Graphe de réseau (tiers)
+
+CAPACITÉS IA & AUTOMATISATION :
+- Scores de risque 5 dimensions ; prédiction retard/PPM ; prédiction de faillite
+- **Import « n'importe quel format »** : mapping de colonnes par IA + nettoyage
+- **Surveillance automatique** : détecte documents/contrats qui expirent et évaluations périmées → crée des alertes + email
+- **Conseils de multi-sourcing** : repère les dépendances mono-source/critiques et propose des alternatives
+- **Ré-entraînement ML automatique** + repli global (un nouveau client a des prédictions dès le 1er jour)
+- Copilote (toi), scorecard PDF, alertes email automatiques
 `.trim();
 
 function fmt(n: number | null | undefined): string {
@@ -100,11 +115,20 @@ Quand l'utilisateur dit "ce fournisseur", il s'agit de celui-ci.`;
  * Si `supplierId` est fourni, ajoute un bloc ciblé sur ce fournisseur.
  */
 export async function buildCopilotSystemPrompt(supplierId?: string): Promise<string> {
-  const [kpis, topRisky, alerts] = await Promise.all([
+  const [kpis, topRisky, alerts, exposure] = await Promise.all([
     getAnalyticsDashboard(),
     getTopRiskySuppliers(5),
     getAlerts({ status: 'open', sort: 'created_at', order: 'desc', limit: 5 }),
+    getOrganizationExposure().catch(() => null),
   ]);
+
+  const exposureLine = exposure
+    ? `Spend-at-Risk: ${fmt(exposure.spend_at_risk)} € (${fmt(exposure.sar_pct)}% de la dépense) · Concentration HHI: ${fmt(
+        exposure.hhi,
+      )} (${exposure.concentration_level}) · Dépendance top 3: ${fmt(exposure.top3_share)}% · Mono-sources: ${fmt(
+        exposure.sole_source_count,
+      )}`
+    : 'Exposition non disponible.';
 
   const kpiLine = kpis
     ? `Fournisseurs: ${fmt(kpis.total_suppliers)} · Risque élevé/critique: ${fmt(
@@ -149,6 +173,7 @@ ${CAPABILITIES}
 
 ÉTAT ACTUEL DU COMPTE :
 ${kpiLine}
+Exposition portefeuille : ${exposureLine}
 
 Top fournisseurs à risque :
 ${suppliersBlock}
