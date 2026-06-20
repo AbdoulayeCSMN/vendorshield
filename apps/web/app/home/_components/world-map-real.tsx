@@ -5,6 +5,22 @@ import { memo, useMemo, useState } from 'react';
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
 
 import type { CountryExposure } from '~/lib/vendorshield/analytics.server';
+import { formatEur } from '~/lib/vendorshield/types';
+
+// Centroïdes [lon, lat] des principaux pays sourcing (pour les bulles).
+const CENTROIDS: Record<string, [number, number]> = {
+  FR: [2.2, 46.2], DE: [10.4, 51.2], IT: [12.6, 42.8], ES: [-3.7, 40.4],
+  PL: [19.1, 52.1], CZ: [15.5, 49.8], GB: [-1.5, 52.6], BE: [4.5, 50.6],
+  NL: [5.3, 52.1], CH: [8.2, 46.8], PT: [-8.2, 39.5], SE: [16.3, 62.2],
+  RO: [24.9, 45.9], TR: [35.2, 39.0], MA: [-7.1, 31.8], TN: [9.5, 34.0],
+  EG: [30.8, 26.8], NG: [8.7, 9.1], ZA: [24.7, -29.0], SN: [-14.5, 14.5],
+  CI: [-5.5, 7.5], CN: [104.2, 35.9], IN: [78.9, 22.6], VN: [106.3, 16.0],
+  JP: [138.3, 36.2], KR: [127.8, 36.4], TW: [121.0, 23.7], ID: [113.9, -0.8],
+  TH: [100.9, 15.9], MY: [101.9, 4.2], BD: [90.4, 23.7], PK: [69.3, 30.4],
+  US: [-98.5, 39.8], CA: [-106.3, 56.1], MX: [-102.5, 23.6], BR: [-51.9, -10.8],
+  AR: [-63.6, -38.4], AE: [54.0, 23.4], SA: [45.0, 23.9], AU: [134.5, -25.7],
+  RU: [90.0, 61.5], UA: [31.2, 48.4], SG: [103.8, 1.35],
+};
 
 // URL TopoJSON monde (hébergé sur CDN jsDelivr — pas de dépendance fichier local)
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
@@ -90,11 +106,15 @@ export const WorldMapReal = memo(function WorldMapReal({
     [countries],
   );
 
-  const handleMouseEnter = (
-    geo: { id: string },
-    data: CountryExposure | undefined,
-    evt: React.MouseEvent,
-  ) => {
+  // Échelle des bulles : aire ∝ dépense (rayon ∝ √dépense).
+  const maxSpend = useMemo(
+    () => Math.max(1, ...countries.map((c) => c.total_spend ?? 0)),
+    [countries],
+  );
+  const bubbleRadius = (spend: number) =>
+    Math.max(3.5, Math.min(20, Math.sqrt((spend || 0) / maxSpend) * 20));
+
+  const handleMouseEnter = (data: CountryExposure | undefined, evt: React.MouseEvent) => {
     if (!data) return;
     const rect = (evt.currentTarget as SVGElement)
       .closest('.rsm-svg')
@@ -152,7 +172,7 @@ export const WorldMapReal = memo(function WorldMapReal({
                         onSelect(isSelected ? null : alpha2);
                       }}
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      onMouseEnter={(evt: any) => handleMouseEnter(geo, data, evt)}
+                      onMouseEnter={(evt: any) => handleMouseEnter(data, evt)}
                       onMouseLeave={() => setTooltip(null)}
                       style={{
                         default: {
@@ -182,12 +202,28 @@ export const WorldMapReal = memo(function WorldMapReal({
               }
             </Geographies>
 
-            {/* Marqueurs pour les pays avec données */}
+            {/* Bulles proportionnelles à la dépense, colorées par le risque */}
             {countries.map((c) => {
-              // On cherche la position approximative depuis les géographies
-              // On affiche juste un point de repère pour les sélectionnés
-              if (c.country_code.trim() !== selected) return null;
-              return null; // Les marqueurs sont optionnels — la coloration suffit
+              const cc = c.country_code.trim().toUpperCase();
+              const coord = CENTROIDS[cc];
+              if (!coord || (c.total_spend ?? 0) <= 0) return null;
+              const isSel = selected === cc;
+              const color = scoreToFill(c.avg_score, false, true);
+              return (
+                <Marker key={cc} coordinates={coord}>
+                  <circle
+                    r={bubbleRadius(c.total_spend)}
+                    fill={color}
+                    fillOpacity={isSel ? 0.9 : 0.6}
+                    stroke="#fff"
+                    strokeWidth={isSel ? 2 : 1}
+                    style={{ cursor: 'pointer' }}
+                    onMouseEnter={(evt) => handleMouseEnter(c, evt)}
+                    onMouseLeave={() => setTooltip(null)}
+                    onClick={() => onSelect(isSel ? null : cc)}
+                  />
+                </Marker>
+              );
             })}
           </ZoomableGroup>
         </ComposableMap>
@@ -206,7 +242,21 @@ export const WorldMapReal = memo(function WorldMapReal({
             </p>
             <p className="text-gray-500">
               {tooltip.content.count} fournisseur{tooltip.content.count > 1 ? 's' : ''}
+              {tooltip.content.total_spend > 0 && (
+                <span className="text-gray-400"> · {formatEur(tooltip.content.total_spend)}</span>
+              )}
             </p>
+            {(tooltip.content.critical_count > 0 || tooltip.content.high_count > 0) && (
+              <p className="text-[10px] mt-0.5">
+                {tooltip.content.critical_count > 0 && (
+                  <span className="text-red-600">{tooltip.content.critical_count} critique{tooltip.content.critical_count > 1 ? 's' : ''}</span>
+                )}
+                {tooltip.content.critical_count > 0 && tooltip.content.high_count > 0 && ' · '}
+                {tooltip.content.high_count > 0 && (
+                  <span className="text-orange-600">{tooltip.content.high_count} élevé{tooltip.content.high_count > 1 ? 's' : ''}</span>
+                )}
+              </p>
+            )}
             <div className="flex items-center gap-2 mt-1">
               <div className="flex-1 h-1.5 rounded-full bg-gray-100 dark:bg-gray-800">
                 <div
@@ -246,6 +296,11 @@ export const WorldMapReal = memo(function WorldMapReal({
               {item.label}
             </span>
           ))}
+          <span className="flex items-center gap-1 text-gray-600 dark:text-gray-400 border-l border-gray-300 dark:border-gray-700 pl-2">
+            <span className="inline-block h-2 w-2 rounded-full bg-gray-400" />
+            <span className="inline-block h-3 w-3 rounded-full bg-gray-400" />
+            taille = dépense
+          </span>
         </div>
 
         {/* Instructions zoom */}
