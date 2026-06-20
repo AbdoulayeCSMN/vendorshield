@@ -29,9 +29,8 @@ export const generateRootMetadata = async (): Promise<Metadata> => {
       title: appConfig.title,
       description: appConfig.description,
     },
-    icons: {
-      icon: '/images/favicon/favicon.ico',
-      apple: '/images/favicon/apple-touch-icon.png',
-    },
+    // Les icônes sont servies automatiquement par Next depuis app/icon.svg et
+    // app/apple-icon.svg (V dans un bouclier). Ne pas les redéclarer ici, sinon
+    // l'ancien favicon.ico de Makerkit reprendrait le dessus.
   };
 };
