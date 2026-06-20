@@ -23,8 +23,8 @@ const MODELS = (
   process.env.OPENROUTER_MODELS ??
   process.env.OPENROUTER_MODEL ??
   [
+    'openai/gpt-oss-120b:free',
     'google/gemma-4-31b-it:free',
-    'google/gemma-4-26b-a4b-it:free',
     'meta-llama/llama-3.3-70b-instruct:free',
   ].join(',')
 )
@@ -42,6 +42,9 @@ async function callOpenRouter(
     stream: true,
     temperature: 0.4,
     max_tokens: 800,
+    // Pour les modèles de raisonnement (ex: gpt-oss) : raisonnement minimal pour
+    // accélérer et laisser plus de budget au contenu. Ignoré par les autres.
+    reasoning: { effort: 'low' },
     messages,
   });
 
