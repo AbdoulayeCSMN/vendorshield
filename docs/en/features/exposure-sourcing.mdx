@@ -14,6 +14,26 @@ The **Exposure** page (`/home/exposure`) gives a portfolio-level view of risk.
 | **Top-3 dependency** | Share of spend on the 3 largest suppliers (stress-test). |
 | **Sole-sources** | Count and spend of single-source suppliers. |
 
+### How it is computed
+
+**Spend-at-Risk** — spend weighted by each supplier's incident probability:
+
+$$
+\text{SaR} = \sum_{k} \text{spend}_k \cdot \left(1 - \frac{S_k}{100}\right)
+$$
+
+where $S_k$ is supplier $k$'s global score (0–100); the factor $\left(1 - S_k/100\right)$ is its incident probability.
+
+**Concentration (HHI)** — Herfindahl index on spend shares:
+
+$$
+\text{HHI} = \sum_{k} s_k^{2}
+\qquad
+s_k = \frac{\text{spend}_k}{\text{total spend}} \times 100
+$$
+
+$\text{HHI} \le 10\,000$. Guides: $>2500$ **high** concentration, $>1500$ **moderate**, otherwise **low**.
+
 ## Multi-sourcing & diversification
 
 The engine flags **dependency risks** and proposes a concrete action:

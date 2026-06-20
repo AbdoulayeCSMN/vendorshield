@@ -14,6 +14,26 @@ La page **Exposition** (`/home/exposure`) donne une vue portefeuille du risque.
 | **Dépendance top 3** | Part de la dépense sur les 3 plus gros fournisseurs (stress-test). |
 | **Mono-sources** | Nombre et dépense des fournisseurs en source unique. |
 
+### Comment c'est calculé
+
+**Spend-at-Risk** — dépense pondérée par la probabilité d'incident de chaque fournisseur :
+
+$$
+\text{SaR} = \sum_{k} \text{dépense}_k \cdot \left(1 - \frac{S_k}{100}\right)
+$$
+
+où $S_k$ est le score global du fournisseur $k$ (0–100) ; le facteur $\left(1 - S_k/100\right)$ est sa probabilité d'incident.
+
+**Concentration (HHI)** — indice de Herfindahl sur les parts de dépense :
+
+$$
+\text{HHI} = \sum_{k} s_k^{2}
+\qquad
+s_k = \frac{\text{dépense}_k}{\text{dépense totale}} \times 100
+$$
+
+$\text{HHI} \le 10\,000$. Repères : $>2500$ concentration **élevée**, $>1500$ **modérée**, sinon **faible**.
+
 ## Multi-sourcing & diversification
 
 Le moteur repère les **risques de dépendance** et propose une action concrète :
