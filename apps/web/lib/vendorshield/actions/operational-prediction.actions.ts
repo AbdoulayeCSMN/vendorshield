@@ -17,6 +17,7 @@ import {
   predictDelay,
   trainDelayModel,
 } from '~/lib/vendorshield/predictions/model';
+import { getGlobalBaselineModel } from '~/lib/vendorshield/predictions/batch';
 
 type ActionResult<T = null> =
   | { success: true; data: T; message?: string }
@@ -152,7 +153,7 @@ export async function predictOperationalRiskAction(
     dataPoints: number;
     drivers: { feature: string; contribution: number }[];
     modelVersion: string;
-    source: 'ml-service' | 'ts-fallback';
+    source: 'ml-service' | 'ts-fallback' | 'cold-start-global';
     audit: Record<string, unknown>;
   };
 
@@ -171,7 +172,12 @@ export async function predictOperationalRiskAction(
       audit: { drivers: mlPred.drivers, drift: mlResponse!.drift ?? null },
     };
   } else {
-    const model = trainDelayModel(rows);
+    // Cold-start : si le compte n'a pas assez d'historique, on s'appuie sur le
+    // modèle global anonymisé pour quand même produire une prédiction.
+    const globalModel =
+      rows.length < MIN_DATA_POINTS ? await getGlobalBaselineModel() : null;
+    const usedGlobal = globalModel !== null;
+    const model = usedGlobal ? globalModel! : trainDelayModel(rows);
     const delay = predictDelay(model, supplierRows);
     const ppm = forecastPpm(supplierRows);
     pred = {
@@ -180,12 +186,12 @@ export async function predictOperationalRiskAction(
       predictedPpm: ppm.predictedPpm,
       ppmBreachProbability: ppm.breachProbability,
       riskLevel: operationalRiskLevel(delay.delayProbability, ppm.breachProbability),
-      confidence: delay.confidence,
+      confidence: usedGlobal ? Math.min(delay.confidence, 0.5) : delay.confidence,
       dataPoints: delay.dataPoints,
       drivers: delay.topDrivers,
       modelVersion: MODEL_VERSION,
-      source: 'ts-fallback',
-      audit: { weights: model.weights, trained: model.trained, ppm_trend: ppm.trendPerDelivery },
+      source: usedGlobal ? 'cold-start-global' : 'ts-fallback',
+      audit: { weights: model.weights, trained: model.trained, ppm_trend: ppm.trendPerDelivery, cold_start: usedGlobal },
     };
   }
 

@@ -18,6 +18,7 @@ import {
 } from '~/lib/vendorshield/suppliers.server';
 
 import { ExportButton } from '~/home/_components/export-button';
+import { RetrainPredictionsButton } from './_components/retrain-predictions-button';
 import { SuppliersTable } from './_components/suppliers-table';
 
 interface SuppliersPageProps {
@@ -57,6 +58,7 @@ async function SuppliersPage({ searchParams }: SuppliersPageProps) {
         description={`${total} fournisseur${total > 1 ? 's' : ''} dans votre portefeuille`}
       >
         <div className="flex items-center gap-2">
+          <RetrainPredictionsButton />
           <ExportButton context="suppliers" label="Exporter" />
           <Button asChild size="sm">
             <Link href="/home/suppliers/new">
