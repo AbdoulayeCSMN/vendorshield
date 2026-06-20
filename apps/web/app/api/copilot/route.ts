@@ -50,7 +50,7 @@ async function callGroq(apiKey: string, messages: Msg[]): Promise<LlmResult> {
       model: GROQ_MODEL,
       stream: true,
       temperature: 0.4,
-      max_tokens: 800,
+      max_tokens: 1200,
       messages,
     }),
   });
@@ -70,7 +70,7 @@ async function callOpenRouter(apiKey: string, messages: Msg[]): Promise<LlmResul
       ...(MODELS.length > 1 ? { models: MODELS } : { model: MODELS[0] }),
       stream: true,
       temperature: 0.4,
-      max_tokens: 800,
+      max_tokens: 1200,
       // Modèles de raisonnement (gpt-oss) : raisonnement minimal → plus rapide.
       reasoning: { effort: 'low' },
       messages,
