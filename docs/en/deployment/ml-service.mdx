@@ -32,6 +32,51 @@ cp .env.example .env
 | `VS_ML_MIN_SUPPLIER_HISTORY` | Minimum history per supplier (default 8) |
 | `VS_ML_PPM_BREACH_THRESHOLD` | PPM breach threshold (default 5000) |
 
+## Free deployment (Cloud Run)
+
+The service runs on any Docker platform. The best **free** option is **Google Cloud Run**:
+scale-to-zero (free when idle), cold starts in **seconds**, configurable RAM. The
+`Dockerfile` **trains the models at build time** — the image ships ready to serve, and
+**serving needs no database** (the app sends the deliveries in the request).
+
+<Steps>
+  <Step title="Prerequisites">
+    A Google Cloud project + the `gcloud` CLI installed and authenticated
+    (`gcloud auth login`, `gcloud config set project <PROJECT>`).
+  </Step>
+  <Step title="Deploy from the service folder">
+    ```bash
+    cd services/ml
+    gcloud run deploy vendorshield-ml \
+      --source . \
+      --region europe-west1 \
+      --memory 1Gi \
+      --min-instances 0 \
+      --allow-unauthenticated \
+      --set-env-vars VS_ML_API_KEY=pick-a-key
+    ```
+    Cloud Run builds the image via the `Dockerfile`, then deploys. Note the URL
+    `https://vendorshield-ml-xxxx.a.run.app`.
+  </Step>
+  <Step title="Wire the app (Vercel)">
+    ```bash
+    ML_SERVICE_URL=https://vendorshield-ml-xxxx.a.run.app
+    ML_SERVICE_API_KEY=pick-a-key   # same as VS_ML_API_KEY
+    ```
+  </Step>
+</Steps>
+
+<Note>
+**Scale-to-zero**: the service shuts down when idle (so it's free). The first call after a
+pause incurs a short cold start; meanwhile the app **falls back to the TS model**. No outage.
+</Note>
+
+### Training on your real data
+
+By default models are trained on **synthetic data** at build time (enough to launch). To
+train on your database, run training where the DSN is reachable (`VS_ML_DATABASE_URL` set),
+then redeploy the image — or schedule periodic retraining (Cloud Run Job / cron).
+
 ## Integration
 
 The app calls the service via `predictViaMlService()`. On unavailability or error, it

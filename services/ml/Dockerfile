@@ -8,7 +8,8 @@ RUN apt-get update \
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1
+    PIP_NO_CACHE_DIR=1 \
+    VS_ML_ARTIFACTS_DIR=/app/artifacts
 
 WORKDIR /app
 
@@ -17,8 +18,10 @@ COPY pyproject.toml README.md ./
 COPY src ./src
 RUN pip install --upgrade pip && pip install .
 
-# Artifacts are mounted or baked in at deploy time (run `vendorshield-ml train`).
-COPY artifacts ./artifacts
+# Train the models at build time so the image ships ready to serve. With no
+# VS_ML_DATABASE_URL set, training uses reproducible synthetic data (fine to
+# launch); pass VS_ML_DATABASE_URL as a build arg/env to train on real data.
+RUN mkdir -p /app/artifacts && vendorshield-ml train
 
 EXPOSE 8000
 
