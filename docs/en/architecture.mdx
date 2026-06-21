@@ -1,0 +1,49 @@
+---
+title: "Architecture"
+description: "Technical overview of VendorShield: components, use cases, data and flows."
+---
+
+## Component architecture
+
+VendorShield is a Next.js app deployed on Vercel, backed by Supabase (PostgreSQL + RLS,
+Auth, Storage, Edge Functions). AI/ML capabilities rely on external services, each with a
+**fallback** so the app is never blocked.
+
+<Frame caption="Deployment architecture">
+  <img src="/images/architecture.png" alt="VendorShield architecture" />
+</Frame>
+
+- **Vercel / Next.js** — pages (RSC), streaming copilot, Server Actions and API routes.
+- **Supabase** — account-isolated data via **RLS**, auth, storage, Edge Functions.
+- **Groq → OpenRouter** — copilot and import mapping (automatic fallback).
+- **Hugging Face** — LightGBM ML service; if unavailable, falls back to the embedded **TypeScript model**.
+- **Resend** — alert emails via a Database Webhook.
+- **Cron** — triggers monitoring and ML retraining.
+
+## Use cases
+
+<Frame caption="Use case diagram">
+  <img src="/images/use-case.png" alt="Use cases" />
+</Frame>
+
+Three actors: the **procurement/risk manager** (core app), the **supplier** (external portal
+for questionnaires) and the **scheduler** (cron: monitoring + retraining).
+
+## Data model
+
+<Frame caption="Data model (excerpt)">
+  <img src="/images/data-model.png" alt="Data model" />
+</Frame>
+
+Everything belongs to an `account` and is isolated by `account_id`. `suppliers` are the hub:
+assessments (24 criteria), alerts, deliveries (ML input), predictions, documents.
+
+## Prediction flow (with fallback)
+
+<Frame caption="Sequence — operational prediction">
+  <img src="/images/sequence-prediction.png" alt="Prediction sequence" />
+</Frame>
+
+The app calls the Python ML service first; on error/timeout it **silently falls back** to the
+TypeScript model, then stores the prediction. The user is never blocked. See
+[Predictions & ML](/en/features/predictions-ml).

@@ -8,15 +8,13 @@ de livraison** et de **défauts (PPM)** — à partir de l'historique des livrai
 
 ## Architecture
 
-```
-Service ML Python (FastAPI + MLflow)  ──HTTP──►  predictViaMlService()
-        │                                              │ (repli automatique)
-        ▼                                              ▼
-   prédiction servie                          Modèle TypeScript embarqué
-```
+<Frame caption="Flux de prédiction avec repli automatique">
+  <img src="/images/sequence-prediction.png" alt="Séquence de prédiction" />
+</Frame>
 
 L'application appelle d'abord le service Python ; s'il est indisponible, elle **retombe
 automatiquement** sur le modèle TypeScript. L'app fonctionne donc **sans** le service ML.
+Vue d'ensemble : [Architecture](/architecture).
 
 ## Modèle de prédiction
 

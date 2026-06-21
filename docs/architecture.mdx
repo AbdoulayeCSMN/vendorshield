@@ -1,0 +1,49 @@
+---
+title: "Architecture"
+description: "Vue d'ensemble technique de VendorShield : composants, cas d'usage, données et flux."
+---
+
+## Architecture des composants
+
+VendorShield est une application Next.js déployée sur Vercel, adossée à Supabase
+(PostgreSQL + RLS, Auth, Storage, Edge Functions). Les capacités IA/ML s'appuient sur des
+services externes, chacun avec un **repli** pour ne jamais bloquer l'application.
+
+<Frame caption="Architecture de déploiement">
+  <img src="/images/architecture.png" alt="Architecture de VendorShield" />
+</Frame>
+
+- **Vercel / Next.js** — pages (RSC), copilote en streaming, Server Actions et routes API.
+- **Supabase** — données isolées par compte via **RLS**, authentification, stockage, Edge Functions.
+- **Groq → OpenRouter** — copilote et mapping d'import (repli automatique).
+- **Hugging Face** — service ML LightGBM ; en cas d'indisponibilité, repli sur le **modèle TypeScript** embarqué.
+- **Resend** — emails d'alerte via un Database Webhook.
+- **Cron** — déclenche la surveillance et le ré-entraînement ML.
+
+## Cas d'usage
+
+<Frame caption="Diagramme de cas d'usage">
+  <img src="/images/use-case.png" alt="Cas d'usage" />
+</Frame>
+
+Trois acteurs : le **responsable achats/risques** (cœur de l'app), le **fournisseur** (portail
+externe pour les questionnaires) et le **planificateur** (cron : surveillance + ré-entraînement).
+
+## Modèle de données
+
+<Frame caption="Modèle de données (extrait)">
+  <img src="/images/data-model.png" alt="Modèle de données" />
+</Frame>
+
+Tout est rattaché à un `account` et isolé par `account_id`. Les `suppliers` sont le pivot :
+évaluations (24 critères), alertes, livraisons (entrée du ML), prédictions, documents.
+
+## Flux d'une prédiction (avec repli)
+
+<Frame caption="Séquence — prédiction opérationnelle">
+  <img src="/images/sequence-prediction.png" alt="Séquence de prédiction" />
+</Frame>
+
+L'app appelle d'abord le service ML Python ; en cas d'erreur/timeout, elle **bascule
+silencieusement** sur le modèle TypeScript, puis stocke la prédiction. L'utilisateur n'est
+jamais bloqué. Voir [Prédictions & ML](/features/predictions-ml).

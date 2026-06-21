@@ -8,15 +8,13 @@ VendorShield predicts **operational risk** per supplier — **delivery-delay** a
 
 ## Architecture
 
-```
-Python ML service (FastAPI + MLflow)  ──HTTP──►  predictViaMlService()
-        │                                              │ (automatic fallback)
-        ▼                                              ▼
-   served prediction                         Embedded TypeScript model
-```
+<Frame caption="Prediction flow with automatic fallback">
+  <img src="/images/sequence-prediction.png" alt="Prediction sequence" />
+</Frame>
 
 The app calls the Python service first; if it is unavailable it **falls back
 automatically** to the TypeScript model. The app therefore works **without** the ML service.
+Overview: [Architecture](/en/architecture).
 
 ## Prediction model
 

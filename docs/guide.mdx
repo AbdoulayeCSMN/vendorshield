@@ -1,0 +1,114 @@
+---
+title: "Guide d'utilisation"
+description: "Prendre en main VendorShield, du premier import au pilotage des risques."
+---
+
+Ce guide vous accompagne pas à pas, dans l'ordre logique d'utilisation.
+
+## 1. Créer votre compte
+
+<Steps>
+  <Step title="Inscription">
+    Allez sur la page de connexion → **Créer un compte** (email + mot de passe).
+  </Step>
+  <Step title="Onboarding">
+    L'assistant de démarrage (`/onboarding`) vous oriente vers les premières actions :
+    importer des fournisseurs et lancer une évaluation.
+  </Step>
+</Steps>
+
+## 2. Ajouter vos fournisseurs
+
+Deux options :
+
+<Tabs>
+  <Tab title="Import en masse (recommandé)">
+    **Fournisseurs → Imports → Fiches fournisseurs**. Chargez votre fichier CSV/Excel ; le
+    **mapping des colonnes est proposé par l'IA** (acceptez ou ajustez), puis confirmez.
+    Voir [Imports & mapping IA](/features/imports).
+  </Tab>
+  <Tab title="Saisie manuelle">
+    **Fournisseurs → Nouveau fournisseur** : renseignez nom, pays, catégorie, criticité,
+    dépense, contrat…
+  </Tab>
+</Tabs>
+
+<Tip>
+Seul le **nom** est obligatoire. Les scores peuvent être importés si vous les avez, ou
+calculés ensuite via une évaluation.
+</Tip>
+
+## 3. Évaluer le risque (24 critères)
+
+**Évaluations → Nouvelle évaluation** : notez le fournisseur sur les 4 dimensions
+(financier, opérationnel, géopolitique, ESG). À la validation, les **scores se propagent
+automatiquement** à la fiche fournisseur et le **niveau de risque** est calculé.
+Voir [Évaluations](/features/assessments).
+
+## 4. Lire le tableau de bord
+
+Le **Dashboard** (`/home`) synthétise votre portefeuille :
+- KPIs (nombre de fournisseurs, risque moyen, alertes ouvertes),
+- **carte du monde** des fournisseurs par pays,
+- tendances (score moyen, alertes par semaine),
+- top fournisseurs à risque.
+
+## 5. Surveiller : alertes & scan
+
+- **Règles d'alerte** : définissez des seuils (ex. score financier &lt; 40) → alerte
+  automatique quand un fournisseur passe sous le seuil.
+- **Scanner maintenant** (page Alertes) : détecte les **contrats/documents qui expirent** et
+  les **évaluations périmées**. Voir [Alertes & surveillance](/features/alerts-monitoring).
+
+<Tip>
+En production, branchez les **emails d'alerte** et le **scan quotidien** automatique —
+voir [Automatisation](/deployment/automation).
+</Tip>
+
+## 6. Analyser l'exposition & diversifier
+
+La page **Exposition** montre votre **Spend-at-Risk**, votre **concentration** et vos
+**mono-sources**. Le panneau **Multi-sourcing** liste les dépendances critiques et propose
+des alternatives ; le bouton **Conseil stratégique IA** génère un plan de diversification.
+Voir [Exposition & multi-sourcing](/features/exposure-sourcing).
+
+## 7. Anticiper avec le ML
+
+Sur une fiche fournisseur **ayant un historique de livraisons**, le panneau **Prédictions
+opérationnelles** estime la probabilité de **retard** et de **défauts (PPM)**. Bouton
+**Recalculer** pour rafraîchir. Un nouveau compte bénéficie d'un **cold-start** (modèle
+global) dès le premier jour. Voir [Prédictions & ML](/features/predictions-ml).
+
+## 8. Demander au copilote
+
+Le copilote **Aboki** (widget ou page dédiée) répond à vos questions sur vos fournisseurs et
+vous oriente dans l'app, en s'appuyant sur **vos données réelles**. Exemples :
+- « Quels sont mes 3 fournisseurs les plus risqués ? »
+- « Comment réduire ma dépendance en catégorie composants ? »
+
+Voir [Copilote Aboki](/features/copilot).
+
+## 9. Conformité & documents
+
+Sur chaque fiche fournisseur : onglets **Documents & conformité** (certifications, échéances
+CSRD), **Questionnaires** (envoyés via le portail fournisseur), **Audits** et **plans
+d'action correctifs (CAPA)**.
+
+---
+
+## Parcours recommandé pour une démo
+
+<Steps>
+  <Step title="Importer le jeu de démo">
+    Importez les fournisseurs puis les livraisons (fichiers de démonstration).
+  </Step>
+  <Step title="Recalculer les prédictions">
+    Page Fournisseurs → **Recalculer les prédictions**.
+  </Step>
+  <Step title="Lancer le scan">
+    Page Alertes → **Scanner maintenant** (alertes contrats/évaluations).
+  </Step>
+  <Step title="Présenter">
+    Dashboard → Exposition (multi-sourcing) → une fiche fournisseur → Copilote.
+  </Step>
+</Steps>

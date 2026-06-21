@@ -20,7 +20,7 @@
         "groups": [
           {
             "group": "Démarrer",
-            "pages": ["introduction", "quickstart", "concepts"]
+            "pages": ["introduction", "quickstart", "guide", "concepts", "architecture"]
           },
           {
             "group": "Fonctionnalités",
@@ -54,7 +54,7 @@
         "groups": [
           {
             "group": "Get started",
-            "pages": ["en/introduction", "en/quickstart", "en/concepts"]
+            "pages": ["en/introduction", "en/quickstart", "en/guide", "en/concepts", "en/architecture"]
           },
           {
             "group": "Features",

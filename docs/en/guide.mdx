@@ -1,0 +1,113 @@
+---
+title: "User guide"
+description: "Get started with VendorShield, from first import to risk steering."
+---
+
+This guide walks you through VendorShield in the natural order of use.
+
+## 1. Create your account
+
+<Steps>
+  <Step title="Sign up">
+    On the sign-in page → **Create an account** (email + password).
+  </Step>
+  <Step title="Onboarding">
+    The onboarding assistant (`/onboarding`) points you to the first actions: import
+    suppliers and run an assessment.
+  </Step>
+</Steps>
+
+## 2. Add your suppliers
+
+Two options:
+
+<Tabs>
+  <Tab title="Bulk import (recommended)">
+    **Suppliers → Imports → Supplier records**. Upload your CSV/Excel; the **column mapping
+    is suggested by AI** (accept or adjust), then confirm. See
+    [Imports & AI mapping](/en/features/imports).
+  </Tab>
+  <Tab title="Manual entry">
+    **Suppliers → Add a supplier**: fill in name, country, category, criticality, spend,
+    contract…
+  </Tab>
+</Tabs>
+
+<Tip>
+Only the **name** is required. Scores can be imported if you have them, or computed later
+via an assessment.
+</Tip>
+
+## 3. Assess risk (24 criteria)
+
+**Assessments → New assessment**: score the supplier across the 4 dimensions (financial,
+operational, geopolitical, ESG). On completion, **scores propagate automatically** to the
+supplier and the **risk level** is computed. See [Assessments](/en/features/assessments).
+
+## 4. Read the dashboard
+
+The **Dashboard** (`/home`) summarizes your portfolio:
+- KPIs (supplier count, average risk, open alerts),
+- **world map** of suppliers by country,
+- trends (average score, alerts per week),
+- top risky suppliers.
+
+## 5. Monitor: alerts & scan
+
+- **Alert rules**: set thresholds (e.g. financial score &lt; 40) → automatic alert when a
+  supplier crosses the threshold.
+- **Scan now** (Alerts page): detects **expiring contracts/documents** and **stale
+  assessments**. See [Alerts & monitoring](/en/features/alerts-monitoring).
+
+<Tip>
+In production, wire up **alert emails** and the daily **monitoring scan** — see
+[Automation](/en/deployment/automation).
+</Tip>
+
+## 6. Analyze exposure & diversify
+
+The **Exposure** page shows your **Spend-at-Risk**, **concentration** and **sole-sources**.
+The **Multi-sourcing** panel lists critical dependencies and proposes alternatives; the
+**AI strategic advice** button generates a diversification plan. See
+[Exposure & multi-sourcing](/en/features/exposure-sourcing).
+
+## 7. Anticipate with ML
+
+On a supplier with **delivery history**, the **Operational predictions** panel estimates the
+probability of **delay** and **defects (PPM)**. Click **Recompute** to refresh. A new account
+benefits from a **cold-start** (global model) on day one. See
+[Predictions & ML](/en/features/predictions-ml).
+
+## 8. Ask the copilot
+
+The **Aboki** copilot (widget or dedicated page) answers questions about your suppliers and
+guides you through the app, using **your real data**. Examples:
+- "What are my 3 riskiest suppliers?"
+- "How do I reduce my dependency in the components category?"
+
+See [Copilot Aboki](/en/features/copilot).
+
+## 9. Compliance & documents
+
+On each supplier record: **Documents & compliance** (certifications, CSRD deadlines),
+**Questionnaires** (sent via the supplier portal), **Audits** and **corrective action plans
+(CAPA)**.
+
+---
+
+## Recommended demo flow
+
+<Steps>
+  <Step title="Import the demo dataset">
+    Import suppliers, then deliveries (demo files).
+  </Step>
+  <Step title="Recompute predictions">
+    Suppliers page → **Recompute predictions**.
+  </Step>
+  <Step title="Run the scan">
+    Alerts page → **Scan now** (contract/assessment alerts).
+  </Step>
+  <Step title="Present">
+    Dashboard → Exposure (multi-sourcing) → a supplier record → Copilot.
+  </Step>
+</Steps>
