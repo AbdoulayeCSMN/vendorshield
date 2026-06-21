@@ -88,7 +88,7 @@ revoke all on public.supplier_tiers, public.supplier_tier_links from authenticat
 grant select, insert, delete on public.supplier_tiers, public.supplier_tier_links to authenticated, service_role;
 
 -- ── Vue graph complète ────────────────────────────────────────────────────────
-create or replace view public.supply_chain_graph as
+create or replace view public.supply_chain_graph with (security_invoker = true) as
 -- Tier 1 (nos fournisseurs réels)
 select
   s.id::text              as node_id,

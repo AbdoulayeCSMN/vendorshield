@@ -923,7 +923,7 @@ create trigger set_updated_at before update on public.documents
 -- ================================================================
 
 -- Vue : résumé des risques par fournisseur (lecture seule)
-create or replace view public.supplier_risk_summary as
+create or replace view public.supplier_risk_summary with (security_invoker = true) as
 select
     s.id,
     s.account_id,
@@ -955,7 +955,7 @@ group by s.id;
 comment on view public.supplier_risk_summary is 'Vue consolidée des risques fournisseurs avec compteurs d''alertes et d''évaluations';
 
 -- Vue : tableau de bord compte (KPIs globaux)
-create or replace view public.account_risk_dashboard as
+create or replace view public.account_risk_dashboard with (security_invoker = true) as
 select
     s.account_id,
     count(distinct s.id) as total_suppliers,

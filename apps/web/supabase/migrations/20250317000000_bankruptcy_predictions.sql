@@ -84,7 +84,7 @@ revoke all on public.bankruptcy_predictions from authenticated, service_role;
 grant select, insert on public.bankruptcy_predictions to authenticated, service_role;
 
 -- ── Vue résumée pour le dashboard ─────────────────────────────────────────────
-create or replace view public.supplier_bankruptcy_latest as
+create or replace view public.supplier_bankruptcy_latest with (security_invoker = true) as
 select distinct on (supplier_id)
   bp.*,
   s.name        as supplier_name,
