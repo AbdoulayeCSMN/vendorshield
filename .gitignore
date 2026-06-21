@@ -27,6 +27,8 @@ pnpm-debug.log*
 .env.production.local
 # …mais on autorise le template (placeholders uniquement)
 !.env.example
+# config publique de base Makerkit (NEXT_PUBLIC_*, aucun secret) — requise au build
+!apps/web/.env
 
 # vercel
 .vercel
