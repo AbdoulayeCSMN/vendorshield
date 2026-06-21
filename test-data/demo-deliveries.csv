@@ -1,0 +1,385 @@
+supplier_id,planned_date,actual_date,ppm,quantity,status
+Bayerische Präzisionstechnik,2025-12-17,2025-12-20,2712,2500,late
+Bayerische Präzisionstechnik,2025-12-28,2025-12-31,1709,500,late
+Bayerische Präzisionstechnik,2026-01-10,2026-01-10,1761,1500,on_time
+Bayerische Präzisionstechnik,2026-01-25,2026-01-25,1507,500,on_time
+Bayerische Präzisionstechnik,2026-02-11,2026-02-14,2029,2000,late
+Bayerische Präzisionstechnik,2026-02-25,2026-02-26,2267,1500,late
+Bayerische Präzisionstechnik,2026-03-11,2026-03-11,2240,2500,on_time
+Bayerische Präzisionstechnik,2026-03-21,2026-03-23,4030,1500,late
+Bayerische Präzisionstechnik,2026-04-02,2026-04-02,363,2500,on_time
+Bayerische Präzisionstechnik,2026-04-16,2026-04-21,1847,5000,late
+Bayerische Präzisionstechnik,2026-04-30,2026-04-30,1861,1500,on_time
+Bayerische Präzisionstechnik,2026-05-13,2026-05-13,1777,1500,on_time
+Bayerische Präzisionstechnik,2026-05-26,2026-05-26,1117,1000,on_time
+Bayerische Präzisionstechnik,2026-06-08,2026-06-10,834,1000,late
+Rhein Stahlwerke,2026-01-08,2026-01-08,741,500,on_time
+Rhein Stahlwerke,2026-01-22,2026-01-22,752,2500,on_time
+Rhein Stahlwerke,2026-02-06,2026-02-06,940,1500,on_time
+Rhein Stahlwerke,2026-02-21,2026-02-22,784,2000,late
+Rhein Stahlwerke,2026-03-06,2026-03-06,1001,2500,on_time
+Rhein Stahlwerke,2026-03-16,2026-03-16,773,5000,on_time
+Rhein Stahlwerke,2026-03-27,2026-03-27,594,2000,on_time
+Rhein Stahlwerke,2026-04-09,2026-04-09,744,5000,on_time
+Rhein Stahlwerke,2026-04-24,2026-04-30,1080,5000,very_late
+Rhein Stahlwerke,2026-05-10,2026-05-10,828,500,on_time
+Rhein Stahlwerke,2026-05-22,2026-05-22,851,1000,on_time
+Rhein Stahlwerke,2026-06-08,2026-06-08,568,2500,on_time
+Nippon Seimitsu KK,2025-11-10,2025-11-12,2170,500,late
+Nippon Seimitsu KK,2025-11-20,2025-11-21,591,500,late
+Nippon Seimitsu KK,2025-12-08,2025-12-08,1194,1000,on_time
+Nippon Seimitsu KK,2025-12-21,2025-12-23,1604,2500,late
+Nippon Seimitsu KK,2026-01-03,2026-01-03,988,2500,on_time
+Nippon Seimitsu KK,2026-01-19,2026-01-19,1342,5000,on_time
+Nippon Seimitsu KK,2026-02-03,2026-02-06,989,2500,late
+Nippon Seimitsu KK,2026-02-19,2026-02-21,418,1000,late
+Nippon Seimitsu KK,2026-03-09,2026-03-11,2126,2000,late
+Nippon Seimitsu KK,2026-03-21,2026-03-21,862,1000,on_time
+Nippon Seimitsu KK,2026-04-02,2026-04-04,2190,500,late
+Nippon Seimitsu KK,2026-04-20,2026-04-24,1880,2500,late
+Nippon Seimitsu KK,2026-05-08,2026-05-08,1646,2500,on_time
+Nippon Seimitsu KK,2026-05-18,2026-05-18,2022,500,on_time
+Nippon Seimitsu KK,2026-06-05,2026-06-05,1573,500,on_time
+Lombardia Cuscinetti,2025-12-25,2025-12-25,2254,1500,on_time
+Lombardia Cuscinetti,2026-01-11,2026-01-11,2599,2500,on_time
+Lombardia Cuscinetti,2026-01-24,2026-01-24,602,1500,on_time
+Lombardia Cuscinetti,2026-02-11,2026-02-12,2246,2000,late
+Lombardia Cuscinetti,2026-02-23,2026-02-23,3239,1500,on_time
+Lombardia Cuscinetti,2026-03-06,2026-03-06,1695,1000,on_time
+Lombardia Cuscinetti,2026-03-20,2026-03-21,449,1000,late
+Lombardia Cuscinetti,2026-04-04,2026-04-07,4449,2000,late
+Lombardia Cuscinetti,2026-04-17,2026-04-17,2219,2000,on_time
+Lombardia Cuscinetti,2026-04-29,2026-05-04,2570,1000,late
+Lombardia Cuscinetti,2026-05-15,2026-05-18,2659,2000,late
+Lombardia Cuscinetti,2026-05-28,2026-05-28,3072,1500,on_time
+Lombardia Cuscinetti,2026-06-07,2026-06-07,3718,5000,on_time
+Lombardia Cuscinetti,2026-06-17,2026-06-17,3566,1500,on_time
+Iberia Composites,2025-11-20,2025-11-25,4702,1000,late
+Iberia Composites,2025-12-01,2025-12-03,3446,1000,late
+Iberia Composites,2025-12-15,2025-12-15,772,5000,on_time
+Iberia Composites,2025-12-29,2025-12-29,3790,2500,on_time
+Iberia Composites,2026-01-15,2026-01-15,2480,500,on_time
+Iberia Composites,2026-01-27,2026-01-27,3178,500,on_time
+Iberia Composites,2026-02-07,2026-02-07,2499,1000,on_time
+Iberia Composites,2026-02-18,2026-02-18,3572,500,on_time
+Iberia Composites,2026-03-05,2026-03-08,2925,1500,late
+Iberia Composites,2026-03-17,2026-03-21,3470,500,late
+Iberia Composites,2026-03-29,2026-03-29,3718,1500,on_time
+Iberia Composites,2026-04-12,2026-04-12,2813,2000,on_time
+Iberia Composites,2026-04-30,2026-04-30,2137,500,on_time
+Iberia Composites,2026-05-14,2026-05-14,3022,2500,on_time
+Iberia Composites,2026-06-01,2026-06-04,2773,1000,late
+Iberia Composites,2026-06-18,2026-06-22,4330,2000,late
+Polska Elektronika SA,2025-11-12,2025-11-12,1919,2500,on_time
+Polska Elektronika SA,2025-11-26,2025-11-26,0,1500,on_time
+Polska Elektronika SA,2025-12-09,2025-12-11,1147,5000,late
+Polska Elektronika SA,2025-12-21,2025-12-21,3045,500,on_time
+Polska Elektronika SA,2026-01-02,2026-01-06,2646,1500,late
+Polska Elektronika SA,2026-01-18,2026-01-18,2882,2000,on_time
+Polska Elektronika SA,2026-02-05,2026-02-05,1799,1000,on_time
+Polska Elektronika SA,2026-02-19,2026-02-20,2700,1500,late
+Polska Elektronika SA,2026-03-08,2026-03-10,2541,1500,late
+Polska Elektronika SA,2026-03-26,2026-03-26,2758,1500,on_time
+Polska Elektronika SA,2026-04-08,2026-04-08,2556,2000,on_time
+Polska Elektronika SA,2026-04-19,2026-04-19,2709,1000,on_time
+Polska Elektronika SA,2026-05-02,2026-05-02,2517,1500,on_time
+Polska Elektronika SA,2026-05-13,2026-05-15,3573,2000,late
+Polska Elektronika SA,2026-05-23,2026-05-23,3872,500,on_time
+Polska Elektronika SA,2026-06-10,2026-06-11,2053,5000,late
+Bohemia Plastics,2025-10-27,2025-10-27,1509,1500,on_time
+Bohemia Plastics,2025-11-08,2025-11-13,3365,2500,late
+Bohemia Plastics,2025-11-24,2025-11-24,759,1000,on_time
+Bohemia Plastics,2025-12-12,2025-12-12,1343,500,on_time
+Bohemia Plastics,2025-12-25,2025-12-25,2956,5000,on_time
+Bohemia Plastics,2026-01-09,2026-01-11,2516,2000,late
+Bohemia Plastics,2026-01-27,2026-01-27,2858,2500,on_time
+Bohemia Plastics,2026-02-09,2026-02-09,2796,500,on_time
+Bohemia Plastics,2026-02-27,2026-02-28,2496,2500,late
+Bohemia Plastics,2026-03-10,2026-03-10,1525,500,on_time
+Bohemia Plastics,2026-03-24,2026-03-24,4657,1000,on_time
+Bohemia Plastics,2026-04-10,2026-04-10,2831,2000,on_time
+Bohemia Plastics,2026-04-24,2026-04-24,1252,5000,on_time
+Bohemia Plastics,2026-05-07,2026-05-08,3084,1500,late
+Bohemia Plastics,2026-05-21,2026-05-21,2377,2000,on_time
+Bohemia Plastics,2026-05-31,2026-05-31,3056,500,on_time
+Bohemia Plastics,2026-06-13,2026-06-13,1963,2500,on_time
+Shenzhen MicroCircuits,2025-12-10,2025-12-10,4877,2500,on_time
+Shenzhen MicroCircuits,2025-12-23,2025-12-24,5414,2000,late
+Shenzhen MicroCircuits,2026-01-02,2026-01-03,5403,2500,late
+Shenzhen MicroCircuits,2026-01-19,2026-01-23,4609,1000,late
+Shenzhen MicroCircuits,2026-01-30,2026-01-30,4173,2500,on_time
+Shenzhen MicroCircuits,2026-02-13,2026-02-16,4387,5000,late
+Shenzhen MicroCircuits,2026-03-03,2026-03-04,5579,1500,late
+Shenzhen MicroCircuits,2026-03-16,2026-03-16,4730,2000,on_time
+Shenzhen MicroCircuits,2026-03-26,2026-03-31,8533,5000,late
+Shenzhen MicroCircuits,2026-04-12,2026-04-12,6369,2000,on_time
+Shenzhen MicroCircuits,2026-04-27,2026-04-27,5347,1500,on_time
+Shenzhen MicroCircuits,2026-05-07,2026-05-07,6197,2000,on_time
+Shenzhen MicroCircuits,2026-05-18,2026-05-21,4224,500,late
+Shenzhen MicroCircuits,2026-06-01,2026-06-02,5366,2000,late
+Shenzhen MicroCircuits,2026-06-12,2026-06-12,6199,1500,on_time
+Guangzhou MetalWorks,2025-10-22,2025-10-22,4364,5000,on_time
+Guangzhou MetalWorks,2025-11-05,2025-11-05,3210,1500,on_time
+Guangzhou MetalWorks,2025-11-21,2025-11-21,3800,1500,on_time
+Guangzhou MetalWorks,2025-12-07,2025-12-12,1988,5000,late
+Guangzhou MetalWorks,2025-12-23,2025-12-30,1965,2500,very_late
+Guangzhou MetalWorks,2026-01-05,2026-01-05,3385,5000,on_time
+Guangzhou MetalWorks,2026-01-21,2026-01-21,4656,5000,on_time
+Guangzhou MetalWorks,2026-02-04,2026-02-04,4178,2500,on_time
+Guangzhou MetalWorks,2026-02-16,2026-02-18,5278,1500,late
+Guangzhou MetalWorks,2026-03-02,2026-03-02,6404,5000,on_time
+Guangzhou MetalWorks,2026-03-16,2026-03-16,4505,2000,on_time
+Guangzhou MetalWorks,2026-04-03,2026-04-03,3187,5000,on_time
+Guangzhou MetalWorks,2026-04-15,2026-04-19,4699,2000,late
+Guangzhou MetalWorks,2026-05-03,2026-05-05,7178,2000,late
+Guangzhou MetalWorks,2026-05-19,2026-05-21,4648,500,late
+Guangzhou MetalWorks,2026-05-31,2026-05-31,4436,1000,on_time
+Guangzhou MetalWorks,2026-06-15,2026-06-15,5877,500,on_time
+Anadolu Döküm,2025-12-09,2025-12-10,3133,1500,late
+Anadolu Döküm,2025-12-24,2025-12-25,2291,2500,late
+Anadolu Döküm,2026-01-08,2026-01-11,5773,5000,late
+Anadolu Döküm,2026-01-21,2026-01-27,6343,2000,very_late
+Anadolu Döküm,2026-02-06,2026-02-06,2862,1500,on_time
+Anadolu Döküm,2026-02-16,2026-02-19,5623,2000,late
+Anadolu Döküm,2026-03-05,2026-03-09,4321,2500,late
+Anadolu Döküm,2026-03-22,2026-03-25,4093,500,late
+Anadolu Döküm,2026-04-04,2026-04-07,6052,5000,late
+Anadolu Döküm,2026-04-15,2026-04-20,3326,5000,late
+Anadolu Döküm,2026-05-02,2026-05-07,5843,500,late
+Anadolu Döküm,2026-05-14,2026-05-16,8179,5000,late
+Anadolu Döküm,2026-05-28,2026-06-02,3752,2500,late
+Anadolu Döküm,2026-06-13,2026-06-14,3520,500,late
+Bharat Forge Components,2025-11-22,2025-11-22,4582,2500,on_time
+Bharat Forge Components,2025-12-02,2025-12-05,3956,2000,late
+Bharat Forge Components,2025-12-16,2025-12-21,3301,1000,late
+Bharat Forge Components,2026-01-02,2026-01-02,3549,500,on_time
+Bharat Forge Components,2026-01-18,2026-01-18,2596,500,on_time
+Bharat Forge Components,2026-01-31,2026-01-31,3894,2000,on_time
+Bharat Forge Components,2026-02-11,2026-02-11,6164,1500,on_time
+Bharat Forge Components,2026-02-24,2026-02-24,3975,5000,on_time
+Bharat Forge Components,2026-03-12,2026-03-12,5053,500,on_time
+Bharat Forge Components,2026-03-26,2026-03-26,2038,1000,on_time
+Bharat Forge Components,2026-04-12,2026-04-15,3618,1000,late
+Bharat Forge Components,2026-04-25,2026-04-25,4134,1500,on_time
+Bharat Forge Components,2026-05-06,2026-05-10,3331,1000,late
+Bharat Forge Components,2026-05-19,2026-05-19,4188,500,on_time
+Bharat Forge Components,2026-05-31,2026-06-01,3626,500,late
+Bharat Forge Components,2026-06-12,2026-06-12,5104,1000,on_time
+Mekong Textile & Foam,2025-12-10,2025-12-16,2180,5000,very_late
+Mekong Textile & Foam,2025-12-21,2025-12-29,4257,1500,very_late
+Mekong Textile & Foam,2026-01-03,2026-01-07,8042,5000,late
+Mekong Textile & Foam,2026-01-20,2026-01-25,4828,2000,late
+Mekong Textile & Foam,2026-02-04,2026-02-08,4144,500,late
+Mekong Textile & Foam,2026-02-14,2026-02-16,4654,2000,late
+Mekong Textile & Foam,2026-02-25,2026-02-25,3227,2000,on_time
+Mekong Textile & Foam,2026-03-12,2026-03-13,2845,2000,late
+Mekong Textile & Foam,2026-03-23,2026-03-27,4916,1500,late
+Mekong Textile & Foam,2026-04-10,2026-04-13,3771,1500,late
+Mekong Textile & Foam,2026-04-27,2026-05-01,4656,5000,late
+Mekong Textile & Foam,2026-05-13,2026-05-15,4436,500,late
+Mekong Textile & Foam,2026-05-23,2026-05-24,7183,2500,late
+Mekong Textile & Foam,2026-06-07,2026-06-07,5503,2500,on_time
+Mekong Textile & Foam,2026-06-17,2026-06-18,7056,1500,late
+Atlas Logistique Maghreb,2025-12-21,2025-12-27,4663,5000,very_late
+Atlas Logistique Maghreb,2026-01-01,2026-01-04,4793,2000,late
+Atlas Logistique Maghreb,2026-01-18,2026-01-22,4071,1500,late
+Atlas Logistique Maghreb,2026-02-03,2026-02-05,3690,2000,late
+Atlas Logistique Maghreb,2026-02-15,2026-02-23,4822,1500,very_late
+Atlas Logistique Maghreb,2026-02-27,2026-02-27,3568,1500,on_time
+Atlas Logistique Maghreb,2026-03-16,2026-03-16,7036,500,on_time
+Atlas Logistique Maghreb,2026-04-03,2026-04-06,7493,1000,late
+Atlas Logistique Maghreb,2026-04-19,2026-04-21,4780,2500,late
+Atlas Logistique Maghreb,2026-05-07,2026-05-07,9162,500,on_time
+Atlas Logistique Maghreb,2026-05-18,2026-05-19,5356,500,late
+Atlas Logistique Maghreb,2026-06-03,2026-06-03,4617,2000,on_time
+Atlas Logistique Maghreb,2026-06-15,2026-06-17,6487,2500,late
+Compañía Química del Norte,2025-11-13,2025-11-16,1762,500,late
+Compañía Química del Norte,2025-11-27,2025-11-27,5123,1500,on_time
+Compañía Química del Norte,2025-12-11,2025-12-11,2510,1000,on_time
+Compañía Química del Norte,2025-12-23,2025-12-23,4208,2500,on_time
+Compañía Química del Norte,2026-01-05,2026-01-05,4638,1000,on_time
+Compañía Química del Norte,2026-01-23,2026-01-23,3093,500,on_time
+Compañía Química del Norte,2026-02-09,2026-02-11,3383,2000,late
+Compañía Química del Norte,2026-02-22,2026-02-26,864,500,late
+Compañía Química del Norte,2026-03-08,2026-03-08,3857,2500,on_time
+Compañía Química del Norte,2026-03-21,2026-03-24,2859,1000,late
+Compañía Química del Norte,2026-04-07,2026-04-07,1994,5000,on_time
+Compañía Química del Norte,2026-04-17,2026-04-20,4556,2500,late
+Compañía Química del Norte,2026-05-02,2026-05-03,4705,1000,late
+Compañía Química del Norte,2026-05-12,2026-05-13,4425,2500,late
+Compañía Química del Norte,2026-05-25,2026-05-27,1097,2000,late
+Compañía Química del Norte,2026-06-09,2026-06-10,4506,1000,late
+Compañía Química del Norte,2026-06-19,2026-06-20,1765,500,late
+Carolina Polymers,2025-12-04,2025-12-05,858,1000,late
+Carolina Polymers,2025-12-22,2025-12-23,2236,5000,late
+Carolina Polymers,2026-01-05,2026-01-05,2327,1500,on_time
+Carolina Polymers,2026-01-21,2026-01-23,1781,2500,late
+Carolina Polymers,2026-02-05,2026-02-05,2058,1500,on_time
+Carolina Polymers,2026-02-18,2026-02-18,2491,500,on_time
+Carolina Polymers,2026-03-06,2026-03-08,1498,500,late
+Carolina Polymers,2026-03-22,2026-03-22,1625,1000,on_time
+Carolina Polymers,2026-04-03,2026-04-06,2073,5000,late
+Carolina Polymers,2026-04-19,2026-04-22,2566,1500,late
+Carolina Polymers,2026-05-07,2026-05-08,2625,1000,late
+Carolina Polymers,2026-05-25,2026-05-25,2240,2000,on_time
+Carolina Polymers,2026-06-11,2026-06-11,576,1000,on_time
+Midwest Bearings Co.,2025-12-31,2026-01-03,1924,500,late
+Midwest Bearings Co.,2026-01-16,2026-01-20,2744,5000,late
+Midwest Bearings Co.,2026-01-28,2026-01-28,810,2500,on_time
+Midwest Bearings Co.,2026-02-13,2026-02-13,1708,2000,on_time
+Midwest Bearings Co.,2026-02-25,2026-02-25,1973,2500,on_time
+Midwest Bearings Co.,2026-03-09,2026-03-09,2353,1000,on_time
+Midwest Bearings Co.,2026-03-22,2026-03-25,2341,5000,late
+Midwest Bearings Co.,2026-04-01,2026-04-01,1432,2000,on_time
+Midwest Bearings Co.,2026-04-18,2026-04-18,1710,1500,on_time
+Midwest Bearings Co.,2026-05-04,2026-05-04,2655,2000,on_time
+Midwest Bearings Co.,2026-05-19,2026-05-19,2361,500,on_time
+Midwest Bearings Co.,2026-05-29,2026-05-29,1417,1000,on_time
+Midwest Bearings Co.,2026-06-15,2026-06-15,634,2000,on_time
+Hansa Verpackung,2025-10-24,2025-10-25,1067,500,late
+Hansa Verpackung,2025-11-05,2025-11-05,2216,2000,on_time
+Hansa Verpackung,2025-11-23,2025-11-23,1697,5000,on_time
+Hansa Verpackung,2025-12-05,2025-12-09,2259,5000,late
+Hansa Verpackung,2025-12-23,2025-12-27,2260,2000,late
+Hansa Verpackung,2026-01-04,2026-01-05,1751,2500,late
+Hansa Verpackung,2026-01-15,2026-01-17,3525,2000,late
+Hansa Verpackung,2026-01-29,2026-02-04,1300,1000,very_late
+Hansa Verpackung,2026-02-11,2026-02-13,1964,1500,late
+Hansa Verpackung,2026-02-23,2026-02-23,2553,2000,on_time
+Hansa Verpackung,2026-03-07,2026-03-07,3475,2000,on_time
+Hansa Verpackung,2026-03-20,2026-03-20,1193,1000,on_time
+Hansa Verpackung,2026-04-04,2026-04-04,2037,2000,on_time
+Hansa Verpackung,2026-04-16,2026-04-16,1292,1500,on_time
+Hansa Verpackung,2026-05-02,2026-05-04,2756,500,late
+Hansa Verpackung,2026-05-20,2026-05-25,2116,2000,late
+Hansa Verpackung,2026-06-07,2026-06-07,1569,500,on_time
+Provence Énergie Solaire,2025-11-25,2025-11-25,1551,2000,on_time
+Provence Énergie Solaire,2025-12-10,2025-12-10,2074,500,on_time
+Provence Énergie Solaire,2025-12-27,2025-12-27,3902,500,on_time
+Provence Énergie Solaire,2026-01-10,2026-01-10,1821,5000,on_time
+Provence Énergie Solaire,2026-01-25,2026-01-25,858,1000,on_time
+Provence Énergie Solaire,2026-02-06,2026-02-06,3886,2000,on_time
+Provence Énergie Solaire,2026-02-24,2026-02-24,2757,2000,on_time
+Provence Énergie Solaire,2026-03-09,2026-03-09,2319,500,on_time
+Provence Énergie Solaire,2026-03-19,2026-03-19,2168,2500,on_time
+Provence Énergie Solaire,2026-04-03,2026-04-03,2298,1500,on_time
+Provence Énergie Solaire,2026-04-15,2026-04-16,3871,2000,late
+Provence Énergie Solaire,2026-04-27,2026-05-01,4293,1000,late
+Provence Énergie Solaire,2026-05-09,2026-05-09,2631,1000,on_time
+Provence Énergie Solaire,2026-05-23,2026-05-23,2976,500,on_time
+Provence Énergie Solaire,2026-06-02,2026-06-02,1496,1500,on_time
+Provence Énergie Solaire,2026-06-19,2026-06-19,1793,2000,on_time
+Normandie Usinage,2026-01-02,2026-01-02,2683,2500,on_time
+Normandie Usinage,2026-01-12,2026-01-12,3352,500,on_time
+Normandie Usinage,2026-01-23,2026-01-26,2993,1000,late
+Normandie Usinage,2026-02-04,2026-02-04,3602,5000,on_time
+Normandie Usinage,2026-02-22,2026-02-22,1925,2500,on_time
+Normandie Usinage,2026-03-06,2026-03-06,2857,5000,on_time
+Normandie Usinage,2026-03-16,2026-03-20,2811,2000,late
+Normandie Usinage,2026-04-03,2026-04-08,2968,5000,late
+Normandie Usinage,2026-04-20,2026-04-23,3694,1000,late
+Normandie Usinage,2026-05-03,2026-05-05,2860,5000,late
+Normandie Usinage,2026-05-13,2026-05-17,4577,5000,late
+Normandie Usinage,2026-05-27,2026-05-27,2000,2500,on_time
+Normandie Usinage,2026-06-12,2026-06-12,514,1500,on_time
+Lyon Maintenance Industrielle,2025-12-20,2025-12-23,2685,1000,late
+Lyon Maintenance Industrielle,2026-01-03,2026-01-07,1224,1000,late
+Lyon Maintenance Industrielle,2026-01-15,2026-01-15,1391,2000,on_time
+Lyon Maintenance Industrielle,2026-01-30,2026-01-30,1658,5000,on_time
+Lyon Maintenance Industrielle,2026-02-17,2026-02-17,2474,5000,on_time
+Lyon Maintenance Industrielle,2026-02-27,2026-03-01,1437,5000,late
+Lyon Maintenance Industrielle,2026-03-12,2026-03-12,1843,1000,on_time
+Lyon Maintenance Industrielle,2026-03-28,2026-03-28,1917,1000,on_time
+Lyon Maintenance Industrielle,2026-04-09,2026-04-10,2246,2500,late
+Lyon Maintenance Industrielle,2026-04-21,2026-04-21,2555,500,on_time
+Lyon Maintenance Industrielle,2026-05-01,2026-05-05,2503,5000,late
+Lyon Maintenance Industrielle,2026-05-11,2026-05-11,825,500,on_time
+Lyon Maintenance Industrielle,2026-05-26,2026-05-28,4200,2500,late
+Lyon Maintenance Industrielle,2026-06-06,2026-06-09,1165,5000,late
+Silesia Casting Group,2025-12-04,2025-12-05,5598,500,late
+Silesia Casting Group,2025-12-14,2025-12-21,3193,5000,very_late
+Silesia Casting Group,2025-12-25,2025-12-28,2189,1500,late
+Silesia Casting Group,2026-01-11,2026-01-13,4880,5000,late
+Silesia Casting Group,2026-01-24,2026-01-24,5945,1500,on_time
+Silesia Casting Group,2026-02-03,2026-02-03,7688,500,on_time
+Silesia Casting Group,2026-02-18,2026-02-23,2796,2500,late
+Silesia Casting Group,2026-03-08,2026-03-08,4627,5000,on_time
+Silesia Casting Group,2026-03-18,2026-03-19,3978,2500,late
+Silesia Casting Group,2026-03-29,2026-03-29,6671,2500,on_time
+Silesia Casting Group,2026-04-11,2026-04-11,1183,2500,on_time
+Silesia Casting Group,2026-04-25,2026-04-26,4488,1000,late
+Silesia Casting Group,2026-05-09,2026-05-11,0,500,late
+Silesia Casting Group,2026-05-24,2026-05-24,4528,1000,on_time
+Silesia Casting Group,2026-06-10,2026-06-10,1977,2500,on_time
+Busan Marine Coatings,2025-12-19,2025-12-19,2518,5000,on_time
+Busan Marine Coatings,2026-01-01,2026-01-01,1984,5000,on_time
+Busan Marine Coatings,2026-01-12,2026-01-12,2128,2500,on_time
+Busan Marine Coatings,2026-01-23,2026-01-23,1445,2000,on_time
+Busan Marine Coatings,2026-02-08,2026-02-11,1156,2000,late
+Busan Marine Coatings,2026-02-18,2026-02-18,2465,2000,on_time
+Busan Marine Coatings,2026-03-08,2026-03-08,1974,5000,on_time
+Busan Marine Coatings,2026-03-21,2026-03-22,1837,2500,late
+Busan Marine Coatings,2026-03-31,2026-03-31,2553,1000,on_time
+Busan Marine Coatings,2026-04-17,2026-04-17,870,1000,on_time
+Busan Marine Coatings,2026-05-04,2026-05-04,2491,2500,on_time
+Busan Marine Coatings,2026-05-17,2026-05-19,2607,5000,late
+Busan Marine Coatings,2026-05-30,2026-05-30,1949,5000,on_time
+Busan Marine Coatings,2026-06-11,2026-06-11,0,5000,on_time
+São Paulo Aluminio,2025-12-25,2025-12-25,4460,1000,on_time
+São Paulo Aluminio,2026-01-08,2026-01-13,3238,500,late
+São Paulo Aluminio,2026-01-20,2026-01-22,3443,2000,late
+São Paulo Aluminio,2026-02-01,2026-02-07,3340,5000,very_late
+São Paulo Aluminio,2026-02-15,2026-02-15,3978,5000,on_time
+São Paulo Aluminio,2026-02-26,2026-02-26,6540,2000,on_time
+São Paulo Aluminio,2026-03-08,2026-03-14,3823,2000,very_late
+São Paulo Aluminio,2026-03-21,2026-03-21,3593,2000,on_time
+São Paulo Aluminio,2026-03-31,2026-04-03,5123,2000,late
+São Paulo Aluminio,2026-04-10,2026-04-10,459,2000,on_time
+São Paulo Aluminio,2026-04-26,2026-04-29,1839,5000,late
+São Paulo Aluminio,2026-05-09,2026-05-09,1735,2000,on_time
+São Paulo Aluminio,2026-05-25,2026-05-25,5469,500,on_time
+São Paulo Aluminio,2026-06-10,2026-06-10,5054,5000,on_time
+Carpathian Cables SRL,2025-11-07,2025-11-08,6645,2000,late
+Carpathian Cables SRL,2025-11-17,2025-11-17,3351,5000,on_time
+Carpathian Cables SRL,2025-11-29,2025-12-02,3652,500,late
+Carpathian Cables SRL,2025-12-15,2025-12-20,1118,500,late
+Carpathian Cables SRL,2025-12-25,2025-12-26,5992,5000,late
+Carpathian Cables SRL,2026-01-07,2026-01-07,4575,2500,on_time
+Carpathian Cables SRL,2026-01-24,2026-01-24,3921,2500,on_time
+Carpathian Cables SRL,2026-02-03,2026-02-03,1979,2500,on_time
+Carpathian Cables SRL,2026-02-18,2026-02-18,7110,1000,on_time
+Carpathian Cables SRL,2026-03-02,2026-03-02,6665,500,on_time
+Carpathian Cables SRL,2026-03-17,2026-03-17,3593,2000,on_time
+Carpathian Cables SRL,2026-04-02,2026-04-04,4958,2000,late
+Carpathian Cables SRL,2026-04-17,2026-04-17,4245,1500,on_time
+Carpathian Cables SRL,2026-05-03,2026-05-08,3835,1000,late
+Carpathian Cables SRL,2026-05-19,2026-05-19,4944,500,on_time
+Carpathian Cables SRL,2026-06-01,2026-06-01,5143,1000,on_time
+Carpathian Cables SRL,2026-06-13,2026-06-13,6810,2000,on_time
+Pennine Precision Ltd,2025-12-07,2025-12-07,835,2000,on_time
+Pennine Precision Ltd,2025-12-22,2025-12-22,1419,5000,on_time
+Pennine Precision Ltd,2026-01-07,2026-01-07,0,5000,on_time
+Pennine Precision Ltd,2026-01-19,2026-01-19,2145,1500,on_time
+Pennine Precision Ltd,2026-02-03,2026-02-03,2651,2000,on_time
+Pennine Precision Ltd,2026-02-20,2026-02-20,2469,5000,on_time
+Pennine Precision Ltd,2026-03-07,2026-03-08,2531,2000,late
+Pennine Precision Ltd,2026-03-17,2026-03-20,2501,1500,late
+Pennine Precision Ltd,2026-03-29,2026-03-29,1840,2500,on_time
+Pennine Precision Ltd,2026-04-08,2026-04-08,1526,500,on_time
+Pennine Precision Ltd,2026-04-22,2026-04-22,2346,1000,on_time
+Pennine Precision Ltd,2026-05-05,2026-05-06,2778,1000,late
+Pennine Precision Ltd,2026-05-18,2026-05-22,1184,1000,late
+Pennine Precision Ltd,2026-05-29,2026-05-29,517,5000,on_time
+Pennine Precision Ltd,2026-06-12,2026-06-13,3130,2500,late
+OrientChem Industanbul,2026-01-21,2026-01-22,4155,500,late
+OrientChem Industanbul,2026-02-04,2026-02-04,6879,2000,on_time
+OrientChem Industanbul,2026-02-21,2026-02-21,4223,1000,on_time
+OrientChem Industanbul,2026-03-10,2026-03-12,6248,2500,late
+OrientChem Industanbul,2026-03-20,2026-03-23,6539,5000,late
+OrientChem Industanbul,2026-04-06,2026-04-06,1711,1500,on_time
+OrientChem Industanbul,2026-04-22,2026-04-22,7543,500,on_time
+OrientChem Industanbul,2026-05-04,2026-05-04,2865,500,on_time
+OrientChem Industanbul,2026-05-14,2026-05-14,3098,1500,on_time
+OrientChem Industanbul,2026-05-25,2026-05-25,4885,1000,on_time
+OrientChem Industanbul,2026-06-04,2026-06-06,7074,1000,late
+OrientChem Industanbul,2026-06-19,2026-06-24,6694,1500,late
