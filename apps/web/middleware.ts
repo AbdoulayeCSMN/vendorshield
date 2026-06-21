@@ -27,6 +27,45 @@ const getUser = async (request: NextRequest, response: NextResponse) => {
   }
 };
 
+const DEMO_MODE_COOKIE = 'vs-demo-mode';
+
+/**
+ * Removes a stale `vs-demo-mode` cookie when the authenticated user is NOT the
+ * demo account. Without this, a visitor who opened /demo (cookie set) and then
+ * signed up with a real account stays stuck in read-only mode.
+ */
+async function clearStaleDemoCookie(
+  request: NextRequest,
+  response: NextResponse,
+) {
+  if (request.cookies.get(DEMO_MODE_COOKIE)?.value !== 'true') {
+    return;
+  }
+
+  try {
+    const { data } = await getUser(request, response);
+    // getClaims() returns the JWT payload (directly or nested under `claims`)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const claims = ((data as any)?.claims ?? data) as { email?: string } | null;
+    const email = claims?.email?.toLowerCase();
+
+    // not authenticated → genuine demo browsing, keep the cookie
+    if (!email) {
+      return;
+    }
+
+    const demoEmail = process.env.DEMO_EMAIL?.toLowerCase();
+    const isDemoAccount = !!demoEmail && email === demoEmail;
+
+    // a real (non-demo) user carries a stale demo cookie → remove it
+    if (!isDemoAccount) {
+      response.cookies.set(DEMO_MODE_COOKIE, '', { path: '/', maxAge: 0 });
+    }
+  } catch {
+    // best-effort cleanup — never break navigation
+  }
+}
+
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
@@ -36,6 +75,10 @@ export async function middleware(request: NextRequest) {
 
   // apply CSRF protection for mutating requests
   const csrfResponse = await withCsrfMiddleware(request, response);
+
+  // clear a stale demo cookie when a real (non-demo) user is authenticated, so
+  // visitors who tried /demo then signed up aren't stuck in read-only mode
+  await clearStaleDemoCookie(request, csrfResponse);
 
   // handle patterns for specific routes
   const handlePattern = matchUrlPattern(request.url);
