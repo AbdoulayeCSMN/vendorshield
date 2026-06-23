@@ -307,7 +307,7 @@ export function OnboardingWizard() {
                   {[
                     'Accès à tous les modules VendorShield',
                     'Invitez jusqu\'à 1 collaborateur (Starter)',
-                    'Score de risque sur 24 critères',
+                    'Score de fiabilité sur 24 critères',
                     'Alertes automatiques configurables',
                   ].map((benefit) => (
                     <div key={benefit} className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">

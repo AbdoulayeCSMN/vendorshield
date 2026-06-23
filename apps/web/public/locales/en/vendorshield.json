@@ -3,7 +3,7 @@
     "kpiActiveSuppliers": "Active suppliers",
     "kpiOfTotal": "of {{count}} total",
     "kpiTotalCount": "{{count}} total",
-    "kpiAvgScore": "Average risk score",
+    "kpiAvgScore": "Average reliability score",
     "notRated": "Not rated",
     "kpiOpenAlerts": "Open alerts",
     "kpiInCountry": "in this country",

@@ -83,8 +83,8 @@ function Home() {
             <FeatureGrid>
               <FeatureCard
                 className={'relative col-span-2 overflow-hidden'}
-                label={'Score de Risque Global'}
-                description={`Chaque fournisseur reçoit un score de risque composite (0–100) calculé automatiquement à partir de 4 dimensions : financière, opérationnelle, géopolitique et ESG.`}
+                label={'Score de fiabilité global'}
+                description={`Chaque fournisseur reçoit un score de fiabilité composite (0–100) calculé automatiquement à partir de 4 dimensions : financière, opérationnelle, géopolitique et ESG.`}
               />
 
               <FeatureCard

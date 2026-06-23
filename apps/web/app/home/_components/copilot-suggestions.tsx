@@ -8,7 +8,7 @@ const GENERAL: string[] = [
   'Quels documents de conformité me manquent ?',
   'Quels fournisseurs ont une prédiction de retard ?',
   'Comment importer mes fournisseurs ?',
-  'Explique le score de risque sur 24 critères',
+  'Explique le score de fiabilité sur 24 critères',
 ];
 
 const SUPPLIER: string[] = [

@@ -213,7 +213,7 @@ export function AnalyticsDashboard({
           href="/home/suppliers"
         />
         <KpiCard
-          label="Score risque moyen"
+          label="Score fiabilité moyen"
           value={kpis?.avg_global_score !== null && kpis?.avg_global_score !== undefined ? `${kpis.avg_global_score}/100` : '—'}
           sub={
             kpis?.avg_global_score
@@ -637,7 +637,7 @@ export function AnalyticsDashboard({
                     <th className="text-left text-xs font-medium text-gray-500 pb-2">Fournisseur</th>
                     <th className="text-left text-xs font-medium text-gray-500 pb-2 hidden md:table-cell">Criticité</th>
                     <th className="text-left text-xs font-medium text-gray-500 pb-2 hidden lg:table-cell">Dépense annuelle</th>
-                    <th className="text-left text-xs font-medium text-gray-500 pb-2 w-40">Score risque</th>
+                    <th className="text-left text-xs font-medium text-gray-500 pb-2 w-40">Score fiabilité</th>
                   </tr>
                 </thead>
                 <tbody>

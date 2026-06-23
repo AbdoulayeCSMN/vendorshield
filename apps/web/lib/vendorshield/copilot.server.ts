@@ -40,7 +40,7 @@ MODULES SUR LA FICHE FOURNISSEUR (onglets de /home/suppliers/[id]) :
 - **KPI scorecard** + export **PDF** · Graphe de réseau (tiers)
 
 CAPACITÉS IA & AUTOMATISATION :
-- Scores de risque 5 dimensions ; prédiction retard/PPM ; prédiction de faillite
+- Scores de fiabilité 5 dimensions ; prédiction retard/PPM ; prédiction de faillite
 - **Import « n'importe quel format »** : mapping de colonnes par IA + nettoyage
 - **Surveillance automatique** : détecte documents/contrats qui expirent et évaluations périmées → crée des alertes + email
 - **Conseils de multi-sourcing** : repère les dépendances mono-source/critiques et propose des alternatives

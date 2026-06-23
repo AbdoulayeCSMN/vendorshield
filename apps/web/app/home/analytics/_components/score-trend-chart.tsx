@@ -55,7 +55,7 @@ export function ScoreTrendChart({ trend }: Props) {
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>
-            <CardTitle className="text-sm font-semibold">Évolution du score de risque moyen</CardTitle>
+            <CardTitle className="text-sm font-semibold">Évolution du score de fiabilité moyen</CardTitle>
             <CardDescription>Score global agrégé par mois sur les 12 derniers mois</CardDescription>
           </div>
           {delta !== null && (
