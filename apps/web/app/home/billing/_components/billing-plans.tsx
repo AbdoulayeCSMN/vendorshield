@@ -52,15 +52,15 @@ export function BillingPlans({
 
   async function subscribe(plan: BillingPlan) {
     const price = plan.prices.find((p) => p.interval === interval);
-    if (!price?.priceId) {
+    if (!price?.paddlePriceId) {
       toast.error(
-        'Ce tarif n’est pas encore configuré (price ID Stripe manquant).',
+        'Ce tarif n’est pas encore configuré (price ID Paddle manquant).',
       );
       return;
     }
     try {
       setLoadingId(plan.id);
-      await post('/api/billing/checkout', { priceId: price.priceId });
+      await post('/api/billing/paddle/checkout', { priceId: price.paddlePriceId });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Échec du paiement.');
       setLoadingId(null);
@@ -70,7 +70,7 @@ export function BillingPlans({
   async function manage() {
     try {
       setLoadingId('manage');
-      await post('/api/billing/portal');
+      await post('/api/billing/paddle/portal');
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Échec.');
       setLoadingId(null);

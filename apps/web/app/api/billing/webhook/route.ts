@@ -20,15 +20,33 @@ import { getStripe } from '~/lib/billing/stripe';
 // Stripe exige le corps brut pour vérifier la signature.
 export const runtime = 'nodejs';
 
-async function upsertFromSubscription(subscription: Stripe.Subscription) {
+interface AccountHint {
+  // Présent quand le paiement vient d'un Payment Link partagé avec
+  // `?client_reference_id=<accountId>` (lien généré pour un compte connu).
+  accountId?: string;
+  // Présent quand le paiement vient d'un Payment Link partagé avec
+  // `?prefilled_email=` (vente assistée, prospect sans compte ouvert encore).
+  email?: string;
+}
+
+async function upsertFromSubscription(
+  subscription: Stripe.Subscription,
+  hint?: AccountHint,
+) {
   const admin = getSupabaseServerAdminClient();
   const customerId =
     typeof subscription.customer === 'string'
       ? subscription.customer
       : subscription.customer.id;
 
-  // Résout le compte : metadata en priorité, sinon via le customer existant.
+  // Résout le compte : metadata Stripe en priorité, puis le hint du Payment
+  // Link (client_reference_id), puis le customer Stripe déjà connu, puis en
+  // dernier recours l'email du prospect rapproché d'un compte existant.
   let accountId = subscription.metadata?.account_id as string | undefined;
+
+  if (!accountId) {
+    accountId = hint?.accountId;
+  }
 
   if (!accountId) {
     const { data } = await (admin as any)
@@ -37,6 +55,15 @@ async function upsertFromSubscription(subscription: Stripe.Subscription) {
       .eq('stripe_customer_id', customerId)
       .maybeSingle();
     accountId = data?.account_id;
+  }
+
+  if (!accountId && hint?.email) {
+    const { data } = await (admin as any)
+      .from('accounts')
+      .select('id')
+      .eq('email', hint.email)
+      .maybeSingle();
+    accountId = data?.id;
   }
 
   if (!accountId) {
@@ -97,7 +124,10 @@ export async function POST(request: NextRequest) {
           const sub = await stripe.subscriptions.retrieve(
             session.subscription as string,
           );
-          await upsertFromSubscription(sub);
+          await upsertFromSubscription(sub, {
+            accountId: session.client_reference_id ?? undefined,
+            email: session.customer_details?.email ?? session.customer_email ?? undefined,
+          });
         }
         break;
       }

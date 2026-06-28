@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { requireUser } from '@kit/supabase/require-user';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 
+import { assertCanAddSuppliers, getBillingGate } from '~/lib/billing/gate.server';
 import { denyIfDemo } from '~/lib/vendorshield/demo';
 import { getServiceRoleClient } from '~/lib/vendorshield/service-client';
 
@@ -163,6 +164,10 @@ export async function commitSupplierImportAction(
   if (suppliers.length === 0) {
     return { success: false, error: 'Aucune ligne valide (colonne « name » manquante ?).' };
   }
+
+  const gate = await getBillingGate(accountId);
+  const quotaError = assertCanAddSuppliers(gate, suppliers.length);
+  if (quotaError) return quotaError;
 
   // Trace l'import.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

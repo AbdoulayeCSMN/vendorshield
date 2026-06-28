@@ -12,10 +12,12 @@ import { SidebarProvider } from '@kit/ui/shadcn-sidebar';
 import { AppLogo } from '~/components/app-logo';
 import { navigationConfig } from '~/config/navigation.config';
 import { withI18n } from '~/lib/i18n/with-i18n';
+import { getBillingGate } from '~/lib/billing/gate.server';
 import { isDemoMode } from '~/lib/vendorshield/demo';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
 
 // home imports
+import { BillingStatusBanner } from './_components/billing-status-banner';
 import { HomeMenuNavigation } from './_components/home-menu-navigation';
 import { CopilotWidget } from './_components/copilot-widget';
 import { DemoModeBanner } from './_components/demo-mode-banner';
@@ -71,6 +73,8 @@ async function SidebarLayout({
     redirect('/onboarding');
   }
 
+  const gate = demoMode ? null : await getBillingGate(user.id as string);
+
   return (
     <SidebarProvider defaultOpen={navigationConfig.sidebarCollapsed}>
       <Page style={'sidebar'}>
@@ -83,6 +87,7 @@ async function SidebarLayout({
         </PageMobileNavigation>
 
         {demoMode ? <DemoModeBanner /> : null}
+        {gate ? <BillingStatusBanner gate={gate} /> : null}
         {children}
       </Page>
     </SidebarProvider>
@@ -91,10 +96,13 @@ async function SidebarLayout({
 
 // ─── HeaderLayout ─────────────────────────────────────────────────────────────
 
-function HeaderLayout({
+async function HeaderLayout({
   children,
   demoMode,
 }: React.PropsWithChildren<{ demoMode: boolean }>) {
+  const user = await requireUserInServerComponent();
+  const gate = demoMode ? null : await getBillingGate(user.id as string);
+
   return (
     <Page style={'header'}>
       <PageNavigation>
@@ -106,6 +114,7 @@ function HeaderLayout({
       </PageMobileNavigation>
 
       {demoMode ? <DemoModeBanner /> : null}
+      {gate ? <BillingStatusBanner gate={gate} /> : null}
       {children}
     </Page>
   );

@@ -7,6 +7,7 @@ import { requireUser } from '@kit/supabase/require-user';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { z } from 'zod';
 
+import { assertCanAddSuppliers, getBillingGate } from '~/lib/billing/gate.server';
 import { denyIfDemo } from '~/lib/vendorshield/demo';
 
 // ─── Schéma de validation ─────────────────────────────────────────────────────
@@ -96,6 +97,10 @@ export async function createSupplierAction(
       fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
     };
   }
+
+  const gate = await getBillingGate(result.data.id);
+  const quotaError = assertCanAddSuppliers(gate);
+  if (quotaError) return quotaError;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (client as any)

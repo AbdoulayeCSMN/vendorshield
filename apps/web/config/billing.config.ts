@@ -10,7 +10,21 @@ export type BillingInterval = 'month' | 'year';
 
 export interface BillingPlanPrice {
   interval: BillingInterval;
+  /**
+   * Identifiant de prix Paddle (Dashboard Paddle → Catalog → Prices),
+   * chemin de paiement automatisé actif (voir /api/billing/paddle/*).
+   */
+  paddlePriceId: string | undefined;
+  /** Stripe — conservé éteint (compte Stripe indisponible, voir mémoire). */
   priceId: string | undefined;
+  /**
+   * URL d'un Stripe Payment Link pré-créé pour ce prix (Dashboard Stripe →
+   * Payment Links). Permet d'envoyer un lien de paiement à un prospect sans
+   * passer par le checkout in-app (vente assistée). On y ajoute
+   * `?prefilled_email=` côté client pour rattacher le paiement au bon compte
+   * (voir webhook : résolution par email si `client_reference_id` absent).
+   */
+  paymentLinkUrl: string | undefined;
   amount: number; // en euros, pour l'affichage
 }
 
@@ -46,12 +60,16 @@ export const billingConfig = {
       prices: [
         {
           interval: 'month',
+          paddlePriceId: process.env.NEXT_PUBLIC_PADDLE_PRICE_STARTER_MONTHLY,
           priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER_MONTHLY,
+          paymentLinkUrl: process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK_STARTER_MONTHLY,
           amount: 290,
         },
         {
           interval: 'year',
+          paddlePriceId: process.env.NEXT_PUBLIC_PADDLE_PRICE_STARTER_YEARLY,
           priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER_YEARLY,
+          paymentLinkUrl: process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK_STARTER_YEARLY,
           amount: 2900,
         },
       ],
@@ -73,13 +91,17 @@ export const billingConfig = {
       prices: [
         {
           interval: 'month',
+          paddlePriceId: process.env.NEXT_PUBLIC_PADDLE_PRICE_PRO_MONTHLY,
           priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY,
-          amount: 890,
+          paymentLinkUrl: process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK_PRO_MONTHLY,
+          amount: 990,
         },
         {
           interval: 'year',
+          paddlePriceId: process.env.NEXT_PUBLIC_PADDLE_PRICE_PRO_YEARLY,
           priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY,
-          amount: 8900,
+          paymentLinkUrl: process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK_PRO_YEARLY,
+          amount: 9900,
         },
       ],
     },
@@ -109,4 +131,38 @@ export function getPlanByPriceId(priceId: string): BillingPlan | undefined {
   return billingConfig.plans.find((plan) =>
     plan.prices.some((price) => price.priceId === priceId),
   );
+}
+
+export function getPlanByPaddlePriceId(paddlePriceId: string): BillingPlan | undefined {
+  return billingConfig.plans.find((plan) =>
+    plan.prices.some((price) => price.paddlePriceId === paddlePriceId),
+  );
+}
+
+export function getPlan(id: string): BillingPlan | undefined {
+  return billingConfig.plans.find((plan) => plan.id === id);
+}
+
+export function getPlanPrice(
+  id: string,
+  interval: BillingInterval,
+): BillingPlanPrice | undefined {
+  return getPlan(id)?.prices.find((price) => price.interval === interval);
+}
+
+/**
+ * Coordonnées bancaires pour la facturation par virement — chemin de
+ * paiement sans Stripe (le founder n'a pas encore de compte Stripe actif,
+ * ex. pays non supporté). Non sensible : destiné à être communiqué aux
+ * prospects, donc en variables `NEXT_PUBLIC_*`.
+ */
+export const bankTransferConfig = {
+  accountHolder: process.env.NEXT_PUBLIC_BANK_ACCOUNT_HOLDER,
+  iban: process.env.NEXT_PUBLIC_BANK_IBAN,
+  bic: process.env.NEXT_PUBLIC_BANK_BIC,
+  bankName: process.env.NEXT_PUBLIC_BANK_NAME,
+};
+
+export function isBankTransferConfigured(): boolean {
+  return !!(bankTransferConfig.iban && bankTransferConfig.accountHolder);
 }
