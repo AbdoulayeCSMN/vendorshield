@@ -2,6 +2,8 @@
 
 **Plateforme SaaS B2B de gestion et d'anticipation des risques fournisseurs (SRM)**
 
+![VendorShield — page d'accueil](docs/images/landing-hero.png)
+
 VendorShield aide les directions achats et supply chain — en particulier dans l'industrie — à **noter, surveiller et anticiper** les risques de leur portefeuille fournisseurs : santé financière, performance opérationnelle, géopolitique, ESG, cyber et climat. Construit sur Next.js 15, Supabase et une couche IA/ML (LLM + modèles prédictifs).
 
 ---
