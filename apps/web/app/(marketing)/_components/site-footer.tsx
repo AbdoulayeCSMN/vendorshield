@@ -47,6 +47,10 @@ export function SiteFooter() {
               href: '/cookie-policy',
               label: <Trans i18nKey="marketing:cookiePolicy" />,
             },
+            {
+              href: '/refund-policy',
+              label: <Trans i18nKey="marketing:refundPolicy" />,
+            },
           ],
         },
       ]}

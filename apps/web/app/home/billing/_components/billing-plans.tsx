@@ -23,7 +23,7 @@ import {
 } from '~/config/billing.config';
 import type { BillingSubscription } from '~/lib/billing/billing.server';
 
-const CONTACT_EMAIL = 'contact@vendorshield.io';
+const CONTACT_EMAIL = 'a.chaibou.tech@gmail.com';
 const ACTIVE_STATUSES = ['active', 'trialing'];
 
 export function BillingPlans({

@@ -23,6 +23,8 @@
   "cookiePolicyDescription": "Notre politique de cookies et leur utilisation",
   "privacyPolicy": "Politique de confidentialité",
   "privacyPolicyDescription": "Notre politique de confidentialité et l'utilisation de vos données",
+  "refundPolicy": "Politique de remboursement",
+  "refundPolicyDescription": "Conditions d'annulation et de remboursement des abonnements",
   "contactDescription": "Contactez-nous pour toute question ou retour",
   "contactHeading": "Envoyez-nous un message",
   "contactSubheading": "Nous vous répondrons dans les plus brefs délais",
@@ -34,6 +36,6 @@
   "contactError": "Une erreur est survenue lors de l'envoi de votre message",
   "contactSuccessDescription": "Nous avons bien reçu votre message et vous répondrons dans les plus brefs délais",
   "contactErrorDescription": "Une erreur est survenue lors de l'envoi de votre message. Veuillez réessayer plus tard",
-  "footerDescription": "Ajoutez ici une description de votre entreprise ou de votre produit",
+  "footerDescription": "VendorShield aide les directions achats et supply chain à anticiper les défaillances fournisseurs grâce au scoring de risque et à l'IA.",
   "copyright": "© {{year}} {{product}}. Tous droits réservés."
 }

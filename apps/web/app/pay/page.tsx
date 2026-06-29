@@ -10,7 +10,7 @@ import { CopyField } from './_components/copy-field';
 
 export const dynamic = 'force-dynamic';
 
-const CONTACT_EMAIL = 'contact@vendorshield.io';
+const CONTACT_EMAIL = 'a.chaibou.tech@gmail.com';
 
 function Shell({ children }: React.PropsWithChildren) {
   return (
