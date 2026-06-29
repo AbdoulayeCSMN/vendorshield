@@ -114,5 +114,61 @@
       "heading": "Votre paiement a échoué",
       "description": "Votre paiement a échoué. Veuillez mettre à jour votre moyen de paiement."
     }
+  },
+  "plans": {
+    "starter": {
+      "name": "Starter",
+      "description": "Pour démarrer la surveillance de vos fournisseurs clés.",
+      "features": [
+        "Jusqu'à 50 fournisseurs surveillés",
+        "2 utilisateurs",
+        "Scoring de risque 4 dimensions",
+        "Alertes & règles configurables",
+        "Import Excel / CSV"
+      ]
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Surveillance IA et anticipation des défaillances.",
+      "features": [
+        "Jusqu'à 250 fournisseurs surveillés",
+        "10 utilisateurs",
+        "OSINT IA & détection de signaux",
+        "Prédiction de défaillance fournisseur",
+        "Graphe multi-tiers",
+        "Exports PDF & analytics avancés"
+      ]
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "description": "Pour les groupes industriels multi-sites.",
+      "features": [
+        "Fournisseurs illimités",
+        "Utilisateurs illimités",
+        "SSO (SAML / OIDC)",
+        "Onboarding & support dédiés",
+        "SLA & hébergement dédié"
+      ]
+    }
+  },
+  "plansPage": {
+    "activeSubscriptionTitle": "Abonnement actif",
+    "statusLabel": "Statut",
+    "renewsOn": "renouvellement le {{date}}",
+    "manageSubscription": "Gérer mon abonnement",
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "yearlyDiscount": "(2 mois offerts)",
+    "popularBadge": "Populaire",
+    "customPrice": "Sur devis",
+    "perMonth": "/mois",
+    "perYear": "/an",
+    "contactCta": "Nous contacter",
+    "currentPlan": "Plan actuel",
+    "changeViaPortal": "Changer via le portail",
+    "subscribeCta": "S'abonner",
+    "priceNotConfigured": "Ce tarif n'est pas encore configuré (price ID Paddle manquant).",
+    "genericPaymentError": "Échec du paiement.",
+    "genericError": "Échec."
   }
 }

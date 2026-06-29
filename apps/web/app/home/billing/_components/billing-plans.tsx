@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { Check, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { Badge } from '@kit/ui/badge';
@@ -31,6 +32,10 @@ export function BillingPlans({
 }: {
   subscription: BillingSubscription | null;
 }) {
+  const { t, i18n } = useTranslation('billing');
+  const numberLocale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+  const dateLocale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+
   const [interval, setInterval] = useState<BillingInterval>('month');
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
@@ -45,7 +50,7 @@ export function BillingPlans({
     });
     const json = await res.json().catch(() => ({}));
     if (!res.ok || !json.url) {
-      throw new Error(json.error || 'Une erreur est survenue.');
+      throw new Error(json.error || t('plansPage.genericError'));
     }
     window.location.href = json.url as string;
   }
@@ -53,16 +58,14 @@ export function BillingPlans({
   async function subscribe(plan: BillingPlan) {
     const price = plan.prices.find((p) => p.interval === interval);
     if (!price?.paddlePriceId) {
-      toast.error(
-        'Ce tarif n’est pas encore configuré (price ID Paddle manquant).',
-      );
+      toast.error(t('plansPage.priceNotConfigured'));
       return;
     }
     try {
       setLoadingId(plan.id);
       await post('/api/billing/paddle/checkout', { priceId: price.paddlePriceId });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Échec du paiement.');
+      toast.error(e instanceof Error ? e.message : t('plansPage.genericPaymentError'));
       setLoadingId(null);
     }
   }
@@ -72,7 +75,7 @@ export function BillingPlans({
       setLoadingId('manage');
       await post('/api/billing/paddle/portal');
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Échec.');
+      toast.error(e instanceof Error ? e.message : t('plansPage.genericError'));
       setLoadingId(null);
     }
   }
@@ -83,17 +86,19 @@ export function BillingPlans({
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              Abonnement actif
+              {t('plansPage.activeSubscriptionTitle')}
               <Badge variant="default" className="capitalize">
                 {subscription?.plan ?? 'pro'}
               </Badge>
             </CardTitle>
             <CardDescription>
-              Statut : {subscription?.status}
+              {t('plansPage.statusLabel')} : {subscription?.status}
               {subscription?.current_period_end
-                ? ` · renouvellement le ${new Date(
-                    subscription.current_period_end,
-                  ).toLocaleDateString('fr-FR')}`
+                ? ` · ${t('plansPage.renewsOn', {
+                    date: new Date(
+                      subscription.current_period_end,
+                    ).toLocaleDateString(dateLocale),
+                  })}`
                 : null}
             </CardDescription>
           </CardHeader>
@@ -102,7 +107,7 @@ export function BillingPlans({
               {loadingId === 'manage' ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : null}
-              Gérer mon abonnement
+              {t('plansPage.manageSubscription')}
             </Button>
           </CardFooter>
         </Card>
@@ -113,14 +118,15 @@ export function BillingPlans({
             onClick={() => setInterval('month')}
             className={`rounded-md px-3 py-1 ${interval === 'month' ? 'bg-background text-foreground shadow-sm' : ''}`}
           >
-            Mensuel
+            {t('plansPage.monthly')}
           </button>
           <button
             type="button"
             onClick={() => setInterval('year')}
             className={`rounded-md px-3 py-1 ${interval === 'year' ? 'bg-background text-foreground shadow-sm' : ''}`}
           >
-            Annuel <span className="text-xs">(2 mois offerts)</span>
+            {t('plansPage.yearly')}{' '}
+            <span className="text-xs">{t('plansPage.yearlyDiscount')}</span>
           </button>
         </div>
       )}
@@ -129,6 +135,11 @@ export function BillingPlans({
         {billingConfig.plans.map((plan) => {
           const price = plan.prices.find((p) => p.interval === interval);
           const isCurrent = hasActiveSub && subscription?.plan === plan.id;
+          const name = t(`plans.${plan.id}.name`);
+          const description = t(`plans.${plan.id}.description`);
+          const features = t(`plans.${plan.id}.features`, {
+            returnObjects: true,
+          }) as string[];
 
           return (
             <Card
@@ -137,21 +148,27 @@ export function BillingPlans({
             >
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
-                  {plan.name}
+                  {name}
                   {plan.highlight ? (
-                    <Badge variant="secondary">Populaire</Badge>
+                    <Badge variant="secondary">
+                      {t('plansPage.popularBadge')}
+                    </Badge>
                   ) : null}
                 </CardTitle>
-                <CardDescription>{plan.description}</CardDescription>
+                <CardDescription>{description}</CardDescription>
                 <div className="pt-2">
                   {plan.custom ? (
-                    <span className="text-2xl font-bold">Sur devis</span>
+                    <span className="text-2xl font-bold">
+                      {t('plansPage.customPrice')}
+                    </span>
                   ) : (
                     <span className="text-3xl font-bold">
-                      {price?.amount.toLocaleString('fr-FR')} €
+                      {price?.amount.toLocaleString(numberLocale)} €
                       <span className="text-muted-foreground text-sm font-normal">
                         {' '}
-                        /{interval === 'month' ? 'mois' : 'an'}
+                        {interval === 'month'
+                          ? t('plansPage.perMonth')
+                          : t('plansPage.perYear')}
                       </span>
                     </span>
                   )}
@@ -159,7 +176,7 @@ export function BillingPlans({
               </CardHeader>
               <CardContent className="flex-1">
                 <ul className="flex flex-col gap-2 text-sm">
-                  {plan.features.map((f) => (
+                  {features.map((f) => (
                     <li key={f} className="flex items-start gap-2">
                       <Check className="text-primary mt-0.5 h-4 w-4 shrink-0" />
                       <span>{f}</span>
@@ -171,12 +188,12 @@ export function BillingPlans({
                 {plan.custom ? (
                   <Button variant="outline" className="w-full" asChild>
                     <a href={`mailto:${CONTACT_EMAIL}?subject=VendorShield Enterprise`}>
-                      Nous contacter
+                      {t('plansPage.contactCta')}
                     </a>
                   </Button>
                 ) : isCurrent ? (
                   <Button variant="outline" className="w-full" disabled>
-                    Plan actuel
+                    {t('plansPage.currentPlan')}
                   </Button>
                 ) : (
                   <Button
@@ -188,7 +205,9 @@ export function BillingPlans({
                     {loadingId === plan.id ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     ) : null}
-                    {hasActiveSub ? 'Changer via le portail' : "S'abonner"}
+                    {hasActiveSub
+                      ? t('plansPage.changeViaPortal')
+                      : t('plansPage.subscribeCta')}
                   </Button>
                 )}
               </CardFooter>

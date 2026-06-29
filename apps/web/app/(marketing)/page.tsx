@@ -23,38 +23,32 @@ import {
   Hero,
   Pill,
 } from '@kit/ui/marketing';
-import { Trans } from '@kit/ui/trans';
-
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { withI18n } from '~/lib/i18n/with-i18n';
 
-function Home() {
+async function Home() {
+  const { t } = await createI18nServerInstance();
+  const items = (key: string) => t(key, { returnObjects: true }) as string[];
+
   return (
     <div className={'mt-4 flex flex-col space-y-24 py-14'}>
       {/* HERO */}
       <div className={'container mx-auto'}>
         <Hero
           pill={
-            <Pill label={'Nouveau'}>
-              <span>La plateforme de gestion des risques fournisseurs</span>
+            <Pill label={t('marketing:home.pillBadge')}>
+              <span>{t('marketing:home.pillText')}</span>
             </Pill>
           }
           title={
             <>
-              <span>Protégez votre chaîne</span>
-              <span>d'approvisionnement</span>
+              <span>{t('marketing:home.heroTitleLine1')}</span>
+              <span>{t('marketing:home.heroTitleLine2')}</span>
             </>
           }
-          subtitle={
-            <span>
-              VendorShield vous permet d'identifier, évaluer et anticiper les
-              risques liés à vos fournisseurs — financiers, opérationnels,
-              géopolitiques et ESG — en temps réel.
-            </span>
-          }
-          cta={<MainCallToActionButton />}
-          image={
-            <DashboardPreview />
-          }
+          subtitle={<span>{t('marketing:home.heroSubtitle')}</span>}
+          cta={<MainCallToActionButton t={t} />}
+          image={<DashboardPreview />}
         />
       </div>
 
@@ -65,44 +59,43 @@ function Home() {
             heading={
               <>
                 <b className="font-semibold dark:text-white">
-                  Une vue 360° sur vos risques fournisseurs.
+                  {t('marketing:home.featuresHeadingBold')}
                 </b>{' '}
                 <span className="text-muted-foreground font-normal">
-                  Centralisez, scorez et anticipez. Ne soyez plus jamais pris
-                  par surprise par la défaillance d'un fournisseur critique.
+                  {t('marketing:home.featuresHeadingNormal')}
                 </span>
               </>
             }
             icon={
               <FeatureShowcaseIconContainer>
                 <ShieldCheck className="h-5" />
-                <span>Couverture complète des risques</span>
+                <span>{t('marketing:home.featuresIconLabel')}</span>
               </FeatureShowcaseIconContainer>
             }
           >
             <FeatureGrid>
               <FeatureCard
                 className={'relative col-span-2 overflow-hidden'}
-                label={'Score de fiabilité global'}
-                description={`Chaque fournisseur reçoit un score de fiabilité composite (0–100) calculé automatiquement à partir de 4 dimensions : financière, opérationnelle, géopolitique et ESG.`}
+                label={t('marketing:home.feature1Label')}
+                description={t('marketing:home.feature1Description')}
               />
 
               <FeatureCard
                 className={'relative col-span-2 w-full overflow-hidden lg:col-span-1'}
-                label={'Alertes Intelligentes'}
-                description={`Recevez des alertes en temps réel dès qu'un fournisseur franchit un seuil critique. Configurez vos propres règles de déclenchement.`}
+                label={t('marketing:home.feature2Label')}
+                description={t('marketing:home.feature2Description')}
               />
 
               <FeatureCard
                 className={'relative col-span-2 overflow-hidden lg:col-span-1'}
-                label={'Cartographie Géopolitique'}
-                description={`Visualisez l'exposition géographique de votre chaîne d'approvisionnement et identifiez les zones de risque pays.`}
+                label={t('marketing:home.feature3Label')}
+                description={t('marketing:home.feature3Description')}
               />
 
               <FeatureCard
                 className={'relative col-span-2 overflow-hidden'}
-                label={'Rapports & Audit Trail'}
-                description={`Exportez des rapports de conformité détaillés. Conservez un historique complet de toutes les évaluations pour vos audits internes et réglementaires.`}
+                label={t('marketing:home.feature4Label')}
+                description={t('marketing:home.feature4Description')}
               />
             </FeatureGrid>
           </FeatureShowcase>
@@ -113,56 +106,36 @@ function Home() {
       <div className={'container mx-auto'}>
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-            4 dimensions de risque couvertes
+            {t('marketing:home.dimensionsHeading')}
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Une évaluation multicritères exhaustive pour ne manquer aucun signal d'alerte.
+            {t('marketing:home.dimensionsSubtitle')}
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <RiskDimensionCard
             icon={<TrendingUp className="h-8 w-8 text-blue-500" />}
-            title="Financier"
+            title={t('marketing:home.dimensionFinancialTitle')}
             color="blue"
-            items={[
-              'Solvabilité & notation',
-              'Délais de paiement',
-              'Santé bilancielle',
-              'Dépendance CA',
-            ]}
+            items={items('marketing:home.dimensionFinancialItems')}
           />
           <RiskDimensionCard
             icon={<Zap className="h-8 w-8 text-orange-500" />}
-            title="Opérationnel"
+            title={t('marketing:home.dimensionOperationalTitle')}
             color="orange"
-            items={[
-              'Continuité de service',
-              'Concentration fournisseur',
-              'Qualité & certifications',
-              'Capacité de substitution',
-            ]}
+            items={items('marketing:home.dimensionOperationalItems')}
           />
           <RiskDimensionCard
             icon={<Globe className="h-8 w-8 text-purple-500" />}
-            title="Géopolitique"
+            title={t('marketing:home.dimensionGeopoliticalTitle')}
             color="purple"
-            items={[
-              'Risque pays',
-              'Sanctions & embargos',
-              'Instabilité régionale',
-              'Dépendances critiques',
-            ]}
+            items={items('marketing:home.dimensionGeopoliticalItems')}
           />
           <RiskDimensionCard
             icon={<Shield className="h-8 w-8 text-green-500" />}
-            title="Conformité / ESG"
+            title={t('marketing:home.dimensionEsgTitle')}
             color="green"
-            items={[
-              'Devoir de vigilance',
-              'Empreinte carbone',
-              'Pratiques sociales',
-              'Gouvernance & éthique',
-            ]}
+            items={items('marketing:home.dimensionEsgItems')}
           />
         </div>
       </div>
@@ -171,10 +144,10 @@ function Home() {
       <div className="bg-primary/5 dark:bg-primary/10 rounded-3xl py-16">
         <div className={'container mx-auto'}>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <StatCard value="< 5 min" label="Pour évaluer un fournisseur" />
-            <StatCard value="4 axes" label="De risque couverts" />
-            <StatCard value="100+" label="Critères d'évaluation" />
-            <StatCard value="temps réel" label="Alertes & surveillance" />
+            <StatCard value={t('marketing:home.stat1Value')} label={t('marketing:home.stat1Label')} />
+            <StatCard value={t('marketing:home.stat2Value')} label={t('marketing:home.stat2Label')} />
+            <StatCard value={t('marketing:home.stat3Value')} label={t('marketing:home.stat3Label')} />
+            <StatCard value={t('marketing:home.stat4Value')} label={t('marketing:home.stat4Label')} />
           </div>
         </div>
       </div>
@@ -182,22 +155,22 @@ function Home() {
       {/* CTA FINAL */}
       <div className={'container mx-auto text-center'}>
         <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
-          Prêt à sécuriser votre supply chain ?
+          {t('marketing:home.finalCtaHeading')}
         </h2>
         <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
-          Commencez gratuitement. Aucune carte de crédit requise.
+          {t('marketing:home.finalCtaSubtitle')}
         </p>
         <div className="flex justify-center gap-4">
           <CtaButton>
             <Link href="/auth/sign-up">
               <span className="flex items-center gap-2">
-                Démarrer gratuitement
+                {t('marketing:ctaStartFree')}
                 <ArrowRightIcon className="h-4 animate-in fade-in slide-in-from-left-8 zoom-in fill-mode-both delay-1000 duration-1000" />
               </span>
             </Link>
           </CtaButton>
           <CtaButton variant="outline">
-            <Link href="/auth/sign-in">Se connecter</Link>
+            <Link href="/auth/sign-in">{t('marketing:ctaSignIn')}</Link>
           </CtaButton>
         </div>
       </div>
@@ -207,19 +180,23 @@ function Home() {
 
 export default withI18n(Home);
 
-function MainCallToActionButton() {
+function MainCallToActionButton({
+  t,
+}: {
+  t: (key: string) => string;
+}) {
   return (
     <div className={'flex space-x-4'}>
       <CtaButton>
         <Link href={'/auth/sign-up'}>
           <span className={'flex items-center space-x-2'}>
-            <span>Démarrer gratuitement</span>
+            <span>{t('marketing:ctaStartFree')}</span>
             <ArrowRightIcon className={'h-4 animate-in fade-in slide-in-from-left-8 zoom-in fill-mode-both delay-1000 duration-1000'} />
           </span>
         </Link>
       </CtaButton>
       <CtaButton variant={'outline'}>
-        <Link href={'/auth/sign-in'}>Se connecter</Link>
+        <Link href={'/auth/sign-in'}>{t('marketing:ctaSignIn')}</Link>
       </CtaButton>
     </div>
   );

@@ -29,7 +29,8 @@ export async function generateMetadata() {
 }
 
 async function PricingPage() {
-  const { t } = await createI18nServerInstance();
+  const { t, language } = await createI18nServerInstance();
+  const numberLocale = language === 'fr' ? 'fr-FR' : 'en-US';
 
   return (
     <div className={'flex flex-col space-y-4 xl:space-y-8'}>
@@ -44,6 +45,11 @@ async function PricingPage() {
             const monthlyPrice = plan.prices.find(
               (p) => p.interval === 'month',
             );
+            const name = t(`billing:plans.${plan.id}.name`);
+            const description = t(`billing:plans.${plan.id}.description`);
+            const features = t(`billing:plans.${plan.id}.features`, {
+              returnObjects: true,
+            }) as string[];
 
             return (
               <Card
@@ -52,21 +58,25 @@ async function PricingPage() {
               >
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
-                    {plan.name}
+                    {name}
                     {plan.highlight ? (
-                      <Badge variant="secondary">Populaire</Badge>
+                      <Badge variant="secondary">
+                        {t('marketing:pricingPage.popularBadge')}
+                      </Badge>
                     ) : null}
                   </CardTitle>
-                  <CardDescription>{plan.description}</CardDescription>
+                  <CardDescription>{description}</CardDescription>
                   <div className="pt-2">
                     {plan.custom ? (
-                      <span className="text-2xl font-bold">Sur devis</span>
+                      <span className="text-2xl font-bold">
+                        {t('marketing:pricingPage.customPrice')}
+                      </span>
                     ) : (
                       <span className="text-3xl font-bold">
-                        {monthlyPrice?.amount.toLocaleString('fr-FR')} €
+                        {monthlyPrice?.amount.toLocaleString(numberLocale)} €
                         <span className="text-muted-foreground text-sm font-normal">
                           {' '}
-                          /mois
+                          {t('marketing:pricingPage.perMonth')}
                         </span>
                       </span>
                     )}
@@ -74,7 +84,7 @@ async function PricingPage() {
                 </CardHeader>
                 <CardContent className="flex-1">
                   <ul className="flex flex-col gap-2 text-sm">
-                    {plan.features.map((f) => (
+                    {features.map((f) => (
                       <li key={f} className="flex items-start gap-2">
                         <Check className="text-primary mt-0.5 h-4 w-4 shrink-0" />
                         <span>{f}</span>
@@ -86,7 +96,7 @@ async function PricingPage() {
                   {plan.custom ? (
                     <Button variant="outline" className="w-full" asChild>
                       <a href={`mailto:${CONTACT_EMAIL}?subject=VendorShield Enterprise`}>
-                        Nous contacter
+                        {t('marketing:pricingPage.contactCta')}
                       </a>
                     </Button>
                   ) : (
@@ -95,7 +105,7 @@ async function PricingPage() {
                       variant={plan.highlight ? 'default' : 'outline'}
                       asChild
                     >
-                      <Link href="/auth/sign-up">Démarrer gratuitement</Link>
+                      <Link href="/auth/sign-up">{t('marketing:ctaStartFree')}</Link>
                     </Button>
                   )}
                 </CardFooter>
@@ -105,17 +115,7 @@ async function PricingPage() {
         </div>
 
         <p className="text-muted-foreground mt-8 text-center text-sm">
-          Essai gratuit de 14 jours, sans carte bancaire. Facturation annuelle
-          disponible (2 mois offerts). Paiement sécurisé par{' '}
-          <a
-            href="https://www.paddle.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline"
-          >
-            Paddle
-          </a>
-          .
+          {t('marketing:pricingPage.footerNote')}
         </p>
       </div>
     </div>

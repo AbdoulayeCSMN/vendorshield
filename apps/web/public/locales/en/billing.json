@@ -114,5 +114,61 @@
       "heading": "Your payment failed",
       "description": "Your payment failed. Please update your payment method."
     }
+  },
+  "plans": {
+    "starter": {
+      "name": "Starter",
+      "description": "Get started monitoring your key suppliers.",
+      "features": [
+        "Up to 50 monitored suppliers",
+        "2 users",
+        "4-dimension risk scoring",
+        "Configurable alerts & rules",
+        "Excel / CSV import"
+      ]
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "AI-powered monitoring and failure anticipation.",
+      "features": [
+        "Up to 250 monitored suppliers",
+        "10 users",
+        "AI OSINT & signal detection",
+        "Supplier failure prediction",
+        "Multi-tier graph",
+        "PDF exports & advanced analytics"
+      ]
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "description": "For multi-site industrial groups.",
+      "features": [
+        "Unlimited suppliers",
+        "Unlimited users",
+        "SSO (SAML / OIDC)",
+        "Dedicated onboarding & support",
+        "SLA & dedicated hosting"
+      ]
+    }
+  },
+  "plansPage": {
+    "activeSubscriptionTitle": "Active subscription",
+    "statusLabel": "Status",
+    "renewsOn": "renews on {{date}}",
+    "manageSubscription": "Manage my subscription",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "yearlyDiscount": "(2 months free)",
+    "popularBadge": "Popular",
+    "customPrice": "Custom pricing",
+    "perMonth": "/month",
+    "perYear": "/year",
+    "contactCta": "Contact us",
+    "currentPlan": "Current plan",
+    "changeViaPortal": "Manage via portal",
+    "subscribeCta": "Subscribe",
+    "priceNotConfigured": "This price isn't configured yet (missing Paddle price ID).",
+    "genericPaymentError": "Payment failed.",
+    "genericError": "Something went wrong."
   }
 }
