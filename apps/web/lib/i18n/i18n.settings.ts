@@ -32,6 +32,7 @@ export const defaultI18nNamespaces = [
   'billing',
   'marketing',
   'vendorshield',
+  'legal',
 ];
 
 /**
