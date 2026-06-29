@@ -84,5 +84,31 @@
     "perMonth": "/mois",
     "contactCta": "Nous contacter",
     "footerNote": "Essai gratuit de 14 jours, sans carte bancaire. Facturation annuelle disponible (2 mois offerts). Paiement sécurisé par Paddle."
-  }
+  },
+  "faqItems": [
+    {
+      "question": "Proposez-vous un essai gratuit ?",
+      "answer": "Oui, un essai gratuit de 14 jours, sans carte bancaire requise. À son terme, vous pouvez souscrire à un abonnement payant ou continuer sur un palier gratuit limité."
+    },
+    {
+      "question": "Puis-je annuler mon abonnement ?",
+      "answer": "Oui, à tout moment, depuis votre espace de facturation ou le portail client Paddle. Voir notre politique de remboursement pour les modalités exactes."
+    },
+    {
+      "question": "Où puis-je trouver mes factures ?",
+      "answer": "Vos factures sont disponibles dans le portail client Paddle, accessible depuis votre espace de facturation."
+    },
+    {
+      "question": "Quels moyens de paiement acceptez-vous ?",
+      "answer": "Le paiement par carte bancaire est traité par Paddle, notre prestataire de paiement. Le virement bancaire est également possible sur demande pour les premiers clients."
+    },
+    {
+      "question": "Puis-je changer de plan ?",
+      "answer": "Oui, vous pouvez passer à un plan supérieur ou inférieur à tout moment depuis votre espace de facturation."
+    },
+    {
+      "question": "Où mes données sont-elles hébergées ?",
+      "answer": "Vos données sont hébergées dans l'Union européenne (Supabase), chiffrées en transit et au repos, avec une isolation stricte entre comptes clients."
+    }
+  ]
 }

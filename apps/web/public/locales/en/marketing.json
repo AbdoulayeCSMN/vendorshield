@@ -84,5 +84,31 @@
     "perMonth": "/month",
     "contactCta": "Contact us",
     "footerNote": "14-day free trial, no credit card required. Annual billing available (2 months free). Secure payment by Paddle."
-  }
+  },
+  "faqItems": [
+    {
+      "question": "Do you offer a free trial?",
+      "answer": "Yes, a 14-day free trial with no credit card required. After that, you can subscribe to a paid plan or continue on a limited free tier."
+    },
+    {
+      "question": "Can I cancel my subscription?",
+      "answer": "Yes, at any time, from your billing area or the Paddle customer portal. See our refund policy for the exact terms."
+    },
+    {
+      "question": "Where can I find my invoices?",
+      "answer": "Your invoices are available in the Paddle customer portal, accessible from your billing area."
+    },
+    {
+      "question": "What payment methods do you accept?",
+      "answer": "Card payments are processed by Paddle, our payment provider. Bank transfer is also available on request for our first customers."
+    },
+    {
+      "question": "Can I upgrade or downgrade my plan?",
+      "answer": "Yes, you can move to a higher or lower plan at any time from your billing area."
+    },
+    {
+      "question": "Where is my data hosted?",
+      "answer": "Your data is hosted in the European Union (Supabase), encrypted in transit and at rest, with strict isolation between customer accounts."
+    }
+  ]
 }

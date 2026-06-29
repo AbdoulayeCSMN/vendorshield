@@ -20,35 +20,10 @@ export const generateMetadata = async () => {
 async function FAQPage() {
   const { t } = await createI18nServerInstance();
 
-  // replace this content with translations
-  const faqItems = [
-    {
-      // or: t('marketing:faq.question1')
-      question: `Do you offer a free trial?`,
-      // or: t('marketing:faq.answer1')
-      answer: `Yes, we offer a 14-day free trial. You can cancel at any time during the trial period and you won't be charged.`,
-    },
-    {
-      question: `Can I cancel my subscription?`,
-      answer: `You can cancel your subscription at any time. You can do this from your account settings.`,
-    },
-    {
-      question: `Where can I find my invoices?`,
-      answer: `You can find your invoices in your account settings.`,
-    },
-    {
-      question: `What payment methods do you accept?`,
-      answer: `We accept all major credit cards and PayPal.`,
-    },
-    {
-      question: `Can I upgrade or downgrade my plan?`,
-      answer: `Yes, you can upgrade or downgrade your plan at any time. You can do this from your account settings.`,
-    },
-    {
-      question: `Do you offer discounts for non-profits?`,
-      answer: `Yes, we offer a 50% discount for non-profits. Please contact us to learn more.`,
-    },
-  ];
+  const faqItems = t('marketing:faqItems', { returnObjects: true }) as {
+    question: string;
+    answer: string;
+  }[];
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -125,7 +100,7 @@ function FaqItem({
             'hover:underline-none cursor-pointer font-sans font-medium'
           }
         >
-          <Trans i18nKey={item.question} defaults={item.question} />
+          {item.question}
         </h2>
 
         <div>
@@ -136,7 +111,7 @@ function FaqItem({
       </summary>
 
       <div className={'text-muted-foreground flex flex-col space-y-2 py-1'}>
-        <Trans i18nKey={item.answer} defaults={item.answer} />
+        {item.answer}
       </div>
     </details>
   );
