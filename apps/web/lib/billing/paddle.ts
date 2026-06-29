@@ -62,6 +62,45 @@ export async function createPaddleCustomer(
   return result.data;
 }
 
+/** Paddle refuse deux clients avec le même email — on cherche d'abord
+ * l'existant (ex. créé par une tentative précédente jamais persistée côté
+ * app) avant d'en créer un nouveau. */
+export async function findPaddleCustomerByEmail(
+  email: string,
+): Promise<PaddleCustomer | null> {
+  const result = await paddleFetch<{ data: PaddleCustomer[] }>(
+    `/customers?email=${encodeURIComponent(email)}`,
+  );
+
+  return result.data[0] ?? null;
+}
+
+/** Idempotent : réutilise le client Paddle existant pour cet email, sinon
+ * en crée un. Gère aussi le cas de course (deux requêtes concurrentes) où
+ * Paddle renvoie une erreur "customer email conflicts with customer of id
+ * ctm_xxx" — on récupère alors l'id annoncé dans le message d'erreur. */
+export async function findOrCreatePaddleCustomer(
+  email: string,
+  accountId: string,
+): Promise<PaddleCustomer> {
+  const existing = await findPaddleCustomerByEmail(email);
+  if (existing) return existing;
+
+  try {
+    return await createPaddleCustomer(email, accountId);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '';
+    const match = /customer of id (ctm_[a-z0-9_]+)/i.exec(message);
+    const conflictingId = match?.[1];
+
+    if (conflictingId) {
+      return getPaddleCustomer(conflictingId);
+    }
+
+    throw error;
+  }
+}
+
 export interface PaddleTransaction {
   id: string;
   checkout: { url: string | null };

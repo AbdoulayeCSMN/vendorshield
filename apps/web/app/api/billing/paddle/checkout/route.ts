@@ -12,8 +12,8 @@ import { getSupabaseServerClient } from '@kit/supabase/server-client';
 import { requireUser } from '@kit/supabase/require-user';
 
 import {
-  createPaddleCustomer,
   createPaddleSubscriptionTransaction,
+  findOrCreatePaddleCustomer,
 } from '~/lib/billing/paddle';
 
 function getSiteUrl(request: NextRequest): string {
@@ -60,13 +60,20 @@ export async function POST(request: NextRequest) {
     let customerId: string | undefined = existing?.paddle_customer_id ?? undefined;
 
     if (!customerId) {
-      const customer = await createPaddleCustomer(email, accountId);
+      const customer = await findOrCreatePaddleCustomer(email, accountId);
       customerId = customer.id;
 
-      await (admin as any).from('billing_subscriptions').upsert(
-        { account_id: accountId, paddle_customer_id: customerId, status: 'incomplete' },
-        { onConflict: 'account_id' },
-      );
+      const { error: upsertError } = await (admin as any)
+        .from('billing_subscriptions')
+        .upsert(
+          { account_id: accountId, paddle_customer_id: customerId, status: 'incomplete' },
+          { onConflict: 'account_id' },
+        );
+
+      if (upsertError) {
+        console.error('[billing/paddle/checkout] upsert failed', upsertError);
+        return NextResponse.json({ error: upsertError.message }, { status: 500 });
+      }
     }
 
     const siteUrl = getSiteUrl(request);
