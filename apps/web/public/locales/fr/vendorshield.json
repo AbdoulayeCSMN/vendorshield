@@ -3,7 +3,7 @@
     "kpiActiveSuppliers": "Fournisseurs actifs",
     "kpiOfTotal": "sur {{count}} total",
     "kpiTotalCount": "{{count}} au total",
-    "kpiAvgScore": "Score fiabilité moyen",
+    "kpiAvgScore": "Score risque moyen",
     "notRated": "Non évalué",
     "kpiOpenAlerts": "Alertes ouvertes",
     "kpiInCountry": "dans ce pays",
@@ -184,7 +184,14 @@
     "recompute": "Recalculer",
     "launch": "Lancer la prédiction",
     "askCopilot": "Demander au copilote",
-    "copilotPrompt": "Explique la prédiction opérationnelle de ce fournisseur (retard et défauts) et donne 2 actions concrètes pour réduire le risque."
+    "copilotPrompt": "Explique la prédiction opérationnelle de ce fournisseur (retard et défauts) et donne 2 actions concrètes pour réduire le risque.",
+    "uploadCta": "Importer un historique CSV",
+    "uploadHint": "Colonnes attendues : date prévue, date réelle, PPM, quantité",
+    "uploadImporting": "Import en cours…",
+    "uploadInvalidFile": "Fichier vide ou format non reconnu.",
+    "uploadUnrecognizedColumns": "Colonnes non reconnues. Attendu : date prévue, date réelle, PPM, quantité.",
+    "uploadSuccess": "{{count}} livraison(s) importée(s).",
+    "uploadFailed": "Échec de l'import."
   },
   "common": {
     "save": "Enregistrer",

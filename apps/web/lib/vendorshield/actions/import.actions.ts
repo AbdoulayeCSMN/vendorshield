@@ -211,6 +211,115 @@ export async function commitSupplierImportAction(
   return { success: true, data: { importId, imported: suppliers.length, skipped } };
 }
 
+export interface CommitSupplierDeliveriesResult {
+  imported: number;
+}
+
+/**
+ * Importe un historique de livraisons pour UN fournisseur précis (depuis sa
+ * fiche), sans étape de rapprochement — le `supplier_id` est déjà connu.
+ */
+export async function commitSupplierDeliveryHistoryAction(
+  supplierId: string,
+  input: CommitImportInput,
+): Promise<ActionResult<CommitSupplierDeliveriesResult>> {
+  const client = getSupabaseServerClient();
+  const auth = await requireUser(client);
+  if (auth.error) return { success: false, error: 'Non authentifié' };
+
+  const demo = await denyIfDemo();
+  if (demo) return demo;
+
+  const accountId = auth.data.id;
+  const svc = getServiceRoleClient();
+
+  const rows = Array.isArray(input.rows) ? input.rows : [];
+  if (rows.length === 0) return { success: false, error: 'Aucune ligne à importer.' };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: supplier } = await (client as any)
+    .from('suppliers')
+    .select('id')
+    .eq('id', supplierId)
+    .eq('account_id', accountId)
+    .maybeSingle();
+
+  if (!supplier) return { success: false, error: 'Fournisseur introuvable.' };
+
+  const map = (key: string) => input.columnMapping[key] || key;
+  const get = (row: Record<string, unknown>, canonical: string) => row[map(canonical)];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: imp, error: impErr } = await (svc as any)
+    .from('data_imports')
+    .insert({
+      account_id: accountId,
+      filename: input.filename || 'livraisons',
+      file_type: input.fileType || 'csv',
+      total_rows: rows.length,
+      valid_rows: rows.length,
+      error_rows: 0,
+      import_status: 'processing',
+      quality_score: input.qualityScore ?? 100,
+      imported_by: accountId,
+    })
+    .select('id')
+    .single();
+
+  if (impErr) return { success: false, error: impErr.message };
+  const importId = imp.id as string;
+
+  const deliveries = rows
+    .map((row) => ({
+      account_id: accountId,
+      supplier_id: supplierId,
+      planned_date: toISODate(get(row, CANONICAL.plannedDate)),
+      actual_date: toISODate(get(row, CANONICAL.actualDate)),
+      ppm: toNumber(get(row, CANONICAL.ppm)),
+      quantity: toNumber(get(row, CANONICAL.quantity)),
+      status: get(row, CANONICAL.status) ? String(get(row, CANONICAL.status)) : null,
+      import_id: importId,
+    }))
+    .filter((d) => d.planned_date || d.actual_date);
+
+  if (deliveries.length === 0) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (svc as any)
+      .from('data_imports')
+      .update({ import_status: 'failed', error_summary: 'Aucune date valide' })
+      .eq('id', importId);
+    return {
+      success: false,
+      error: 'Aucune ligne valide (date prévue/réelle manquante ou mal formatée — JJ/MM/AAAA ou AAAA-MM-JJ).',
+    };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: insErr } = await (svc as any)
+    .from('supplier_deliveries')
+    .insert(deliveries);
+
+  if (insErr) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (svc as any)
+      .from('data_imports')
+      .update({ import_status: 'failed', error_summary: insErr.message })
+      .eq('id', importId);
+    return { success: false, error: insErr.message };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (svc as any)
+    .from('data_imports')
+    .update({ import_status: 'done' })
+    .eq('id', importId);
+
+  revalidatePath(`/home/suppliers/${supplierId}`);
+  revalidatePath('/home/imports');
+
+  return { success: true, data: { imported: deliveries.length } };
+}
+
 export async function commitImportAction(
   input: CommitImportInput,
 ): Promise<ActionResult<CommitImportResult>> {

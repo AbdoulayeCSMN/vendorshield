@@ -23,6 +23,8 @@ import {
   predictOperationalRiskAction,
 } from '~/lib/vendorshield/actions/operational-prediction.actions';
 
+import { SupplierDeliveryUpload } from './supplier-delivery-upload';
+
 const RISK_CLS: Record<string, string> = {
   low: 'bg-green-100 text-green-800',
   medium: 'bg-amber-100 text-amber-800',
@@ -84,9 +86,12 @@ export function OperationalPredictionPanel({
 
       <CardContent className="space-y-4">
         {!prediction ? (
-          <p className="text-muted-foreground text-sm">
-            {t('prediction.empty')}
-          </p>
+          <div className="space-y-3">
+            <p className="text-muted-foreground text-sm">
+              {t('prediction.empty')}
+            </p>
+            <SupplierDeliveryUpload supplierId={supplierId} onImported={run} />
+          </div>
         ) : (
           <>
             <div className="grid grid-cols-2 gap-3">

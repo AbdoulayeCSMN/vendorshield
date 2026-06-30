@@ -3,7 +3,7 @@
     "kpiActiveSuppliers": "Active suppliers",
     "kpiOfTotal": "of {{count}} total",
     "kpiTotalCount": "{{count}} total",
-    "kpiAvgScore": "Average reliability score",
+    "kpiAvgScore": "Average risk score",
     "notRated": "Not rated",
     "kpiOpenAlerts": "Open alerts",
     "kpiInCountry": "in this country",
@@ -184,7 +184,14 @@
     "recompute": "Recompute",
     "launch": "Run prediction",
     "askCopilot": "Ask the copilot",
-    "copilotPrompt": "Explain this supplier's operational prediction (delays and defects) and give 2 concrete actions to reduce the risk."
+    "copilotPrompt": "Explain this supplier's operational prediction (delays and defects) and give 2 concrete actions to reduce the risk.",
+    "uploadCta": "Import a CSV history",
+    "uploadHint": "Expected columns: planned date, actual date, PPM, quantity",
+    "uploadImporting": "Importing…",
+    "uploadInvalidFile": "Empty file or unrecognized format.",
+    "uploadUnrecognizedColumns": "Unrecognized columns. Expected: planned date, actual date, PPM, quantity.",
+    "uploadSuccess": "{{count}} deliveries imported.",
+    "uploadFailed": "Import failed."
   },
   "common": {
     "save": "Save",
