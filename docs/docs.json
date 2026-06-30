@@ -1,8 +1,8 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "VendorShield",
-  "description": "Documentation de VendorShield — plateforme SaaS de gestion et d'anticipation des risques fournisseurs.",
+  "name": "Avilyre",
+  "description": "Documentation de Avilyre — plateforme SaaS de gestion et d'anticipation des risques fournisseurs.",
   "colors": {
     "primary": "#6366f1",
     "light": "#818cf8",
@@ -87,7 +87,7 @@
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/AbdoulayeCSMN/vendorshield"
+      "github": "https://github.com/AbdoulayeCSMN/Avilyre"
     }
   }
 }

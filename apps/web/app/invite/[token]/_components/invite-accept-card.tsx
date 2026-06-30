@@ -60,7 +60,7 @@ export function InviteAcceptCard({ invitation, token }: InviteAcceptCardProps) {
             </div>
             <CardTitle>Vous êtes invité</CardTitle>
             <CardDescription>
-              Rejoignez l'organisation {org?.name ?? 'VendorShield'} en tant que{' '}
+              Rejoignez l'organisation {org?.name ?? 'Avilyre'} en tant que{' '}
               <strong>{ROLE_LABELS[invitation.role as OrgMemberRole]}</strong>
             </CardDescription>
           </CardHeader>

@@ -14,7 +14,7 @@ export function DemoModeBanner() {
             Mode démo actif
           </p>
           <p className="mt-0.5 text-xs text-amber-700">
-            Vous explorez VendorShield avec des données de démonstration (lecture seule). Créez un compte pour gérer vos propres fournisseurs.
+            Vous explorez Avilyre avec des données de démonstration (lecture seule). Créez un compte pour gérer vos propres fournisseurs.
           </p>
         </div>
 

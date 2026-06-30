@@ -2,11 +2,11 @@
   "lastUpdated": "Dernière mise à jour : 29 juin 2026",
   "terms": {
     "s1Heading": "1. Objet",
-    "s1Body": "Les présentes conditions générales d'utilisation (« CGU ») régissent l'accès et l'utilisation du service VendorShield (le « Service »), une plateforme SaaS de gestion et d'anticipation des risques fournisseurs, accessible à l'adresse vendorshield-ten.vercel.app. Le Service est exploité par Abdoulaye Chaibou, exploitant individuel basé au Maroc (« nous », « l'Exploitant »).",
+    "s1Body": "Les présentes conditions générales d'utilisation (« CGU ») régissent l'accès et l'utilisation du service Avilyre (le « Service »), une plateforme SaaS de gestion et d'anticipation des risques fournisseurs, accessible à l'adresse avilyre.com. Le Service est exploité par Abdoulaye Chaibou, exploitant individuel basé au Maroc (« nous », « l'Exploitant »).",
     "s2Heading": "2. Acceptation",
     "s2Body": "En créant un compte ou en utilisant le Service, vous acceptez sans réserve les présentes CGU. Si vous n'y consentez pas, vous ne devez pas utiliser le Service. Le Service est destiné à un usage professionnel (B2B) ; vous garantissez agir dans le cadre de votre activité professionnelle.",
     "s3Heading": "3. Description du service",
-    "s3Body": "VendorShield permet de référencer des fournisseurs, de calculer des scores de risque (financier, opérationnel, géopolitique, ESG), de configurer des alertes, d'importer des données, et d'accéder à des fonctionnalités d'intelligence artificielle (analyse, prédiction, enrichissement OSINT). Le Service est fourni « en l'état » et peut évoluer ou être amélioré sans préavis.",
+    "s3Body": "Avilyre permet de référencer des fournisseurs, de calculer des scores de risque (financier, opérationnel, géopolitique, ESG), de configurer des alertes, d'importer des données, et d'accéder à des fonctionnalités d'intelligence artificielle (analyse, prédiction, enrichissement OSINT). Le Service est fourni « en l'état » et peut évoluer ou être amélioré sans préavis.",
     "s4Heading": "4. Compte utilisateur",
     "s4Body": "Vous êtes responsable de la confidentialité de vos identifiants et de toute activité effectuée depuis votre compte. Vous vous engagez à fournir des informations exactes lors de la création de votre compte et de votre organisation.",
     "s5Heading": "5. Essai gratuit, abonnement et facturation",
@@ -37,7 +37,7 @@
   },
   "privacy": {
     "s1Heading": "1. Responsable du traitement",
-    "s1Before": "Le responsable du traitement des données personnelles collectées via VendorShield est Abdoulaye Chaibou, exploitant individuel basé au Maroc. Contact :",
+    "s1Before": "Le responsable du traitement des données personnelles collectées via Avilyre est Abdoulaye Chaibou, exploitant individuel basé au Maroc. Contact :",
     "s2Heading": "2. Données collectées",
     "s2Items": [
       "Données de compte : nom, email, mot de passe (haché), société, rôle.",
@@ -75,7 +75,7 @@
   "cookies": {
     "s1Heading": "1. Qu'est-ce qu'un cookie ?",
     "s1Body": "Un cookie est un petit fichier déposé sur votre appareil lors de la visite d'un site, permettant de conserver des informations entre deux visites ou pages.",
-    "s2Heading": "2. Cookies utilisés sur VendorShield",
+    "s2Heading": "2. Cookies utilisés sur Avilyre",
     "s2Intro": "Nous utilisons exclusivement des cookies strictement nécessaires au fonctionnement du Service — aucun cookie publicitaire ou de tracking tiers n'est déposé à ce jour :",
     "s2Items": [
       "Cookies de session/authentification (Supabase Auth) — vous maintiennent connecté(e) à votre compte.",
@@ -92,7 +92,7 @@
   },
   "refund": {
     "s1Heading": "1. Essai gratuit",
-    "s1Body": "VendorShield propose un essai gratuit de 14 jours, sans carte bancaire requise. Aucun paiement n'est prélevé pendant cette période ; à son terme, l'accès se limite à un palier gratuit restreint si aucun abonnement n'est souscrit.",
+    "s1Body": "Avilyre propose un essai gratuit de 14 jours, sans carte bancaire requise. Aucun paiement n'est prélevé pendant cette période ; à son terme, l'accès se limite à un palier gratuit restreint si aucun abonnement n'est souscrit.",
     "s2Heading": "2. Garantie satisfait ou remboursé — 14 jours",
     "s2Before": "Si vous souscrivez un abonnement payant (Starter ou Pro) et n'êtes pas satisfait(e), vous pouvez demander un remboursement intégral dans les",
     "s2Bold": "14 jours",

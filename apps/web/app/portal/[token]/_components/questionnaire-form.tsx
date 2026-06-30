@@ -141,7 +141,7 @@ export function QuestionnaireForm({
         )}
       </Button>
       <p className="text-muted-foreground mt-3 text-center text-[11px]">
-        Propulsé par VendorShield — vos données sont traitées de façon confidentielle.
+        Propulsé par Avilyre — vos données sont traitées de façon confidentielle.
       </p>
     </div>
   );

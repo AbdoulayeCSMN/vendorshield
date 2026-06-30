@@ -1,10 +1,11 @@
 import { cn } from '@kit/ui/utils';
 
 /**
- * Marque VendorShield : un « V » dans un bouclier.
- * Bouclier en couleur primaire (s'adapte au thème) ; le V contraste
- * automatiquement (blanc en clair, sombre en sombre). `className` règle la
- * taille (ex: "h-8 w-8").
+ * Marque Avilyre : un badge en couleur primaire (s'adapte au thème) avec un
+ * chevron qui contraste automatiquement (blanc en clair, sombre en sombre).
+ * `className` règle la taille (ex: "h-8 w-8").
+ * TODO: remplacer par une vraie icône Avilyre (le badge/chevron actuel est
+ * un héritage visuel de l'ancienne marque VendorShield).
  */
 export function BrandMark({ className }: { className?: string }) {
   return (
@@ -13,7 +14,7 @@ export function BrandMark({ className }: { className?: string }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       role="img"
-      aria-label="VendorShield"
+      aria-label="Avilyre"
       className={cn('h-8 w-8 shrink-0', className)}
     >
       <path

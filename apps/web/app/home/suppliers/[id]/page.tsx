@@ -157,5 +157,5 @@ export default withI18n(SupplierDetailPage);
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const supplier = await getSupplierById(id);
-  return { title: supplier ? `${supplier.name} — VendorShield` : 'Fournisseur' };
+  return { title: supplier ? `${supplier.name} — Avilyre` : 'Fournisseur' };
 }

@@ -3,7 +3,7 @@ title: "Automatisation & cron"
 description: "Emails d'alerte, surveillance quotidienne et ré-entraînement ML."
 ---
 
-VendorShield s'appuie sur trois automatisations. Elles sont **optionnelles** : l'app
+Avilyre s'appuie sur trois automatisations. Elles sont **optionnelles** : l'app
 fonctionne sans, mais elles apportent la valeur récurrente (alertes proactives, prédictions
 fraîches).
 
@@ -40,7 +40,7 @@ Endpoint : `POST/GET /api/monitoring/scan` (tous les comptes). Choisissez **une*
     create extension if not exists pg_cron;
 
     select cron.schedule(
-      'vendorshield-daily-monitoring',
+      'Avilyre-daily-monitoring',
       '0 6 * * *',
       $$ select public.run_monitoring_scan(); $$
     );

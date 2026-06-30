@@ -1,4 +1,4 @@
-# Déploiement production (EU) — VendorShield
+# Déploiement production (EU) — Avilyre
 
 Runbook complet pour passer de la branche `feat/vendorshield-modules` à une
 instance live et conforme RGPD. Les étapes marquées 🔑 nécessitent **tes**
@@ -67,7 +67,7 @@ supabase functions deploy osint-scan --no-verify-jwt
 NEXT_PUBLIC_SUPABASE_URL=https://<ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 SUPABASE_SERVICE_ROLE_KEY=eyJ...
-NEXT_PUBLIC_SITE_URL=https://app.vendorshield.io
+NEXT_PUBLIC_SITE_URL=https://avilyre.com
 
 # Billing (étape 4)
 STRIPE_SECRET_KEY=sk_live_...
@@ -79,14 +79,14 @@ NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY=price_...
 
 # Email (étape 5)
 RESEND_API_KEY=re_...
-EMAIL_FROM=VendorShield <alertes@vendorshield.io>
+EMAIL_FROM=Avilyre <alertes@avilyre.com>
 ALERTS_WEBHOOK_SECRET=<chaîne-aléatoire-longue>
 
 # IA côté serveur (mêmes valeurs que les secrets Supabase, pour le statut UI)
 OPENROUTER_API_KEY=sk-or-...
 
 # Démo publique
-DEMO_EMAIL=demo@vendorshield.io
+DEMO_EMAIL=demo@avilyre.com
 DEMO_PASSWORD=<mot-de-passe-démo>
 ```
 

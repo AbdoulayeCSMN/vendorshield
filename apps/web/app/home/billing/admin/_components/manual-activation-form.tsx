@@ -37,7 +37,7 @@ export function ManualActivationForm() {
           <CardDescription>
             Une fois le virement bancaire confirmé sur le compte, active
             l&apos;abonnement du client ici. Le client doit déjà avoir un
-            compte VendorShield (même en essai gratuit).
+            compte Avilyre (même en essai gratuit).
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">

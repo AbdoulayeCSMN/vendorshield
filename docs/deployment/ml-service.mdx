@@ -49,7 +49,7 @@ dans la requête).
   <Step title="Déployer depuis le dossier du service">
     ```bash
     cd services/ml
-    gcloud run deploy vendorshield-ml \
+    gcloud run deploy Avilyre-ml \
       --source . \
       --region europe-west1 \
       --memory 1Gi \
@@ -58,11 +58,11 @@ dans la requête).
       --set-env-vars VS_ML_API_KEY=choisis-une-cle
     ```
     Cloud Run construit l'image via le `Dockerfile`, puis déploie. Notez l'URL
-    `https://vendorshield-ml-xxxx.a.run.app`.
+    `https://Avilyre-ml-xxxx.a.run.app`.
   </Step>
   <Step title="Brancher l'application (Vercel)">
     ```bash
-    ML_SERVICE_URL=https://vendorshield-ml-xxxx.a.run.app
+    ML_SERVICE_URL=https://Avilyre-ml-xxxx.a.run.app
     ML_SERVICE_API_KEY=choisis-une-cle   # identique à VS_ML_API_KEY
     ```
   </Step>

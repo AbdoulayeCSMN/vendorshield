@@ -32,5 +32,5 @@ export default withI18n(AssessmentDetailPage);
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const assessment = await getAssessmentById(id);
-  return { title: assessment ? `${assessment.title} — VendorShield` : 'Évaluation' };
+  return { title: assessment ? `${assessment.title} — Avilyre` : 'Évaluation' };
 }

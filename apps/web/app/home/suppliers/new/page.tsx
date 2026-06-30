@@ -5,7 +5,7 @@ import { withI18n } from '~/lib/i18n/with-i18n';
 import { SupplierForm } from './_components/supplier-form';
 
 export const metadata = {
-  title: 'Nouveau fournisseur — VendorShield',
+  title: 'Nouveau fournisseur — Avilyre',
 };
 
 function NewSupplierPage() {

@@ -3,7 +3,7 @@ title: "Prédictions & ML"
 description: "Prédiction de retard/PPM, cold-start global et ré-entraînement automatique."
 ---
 
-VendorShield prédit le **risque opérationnel** par fournisseur — probabilité de **retard
+Avilyre prédit le **risque opérationnel** par fournisseur — probabilité de **retard
 de livraison** et de **défauts (PPM)** — à partir de l'historique des livraisons.
 
 ## Architecture
@@ -47,7 +47,7 @@ où $\sigma_{\text{rés}}$ est l'écart-type des résidus de la tendance.
 ## Cold-start : valeur dès le 1er jour
 
 <Note>
-Un nouveau compte n'a pas d'historique. Plutôt que d'échouer, VendorShield utilise un
+Un nouveau compte n'a pas d'historique. Plutôt que d'échouer, Avilyre utilise un
 **modèle global anonymisé** (coefficients agrégés inter-comptes, **aucun identifiant de
 tenant exposé**) pour produire une prédiction initiale (confiance plafonnée). Dès que le
 compte a assez de données, un modèle dédié prend le relais automatiquement.

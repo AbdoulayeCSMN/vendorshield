@@ -62,7 +62,7 @@ export function QuickStartCard({ status }: { status: QuickStartStatus }) {
         </CardTitle>
         <CardDescription>
           {doneCount === 0
-            ? 'Bienvenue sur VendorShield 👋 Trois étapes pour voir votre risque fournisseur en temps réel.'
+            ? 'Bienvenue sur Avilyre 👋 Trois étapes pour voir votre risque fournisseur en temps réel.'
             : `${doneCount}/3 étapes complétées — encore un effort !`}
         </CardDescription>
       </CardHeader>

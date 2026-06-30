@@ -61,7 +61,7 @@ export async function activateSubscriptionManuallyAction(
   if (!account) {
     return {
       success: false,
-      error: `Aucun compte trouvé avec l'email ${email}. Le prospect doit d'abord créer un compte VendorShield.`,
+      error: `Aucun compte trouvé avec l'email ${email}. Le prospect doit d'abord créer un compte Avilyre.`,
     };
   }
 

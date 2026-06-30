@@ -1,5 +1,5 @@
 /**
- * Billing config — plans VendorShield.
+ * Billing config — plans Avilyre.
  *
  * Les `priceId` proviennent des variables d'environnement Stripe afin de
  * pouvoir basculer test/prod sans changer le code. Crée les prix dans le

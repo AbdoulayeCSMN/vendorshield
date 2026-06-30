@@ -1,4 +1,4 @@
-# Documentation VendorShield (Mintlify)
+# Documentation Avilyre (Mintlify)
 
 Documentation propulsée par [Mintlify](https://mintlify.com).
 

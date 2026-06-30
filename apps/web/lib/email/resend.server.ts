@@ -23,7 +23,7 @@ export async function sendEmail({
   html,
 }: SendEmailParams): Promise<SendEmailResult> {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM ?? 'VendorShield <onboarding@resend.dev>';
+  const from = process.env.EMAIL_FROM ?? 'Avilyre <onboarding@resend.dev>';
 
   if (!apiKey) {
     console.warn(

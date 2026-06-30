@@ -134,7 +134,7 @@ async function SupplyChainPage() {
                 <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
                   <p className="font-medium text-gray-800 dark:text-gray-200">Comment fonctionne le graph multi-tiers ?</p>
                   <p>
-                    <strong>Tier 1</strong> = vos fournisseurs directs (données réelles VendorShield).
+                    <strong>Tier 1</strong> = vos fournisseurs directs (données réelles Avilyre).
                   </p>
                   <p>
                     <strong>Tier 2/3</strong> = fournisseurs probables inférés par IA (Groq Llama 3.3) basés sur

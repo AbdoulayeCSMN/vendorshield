@@ -19,7 +19,7 @@ export async function openRouterComplete(params: {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
-        'X-Title': 'VendorShield',
+        'X-Title': 'Avilyre',
       },
       body: JSON.stringify({
         model: process.env.OPENROUTER_MODEL ?? 'openai/gpt-oss-120b:free',

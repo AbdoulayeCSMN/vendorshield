@@ -75,7 +75,7 @@ export default async function PayPage({
     );
   }
 
-  const reference = email || 'votre nom d\'entreprise + VendorShield';
+  const reference = email || 'votre nom d\'entreprise + Avilyre';
 
   return (
     <Shell>

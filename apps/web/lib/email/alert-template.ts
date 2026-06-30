@@ -60,7 +60,7 @@ export function renderAlertEmail(params: AlertEmailParams): {
       </div>
     </div>
     <p style="font-size:11px;color:#9ca3af;text-align:center;margin-top:16px;">
-      VendorShield — Supplier Risk Intelligence Platform<br>
+      Avilyre — Supplier Risk Intelligence Platform<br>
       Vous recevez cet email car une alerte a été déclenchée sur votre portefeuille fournisseurs.
     </p>
   </div>

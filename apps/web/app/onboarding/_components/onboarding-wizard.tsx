@@ -143,7 +143,7 @@ export function OnboardingWizard() {
               <CardHeader>
                 <CardTitle className="text-lg">Créez votre organisation</CardTitle>
                 <CardDescription>
-                  VendorShield est conçu pour les équipes. Commencez par nommer votre organisation.
+                  Avilyre est conçu pour les équipes. Commencez par nommer votre organisation.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -259,7 +259,7 @@ export function OnboardingWizard() {
               <CardHeader>
                 <CardTitle className="text-lg">Tout est prêt !</CardTitle>
                 <CardDescription>
-                  Vérifiez les informations avant de créer votre espace VendorShield.
+                  Vérifiez les informations avant de créer votre espace Avilyre.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -305,9 +305,9 @@ export function OnboardingWizard() {
                 {/* Avantages */}
                 <div className="space-y-2">
                   {[
-                    'Accès à tous les modules VendorShield',
+                    'Accès à tous les modules Avilyre',
                     'Invitez jusqu\'à 1 collaborateur (Starter)',
-                    'Score de fiabilité sur 24 critères',
+                    'Score de risque sur 24 critères',
                     'Alertes automatiques configurables',
                   ].map((benefit) => (
                     <div key={benefit} className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">

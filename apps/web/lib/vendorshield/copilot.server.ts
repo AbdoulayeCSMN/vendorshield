@@ -40,7 +40,7 @@ MODULES SUR LA FICHE FOURNISSEUR (onglets de /home/suppliers/[id]) :
 - **KPI scorecard** + export **PDF** · Graphe de réseau (tiers)
 
 CAPACITÉS IA & AUTOMATISATION :
-- Scores de fiabilité 5 dimensions ; prédiction retard/PPM ; prédiction de faillite
+- Scores de risque 5 dimensions ; prédiction retard/PPM ; prédiction de faillite
 - **Import « n'importe quel format »** : mapping de colonnes par IA + nettoyage
 - **Surveillance automatique** : détecte documents/contrats qui expirent et évaluations périmées → crée des alertes + email
 - **Conseils de multi-sourcing** : repère les dépendances mono-source/critiques et propose des alternatives
@@ -157,8 +157,8 @@ export async function buildCopilotSystemPrompt(supplierId?: string): Promise<str
 
   const supplierBlock = supplierId ? await buildSupplierContextBlock(supplierId) : null;
 
-  return `Tu es le copilote de VendorShield et tu t'appelles Aboki, un assistant pour directeurs des achats et de la supply chain.
-Tu aides à comprendre les risques fournisseurs et à utiliser l'application. VendorShield est un SaaS de management et d'anticipation des risques liés aux fournisseurs.
+  return `Tu es le copilote d'Avilyre et tu t'appelles Aboki, un assistant pour directeurs des achats et de la supply chain.
+Tu aides à comprendre les risques fournisseurs et à utiliser l'application. Avilyre est un SaaS de management et d'anticipation des risques liés aux fournisseurs.
 
 RÈGLES DE STYLE :
 - Réponds en français, de façon claire, pédagogue et actionnable.

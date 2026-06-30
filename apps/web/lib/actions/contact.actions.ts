@@ -34,7 +34,7 @@ export async function sendContactMessageAction(
 
   const result = await sendEmail({
     to: CONTACT_EMAIL,
-    subject: `[VendorShield] Nouveau message de ${name}`,
+    subject: `[Avilyre] Nouveau message de ${name}`,
     html: `
       <p><strong>De :</strong> ${escapeHtml(name)} (${escapeHtml(email)})</p>
       <p><strong>Message :</strong></p>

@@ -47,7 +47,7 @@ scale-to-zero (free when idle), cold starts in **seconds**, configurable RAM. Th
   <Step title="Deploy from the service folder">
     ```bash
     cd services/ml
-    gcloud run deploy vendorshield-ml \
+    gcloud run deploy Avilyre-ml \
       --source . \
       --region europe-west1 \
       --memory 1Gi \
@@ -56,11 +56,11 @@ scale-to-zero (free when idle), cold starts in **seconds**, configurable RAM. Th
       --set-env-vars VS_ML_API_KEY=pick-a-key
     ```
     Cloud Run builds the image via the `Dockerfile`, then deploys. Note the URL
-    `https://vendorshield-ml-xxxx.a.run.app`.
+    `https://Avilyre-ml-xxxx.a.run.app`.
   </Step>
   <Step title="Wire the app (Vercel)">
     ```bash
-    ML_SERVICE_URL=https://vendorshield-ml-xxxx.a.run.app
+    ML_SERVICE_URL=https://Avilyre-ml-xxxx.a.run.app
     ML_SERVICE_API_KEY=pick-a-key   # same as VS_ML_API_KEY
     ```
   </Step>

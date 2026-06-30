@@ -3,7 +3,7 @@ title: "Predictions & ML"
 description: "Delay/PPM prediction, global cold-start and automatic retraining."
 ---
 
-VendorShield predicts **operational risk** per supplier — **delivery-delay** and **defect
+Avilyre predicts **operational risk** per supplier — **delivery-delay** and **defect
 (PPM)** probability — from delivery history.
 
 ## Architecture
@@ -47,7 +47,7 @@ where $\sigma_{\text{res}}$ is the standard deviation of the trend residuals.
 ## Cold-start: value on day one
 
 <Note>
-A new account has no history. Instead of failing, VendorShield uses an **anonymized global
+A new account has no history. Instead of failing, Avilyre uses an **anonymized global
 model** (aggregate cross-account coefficients, **no tenant identifier exposed**) to produce
 an initial prediction (capped confidence). As soon as the account has enough data, a
 dedicated model takes over automatically.

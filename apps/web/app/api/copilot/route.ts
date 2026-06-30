@@ -64,7 +64,7 @@ async function callOpenRouter(apiKey: string, messages: Msg[]): Promise<LlmResul
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
-      'X-Title': 'VendorShield Copilot',
+      'X-Title': 'Avilyre Copilot',
     },
     body: JSON.stringify({
       ...(MODELS.length > 1 ? { models: MODELS } : { model: MODELS[0] }),
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     console.error('[copilot] échec construction du contexte:', err);
     system =
-      'Tu es le copilote VendorShield, assistant pour la gestion et l’anticipation du risque fournisseur. Réponds en français, de façon concise, professionnelle et actionnable.';
+      'Tu es le copilote Avilyre, assistant pour la gestion et l’anticipation du risque fournisseur. Réponds en français, de façon concise, professionnelle et actionnable.';
   }
 
   const result = await callLlm([

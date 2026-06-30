@@ -2,11 +2,11 @@
   "lastUpdated": "Last updated: June 29, 2026",
   "terms": {
     "s1Heading": "1. Purpose",
-    "s1Body": "These terms of service (\"Terms\") govern access to and use of the VendorShield service (the \"Service\"), a SaaS platform for supplier risk management and anticipation, available at vendorshield-ten.vercel.app. The Service is operated by Abdoulaye Chaibou, an individual operator based in Morocco (\"we\", \"the Operator\").",
+    "s1Body": "These terms of service (\"Terms\") govern access to and use of the Avilyre service (the \"Service\"), a SaaS platform for supplier risk management and anticipation, available at avilyre.com. The Service is operated by Abdoulaye Chaibou, an individual operator based in Morocco (\"we\", \"the Operator\").",
     "s2Heading": "2. Acceptance",
     "s2Body": "By creating an account or using the Service, you accept these Terms in full. If you do not agree, you must not use the Service. The Service is intended for professional (B2B) use; you warrant that you are acting within the scope of your professional activity.",
     "s3Heading": "3. Description of the service",
-    "s3Body": "VendorShield lets you reference suppliers, compute risk scores (financial, operational, geopolitical, ESG), configure alerts, import data, and access AI-powered features (analysis, prediction, OSINT enrichment). The Service is provided \"as is\" and may evolve or be improved without notice.",
+    "s3Body": "Avilyre lets you reference suppliers, compute risk scores (financial, operational, geopolitical, ESG), configure alerts, import data, and access AI-powered features (analysis, prediction, OSINT enrichment). The Service is provided \"as is\" and may evolve or be improved without notice.",
     "s4Heading": "4. User account",
     "s4Body": "You are responsible for keeping your credentials confidential and for all activity carried out from your account. You agree to provide accurate information when creating your account and organization.",
     "s5Heading": "5. Free trial, subscription and billing",
@@ -37,7 +37,7 @@
   },
   "privacy": {
     "s1Heading": "1. Data controller",
-    "s1Before": "The controller for personal data collected through VendorShield is Abdoulaye Chaibou, an individual operator based in Morocco. Contact:",
+    "s1Before": "The controller for personal data collected through Avilyre is Abdoulaye Chaibou, an individual operator based in Morocco. Contact:",
     "s2Heading": "2. Data we collect",
     "s2Items": [
       "Account data: name, email, password (hashed), company, role.",
@@ -75,7 +75,7 @@
   "cookies": {
     "s1Heading": "1. What is a cookie?",
     "s1Body": "A cookie is a small file stored on your device when you visit a website, used to retain information between visits or pages.",
-    "s2Heading": "2. Cookies used on VendorShield",
+    "s2Heading": "2. Cookies used on Avilyre",
     "s2Intro": "We exclusively use cookies that are strictly necessary for the Service to function — no advertising or third-party tracking cookie is set as of today:",
     "s2Items": [
       "Session/authentication cookies (Supabase Auth) — keep you signed in to your account.",
@@ -92,7 +92,7 @@
   },
   "refund": {
     "s1Heading": "1. Free trial",
-    "s1Body": "VendorShield offers a 14-day free trial with no credit card required. No payment is taken during this period; once it ends, access is limited to a restricted free tier unless you subscribe.",
+    "s1Body": "Avilyre offers a 14-day free trial with no credit card required. No payment is taken during this period; once it ends, access is limited to a restricted free tier unless you subscribe.",
     "s2Heading": "2. 14-day money-back guarantee",
     "s2Before": "If you subscribe to a paid plan (Starter or Pro) and are not satisfied, you can request a full refund within",
     "s2Bold": "14 days",

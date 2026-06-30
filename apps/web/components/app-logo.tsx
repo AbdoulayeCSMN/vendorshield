@@ -9,7 +9,7 @@ function LogoImage({ className }: { className?: string; width?: number }) {
     <div className={cn('flex items-center gap-2', className)}>
       <BrandMark className="h-[30px] w-[30px]" />
       <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-        Vendor<span className="text-primary">Shield</span>
+        Avi<span className="text-primary">lyre</span>
       </span>
     </div>
   );
@@ -29,7 +29,7 @@ export function AppLogo({
   }
 
   return (
-    <Link aria-label={label ?? 'VendorShield - Accueil'} href={href ?? '/'}>
+    <Link aria-label={label ?? 'Avilyre - Accueil'} href={href ?? '/'}>
       <LogoImage className={className} />
     </Link>
   );

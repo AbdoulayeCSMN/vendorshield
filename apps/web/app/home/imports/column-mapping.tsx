@@ -67,7 +67,7 @@ export function ColumnMapping({ rows, importType, onComplete }: ColumnMappingPro
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-600">
-          Associez les colonnes de votre fichier aux champs VendorShield. Modifiable si besoin.
+          Associez les colonnes de votre fichier aux champs Avilyre. Modifiable si besoin.
         </p>
         {aiSuggested && (
           <span className="text-primary inline-flex items-center gap-1 text-xs font-medium">

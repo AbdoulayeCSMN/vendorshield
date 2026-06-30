@@ -187,7 +187,7 @@ export function BillingPlans({
               <CardFooter>
                 {plan.custom ? (
                   <Button variant="outline" className="w-full" asChild>
-                    <a href={`mailto:${CONTACT_EMAIL}?subject=VendorShield Enterprise`}>
+                    <a href={`mailto:${CONTACT_EMAIL}?subject=Avilyre Enterprise`}>
                       {t('plansPage.contactCta')}
                     </a>
                   </Button>

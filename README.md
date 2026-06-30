@@ -1,10 +1,10 @@
-# VendorShield
+# Avilyre
 
 **Plateforme SaaS B2B de gestion et d'anticipation des risques fournisseurs (SRM)**
 
-![VendorShield — page d'accueil](docs/images/landing-hero.png)
+![Avilyre — page d'accueil](docs/images/landing-hero.png)
 
-VendorShield aide les directions achats et supply chain — en particulier dans l'industrie — à **noter, surveiller et anticiper** les risques de leur portefeuille fournisseurs : santé financière, performance opérationnelle, géopolitique, ESG, cyber et climat. Construit sur Next.js 15, Supabase et une couche IA/ML (LLM + modèles prédictifs).
+Avilyre aide les directions achats et supply chain — en particulier dans l'industrie — à **noter, surveiller et anticiper** les risques de leur portefeuille fournisseurs : santé financière, performance opérationnelle, géopolitique, ESG, cyber et climat. Construit sur Next.js 15, Supabase et une couche IA/ML (LLM + modèles prédictifs).
 
 ---
 
@@ -132,7 +132,7 @@ Optionnel (activent les fonctions IA/automatisation) :
 GROQ_API_KEY=gsk_...                       # copilote + mapping IA (recommandé)
 OPENROUTER_API_KEY=sk-or-...               # repli copilote/mapping
 RESEND_API_KEY=re_...                      # emails d'alerte
-EMAIL_FROM=VendorShield <alertes@domaine>
+EMAIL_FROM=Avilyre <alertes@domaine>
 ALERTS_WEBHOOK_SECRET=...                  # Database Webhook Supabase → email
 MONITORING_SCAN_SECRET=...                 # cron /api/monitoring/scan et /api/ml/retrain
 ```

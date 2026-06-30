@@ -22,7 +22,7 @@ export function getStripe(): Stripe {
   stripeClient = new Stripe(secretKey, {
     // On laisse la version d'API par défaut du SDK pour éviter les décalages.
     typescript: true,
-    appInfo: { name: 'VendorShield' },
+    appInfo: { name: 'Avilyre' },
   });
 
   return stripeClient;

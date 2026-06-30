@@ -95,7 +95,7 @@ async function PricingPage() {
                 <CardFooter>
                   {plan.custom ? (
                     <Button variant="outline" className="w-full" asChild>
-                      <a href={`mailto:${CONTACT_EMAIL}?subject=VendorShield Enterprise`}>
+                      <a href={`mailto:${CONTACT_EMAIL}?subject=Avilyre Enterprise`}>
                         {t('marketing:pricingPage.contactCta')}
                       </a>
                     </Button>

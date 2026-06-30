@@ -1,16 +1,16 @@
 ---
 title: "Architecture"
-description: "Technical overview of VendorShield: components, use cases, data and flows."
+description: "Technical overview of Avilyre: components, use cases, data and flows."
 ---
 
 ## Component architecture
 
-VendorShield is a Next.js app deployed on Vercel, backed by Supabase (PostgreSQL + RLS,
+Avilyre is a Next.js app deployed on Vercel, backed by Supabase (PostgreSQL + RLS,
 Auth, Storage, Edge Functions). AI/ML capabilities rely on external services, each with a
 **fallback** so the app is never blocked.
 
 <Frame caption="Deployment architecture">
-  <img src="/images/architecture.png" alt="VendorShield architecture" />
+  <img src="/images/architecture.png" alt="Avilyre architecture" />
 </Frame>
 
 - **Vercel / Next.js** — pages (RSC), streaming copilot, Server Actions and API routes.

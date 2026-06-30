@@ -73,7 +73,7 @@ export function CopilotWidget() {
           <header className="flex items-center justify-between border-b px-4 py-3">
             <div className="flex items-center gap-2">
               <Sparkles className="text-primary h-4 w-4" />
-              <span className="text-sm font-semibold">Copilote VendorShield</span>
+              <span className="text-sm font-semibold">Copilote Avilyre</span>
             </div>
             <div className="flex items-center gap-1">
               {messages.length > 0 && (

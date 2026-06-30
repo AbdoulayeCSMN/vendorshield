@@ -292,7 +292,7 @@ ${assessment.analyst_notes ? `
 </div>` : ''}
 
 <div class="footer">
-  <span>VendorShield — Supplier Risk Intelligence Platform</span>
+  <span>Avilyre — Supplier Risk Intelligence Platform</span>
   <span>${supplier?.name ?? ''} — v${assessment.version ?? 1} — Confidentiel</span>
 </div>
 </body>
@@ -503,7 +503,7 @@ ${
 }
 
 <div class="footer">
-  <span>VendorShield — Supplier Risk Intelligence Platform</span>
+  <span>Avilyre — Supplier Risk Intelligence Platform</span>
   <span>${esc(supplier.name)} — Confidentiel</span>
 </div>
 </body>
@@ -532,7 +532,7 @@ export async function GET(
     if (type === 'csv-suppliers') {
       const suppliers = await fetchSuppliers(client, supplierId);
       const csv = suppliersToCSV(suppliers);
-      const filename = `vendorshield-fournisseurs-${new Date().toISOString().split('T')[0]}.csv`;
+      const filename = `avilyre-fournisseurs-${new Date().toISOString().split('T')[0]}.csv`;
 
       return new Response('\uFEFF' + csv, { // BOM UTF-8 pour Excel
         headers: {
@@ -546,11 +546,11 @@ export async function GET(
 
     if (type === 'json-suppliers') {
       const suppliers = await fetchSuppliers(client, supplierId);
-      const filename = `vendorshield-fournisseurs-${new Date().toISOString().split('T')[0]}.json`;
+      const filename = `avilyre-fournisseurs-${new Date().toISOString().split('T')[0]}.json`;
 
       return new Response(JSON.stringify({
         generated_at: new Date().toISOString(),
-        source:       'VendorShield',
+        source:       'Avilyre',
         count:        suppliers.length,
         suppliers,
       }, null, 2), {
@@ -584,7 +584,7 @@ export async function GET(
 
       return new Response(JSON.stringify({
         generated_at: new Date().toISOString(),
-        source:       'VendorShield',
+        source:       'Avilyre',
         assessment,
       }, null, 2), {
         headers: {
