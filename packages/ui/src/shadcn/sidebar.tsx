@@ -41,9 +41,13 @@ const SIDEBAR_KEYBOARD_SHORTCUT = 'b';
 const SIDEBAR_MINIMIZED_WIDTH = SIDEBAR_WIDTH_ICON;
 
 type SidebarContext = {
+  /** Visual state (pinned OR hovered) — drives content/width of the floating panel. */
   state: 'expanded' | 'collapsed';
+  /** Layout state (pinned only) — drives the space reserved in the page flow. Never changes on hover. */
+  pinnedState: 'expanded' | 'collapsed';
   open: boolean;
   setOpen: (open: boolean) => void;
+  setHovered: (hovered: boolean) => void;
   openMobile: boolean;
   setOpenMobile: (open: boolean) => void;
   isMobile: boolean;
@@ -70,7 +74,7 @@ const SidebarProvider: React.FC<
   }
 > = ({
   ref,
-  defaultOpen = true,
+  defaultOpen = false,
   open: openProp,
   onOpenChange: setOpenProp,
   className,
@@ -82,26 +86,35 @@ const SidebarProvider: React.FC<
   const [openMobile, setOpenMobile] = React.useState(false);
   const collapsibleStyle = process.env.NEXT_PUBLIC_SIDEBAR_COLLAPSIBLE_STYLE;
 
-  // This is the internal state of the sidebar.
-  // We use openProp and setOpenProp for control from outside the component.
+  // This is the "pinned" (persisted) state of the sidebar — toggled via the
+  // keyboard shortcut, never via hover. We use openProp and setOpenProp for
+  // control from outside the component.
   const [_open, _setOpen] = React.useState(defaultOpen);
-  const open = openProp ?? _open;
+  const pinned = openProp ?? _open;
+
+  // Transient hover state (desktop, icon-collapsible only) — expands the
+  // floating panel over the page without reserving extra layout space, à la
+  // Supabase. Never persisted.
+  const [hovered, setHovered] = React.useState(false);
+  const open = pinned || hovered;
 
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
+      const next = typeof value === 'function' ? value(pinned) : value;
+
       if (setOpenProp) {
-        return setOpenProp?.(typeof value === 'function' ? value(open) : value);
+        setOpenProp(next);
+      } else {
+        _setOpen(next);
       }
 
-      _setOpen(value);
-
       // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${open}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+      document.cookie = `${SIDEBAR_COOKIE_NAME}=${next}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
     },
-    [setOpenProp, open],
+    [setOpenProp, pinned],
   );
 
-  // Helper to toggle the sidebar.
+  // Helper to toggle the sidebar (pin/unpin).
   const toggleSidebar = React.useCallback(() => {
     return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
   }, [isMobile, setOpen, setOpenMobile]);
@@ -124,19 +137,24 @@ const SidebarProvider: React.FC<
 
   // We add a state so that we can do data-state="expanded" or "collapsed".
   // This makes it easier to style the sidebar with Tailwind classes.
+  // `state` is the visual (pinned-or-hovered) state; `pinnedState` never
+  // reacts to hover and is what reserves space in the page layout.
   const state = open ? 'expanded' : 'collapsed';
+  const pinnedState = pinned ? 'expanded' : 'collapsed';
 
   const contextValue = React.useMemo<SidebarContext>(
     () => ({
       state,
+      pinnedState,
       open,
       setOpen,
+      setHovered,
       isMobile,
       openMobile,
       setOpenMobile,
       toggleSidebar,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
+    [state, pinnedState, open, setOpen, setHovered, isMobile, openMobile, setOpenMobile, toggleSidebar],
   );
 
   const sidebarWidth = !open
@@ -190,7 +208,8 @@ const Sidebar: React.FC<
   ref,
   ...props
 }) => {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+  const { isMobile, state, pinnedState, openMobile, setOpenMobile, setHovered } =
+    useSidebar();
 
   if (collapsible === 'none') {
     return (
@@ -240,12 +259,13 @@ const Sidebar: React.FC<
     <div
       ref={ref}
       className="group peer hidden md:block"
-      data-state={state}
-      data-collapsible={state === 'collapsed' ? collapsible : ''}
+      data-state={pinnedState}
+      data-collapsible={pinnedState === 'collapsed' ? collapsible : ''}
       data-variant={variant}
       data-side={side}
     >
-      {/* This is what handles the sidebar gap on desktop */}
+      {/* This is what handles the sidebar gap on desktop. Width follows the
+         PINNED state only — hovering never reserves extra layout space. */}
       <div
         className={cn(
           'relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear',
@@ -259,19 +279,35 @@ const Sidebar: React.FC<
           },
         )}
       />
+      {/* The floating panel itself: its own `group` + data-state, driven by
+         the VISUAL (pinned-or-hovered) state, so it expands over the page on
+         hover — à la Supabase — without the gap div above moving. */}
       <div
         className={cn(
-          'fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex',
+          'group fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex',
           side === 'left'
             ? 'left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]'
             : 'right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]',
-          // Adjust the padding for floating and inset variants.
+          // Width of the floating panel responds to its OWN data-state (visual,
+          // pinned-or-hovered) via the self-targeting data-[state=*] variant.
+          // This is intentionally different from the spacer above (which uses
+          // group-data-* targeting the OUTER group / pinnedState).
           variant === 'floating' || variant === 'inset'
-            ? 'p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]'
-            : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l',
+            ? 'p-2 data-[state=collapsed]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]'
+            : 'data-[state=collapsed]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l',
           className,
         )}
+        data-state={state}
+        data-collapsible={state === 'collapsed' ? collapsible : ''}
         {...props}
+        onMouseEnter={(event) => {
+          props.onMouseEnter?.(event);
+          if (collapsible === 'icon') setHovered(true);
+        }}
+        onMouseLeave={(event) => {
+          props.onMouseLeave?.(event);
+          if (collapsible === 'icon') setHovered(false);
+        }}
       >
         <div
           data-sidebar="sidebar"
