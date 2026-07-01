@@ -377,6 +377,22 @@
     "noSoleSource": "No sole source identified",
     "tooltipScore": "{{score}}/100 ({{count}} suppliers)"
   },
+  "delivery": {
+    "title": "Delivery reports",
+    "desc": "Send a secure link to the supplier so they can self-report their delivery data (date, quantity, defects).",
+    "send": "Send link",
+    "newLink": "New delivery report link",
+    "newLinkDesc": "The supplier will fill in the form without needing an account. The link expires in 30 days.",
+    "periodLabel": "Period (optional)",
+    "periodPlaceholder": "e.g. July 2026 or Week 28",
+    "orderRefLabel": "Order reference (optional)",
+    "orderRefPlaceholder": "e.g. PO-2026-00123",
+    "createLink": "Create & copy link",
+    "created": "Link created — copied to clipboard",
+    "empty": "No delivery report sent yet.",
+    "noLabel": "No label",
+    "submittedOn": "Received on"
+  },
   "assessments": {
     "filterAllStatuses": "All statuses",
     "statusDraft": "Draft",

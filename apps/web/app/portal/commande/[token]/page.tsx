@@ -1,13 +1,13 @@
-import { getRequestByToken } from '~/lib/vendorshield/actions/questionnaire.actions';
+import { getDeliveryRequestByToken } from '~/lib/vendorshield/actions/delivery-report.actions';
 
-import { QuestionnaireForm } from './_components/questionnaire-form';
+import { DeliveryForm } from './_components/delivery-form';
 
 export const dynamic = 'force-dynamic';
 
 function Shell({ children }: React.PropsWithChildren) {
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-10 dark:bg-gray-950">
-      <div className="mx-auto w-full max-w-2xl">
+      <div className="mx-auto w-full max-w-xl">
         <div className="mb-6 flex items-center gap-2">
           <span className="text-lg font-bold tracking-tight">
             Avi<span className="text-primary">lyre</span>
@@ -28,18 +28,21 @@ function Notice({ title, message }: { title: string; message: string }) {
   );
 }
 
-export default async function PortalPage({
+export default async function DeliveryPortalPage({
   params,
 }: {
   params: Promise<{ token: string }>;
 }) {
   const { token } = await params;
-  const req = await getRequestByToken(token);
+  const req = await getDeliveryRequestByToken(token);
 
   if (!req) {
     return (
       <Shell>
-        <Notice title="Invalid link / Lien invalide" message="This questionnaire does not exist or has been deleted. / Ce questionnaire n'existe pas ou a été supprimé." />
+        <Notice
+          title="Invalid link / Lien invalide"
+          message="This delivery report link does not exist or has been deleted. / Ce lien n'existe pas ou a été supprimé."
+        />
       </Shell>
     );
   }
@@ -49,7 +52,7 @@ export default async function PortalPage({
       <Shell>
         <Notice
           title="Link expired / Lien expiré"
-          message="This questionnaire is no longer accessible. / Ce questionnaire n'est plus accessible. Contactez votre donneur d'ordre pour un nouveau lien."
+          message="This link is no longer active. Please contact your buyer. / Ce lien n'est plus actif. Contactez votre donneur d'ordre."
         />
       </Shell>
     );
@@ -60,7 +63,7 @@ export default async function PortalPage({
       <Shell>
         <Notice
           title="Already submitted / Déjà soumis ✅"
-          message="Thank you, your response has been recorded. / Merci, votre auto-évaluation a bien été enregistrée."
+          message="Thank you, your delivery report has been recorded. / Merci, votre rapport de livraison a bien été enregistré."
         />
       </Shell>
     );
@@ -68,11 +71,11 @@ export default async function PortalPage({
 
   return (
     <Shell>
-      <QuestionnaireForm
+      <DeliveryForm
         token={token}
-        title={req.title}
-        supplierName={req.supplier_name}
-        questions={req.questions}
+        supplierName={req.supplierName}
+        periodLabel={req.periodLabel}
+        defaultOrderRef={req.orderRef}
       />
     </Shell>
   );

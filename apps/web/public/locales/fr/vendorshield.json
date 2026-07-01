@@ -377,6 +377,22 @@
     "noSoleSource": "Aucun fournisseur unique identifié",
     "tooltipScore": "{{score}}/100 ({{count}} fournisseurs)"
   },
+  "delivery": {
+    "title": "Rapports de livraison",
+    "desc": "Envoyez un lien sécurisé au fournisseur pour qu'il saisisse lui-même ses données de livraison (date, quantité, défauts).",
+    "send": "Envoyer un lien",
+    "newLink": "Nouveau lien de rapport de livraison",
+    "newLinkDesc": "Le fournisseur remplira le formulaire sans avoir besoin de compte. Le lien expire dans 30 jours.",
+    "periodLabel": "Période (optionnel)",
+    "periodPlaceholder": "Ex : Juillet 2026 ou Semaine 28",
+    "orderRefLabel": "Référence commande (optionnel)",
+    "orderRefPlaceholder": "Ex : BC-2026-00123",
+    "createLink": "Créer et copier le lien",
+    "created": "Lien créé — copié dans le presse-papier",
+    "empty": "Aucun rapport de livraison envoyé pour l'instant.",
+    "noLabel": "Sans libellé",
+    "submittedOn": "Reçu le"
+  },
   "assessments": {
     "filterAllStatuses": "Tous les statuts",
     "statusDraft": "Brouillon",

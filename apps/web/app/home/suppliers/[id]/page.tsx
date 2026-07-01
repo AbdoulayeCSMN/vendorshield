@@ -48,6 +48,7 @@ import { getSupplierById } from '~/lib/vendorshield/suppliers.server';
 import { getSupplierKpis } from '~/lib/vendorshield/kpis.server';
 import { getSupplierCompliance } from '~/lib/vendorshield/actions/document.actions';
 import { getSupplierQuestionnaires } from '~/lib/vendorshield/actions/questionnaire.actions';
+import { getSupplierDeliveryReports } from '~/lib/vendorshield/actions/delivery-report.actions';
 import { getSupplierCyberPosture } from '~/lib/vendorshield/cyber.server';
 import {
   getSupplierActions,
@@ -60,6 +61,7 @@ import { OperationalPredictionPanel } from './_components/operational-prediction
 import { SupplierDocumentsPanel } from './_components/supplier-documents-panel';
 import { SupplierKpiScorecard } from './_components/supplier-kpi-scorecard';
 import { SupplierQuestionnairesPanel } from './_components/supplier-questionnaires-panel';
+import { SupplierDeliveryReportsPanel } from './_components/supplier-delivery-reports-panel';
 import { CyberPosturePanel } from './_components/cyber-posture-panel';
 import { SupplierAuditsPanel } from './_components/supplier-audits-panel';
 import { SupplierCapaPanel } from './_components/supplier-capa-panel';
@@ -85,6 +87,7 @@ async function SupplierDetailPage({ params }: Props) {
     kpis,
     compliance,
     questionnaires,
+    deliveryReports,
     cyberPosture,
     audits,
     capaActions,
@@ -98,6 +101,7 @@ async function SupplierDetailPage({ params }: Props) {
     getSupplierKpis(id),
     getSupplierCompliance(id),
     getSupplierQuestionnaires(id),
+    getSupplierDeliveryReports(id),
     getSupplierCyberPosture(id),
     getSupplierAudits(id),
     getSupplierActions(id),
@@ -133,6 +137,7 @@ async function SupplierDetailPage({ params }: Props) {
           actions={
             <>
               <SupplierQuestionnairesPanel supplierId={id} requests={questionnaires} />
+              <SupplierDeliveryReportsPanel supplierId={id} requests={deliveryReports} />
               <SupplierAuditsPanel supplierId={id} audits={audits} />
               <SupplierCapaPanel supplierId={id} actions={capaActions} />
             </>
