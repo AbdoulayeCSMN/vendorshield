@@ -221,7 +221,7 @@ function AlertCard({
           )}
           {alert.score_snapshot !== null && (
             <span className="text-xs text-gray-400">
-              Score : {alert.score_snapshot}/100
+              {t('alerts.score', { score: alert.score_snapshot })}
             </span>
           )}
           {alert.score_delta !== null && alert.score_delta !== 0 && (
@@ -389,12 +389,10 @@ export function AlertsList({ alerts, total, page, pageCount, filters }: Props) {
               <Filter className="h-7 w-7 text-gray-300" />
             </div>
             <p className="text-sm font-medium text-gray-900 dark:text-white">
-              {hasFilters ? 'Aucune alerte pour ces filtres' : 'Aucune alerte active'}
+              {hasFilters ? t('alerts.emptyFiltered') : t('alerts.emptyGlobal')}
             </p>
             <p className="mt-1 text-xs text-gray-400">
-              {hasFilters
-                ? 'Essayez d\'ajuster vos critères.'
-                : 'Votre chaîne d\'approvisionnement est sous contrôle.'}
+              {hasFilters ? t('alerts.emptyFilteredHint') : t('alerts.emptyGlobalHint')}
             </p>
           </div>
         ) : (
@@ -411,15 +409,15 @@ export function AlertsList({ alerts, total, page, pageCount, filters }: Props) {
       {/* Pagination */}
       {pageCount > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500">Page {page} sur {pageCount}</p>
+          <p className="text-sm text-gray-500">{t('alerts.pageOf', { page, pageCount })}</p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" disabled={page <= 1 || isPending}
               onClick={() => updateParam('page', String(page - 1))}>
-              <ChevronLeft className="h-4 w-4 mr-1" />Précédent
+              <ChevronLeft className="h-4 w-4 mr-1" />{t('suppliers.prev')}
             </Button>
             <Button variant="outline" size="sm" disabled={page >= pageCount || isPending}
               onClick={() => updateParam('page', String(page + 1))}>
-              Suivant<ChevronRight className="h-4 w-4 ml-1" />
+              {t('suppliers.next')}<ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
         </div>

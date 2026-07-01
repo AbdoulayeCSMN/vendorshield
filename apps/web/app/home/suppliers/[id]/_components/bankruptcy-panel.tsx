@@ -18,6 +18,8 @@ import {
   Zap,
 } from 'lucide-react';
 
+import { useTranslation } from 'react-i18next';
+
 import { Button } from '@kit/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@kit/ui/card';
 
@@ -28,45 +30,39 @@ import {
   type PredictionResult,
 } from '~/lib/vendorshield/actions/prediction.actions';
 
-// ─── Config zones ─────────────────────────────────────────────────────────────
+// ─── Zone config (no text — labels come from i18n) ───────────────────────────
 
 const ZONE_CFG = {
   safe: {
-    label:    'Zone sûre',
-    icon:     ShieldCheck,
-    color:    '#22c55e',
-    bg:       'bg-green-50 dark:bg-green-950/30',
-    border:   'border-green-200 dark:border-green-900',
-    text:     'text-green-700 dark:text-green-400',
-    range:    'Z ≥ 2.6',
-    desc:     'Santé financière satisfaisante — faible risque de défaillance',
+    icon:   ShieldCheck,
+    color:  '#22c55e',
+    bg:     'bg-green-50 dark:bg-green-950/30',
+    border: 'border-green-200 dark:border-green-900',
+    text:   'text-green-700 dark:text-green-400',
+    range:  'Z ≥ 2.6',
   },
   grey: {
-    label:    'Zone grise',
-    icon:     AlertTriangle,
-    color:    '#f97316',
-    bg:       'bg-orange-50 dark:bg-orange-950/30',
-    border:   'border-orange-200 dark:border-orange-900',
-    text:     'text-orange-700 dark:text-orange-400',
-    range:    '1.1 ≤ Z < 2.6',
-    desc:     'Fragilités financières identifiées — surveillance renforcée requise',
+    icon:   AlertTriangle,
+    color:  '#f97316',
+    bg:     'bg-orange-50 dark:bg-orange-950/30',
+    border: 'border-orange-200 dark:border-orange-900',
+    text:   'text-orange-700 dark:text-orange-400',
+    range:  '1.1 ≤ Z < 2.6',
   },
   distress: {
-    label:    'Détresse financière',
-    icon:     ShieldAlert,
-    color:    '#dc2626',
-    bg:       'bg-red-50 dark:bg-red-950/30',
-    border:   'border-red-200 dark:border-red-900',
-    text:     'text-red-700 dark:text-red-400',
-    range:    'Z < 1.1',
-    desc:     'Risque de défaillance élevé — action immédiate recommandée',
+    icon:   ShieldAlert,
+    color:  '#dc2626',
+    bg:     'bg-red-50 dark:bg-red-950/30',
+    border: 'border-red-200 dark:border-red-900',
+    text:   'text-red-700 dark:text-red-400',
+    range:  'Z < 1.1',
   },
 } as const;
 
-const IMPACT_CFG = {
-  high:   { cls: 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400',   label: 'Élevé' },
-  medium: { cls: 'bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-400', label: 'Moyen' },
-  low:    { cls: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400', label: 'Faible' },
+const IMPACT_CLS = {
+  high:   'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400',
+  medium: 'bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-400',
+  low:    'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
 } as const;
 
 function probTextClass(pct: number) {
@@ -86,15 +82,14 @@ function zoneDotClass(color: string) {
 // ─── Gauge Z-Score ─────────────────────────────────────────────────────────────
 
 function ZScoreGauge({ z, zone }: { z: number; zone: BankruptcyRiskZone }) {
+  const { t } = useTranslation('vendorshield');
   const cfg = ZONE_CFG[zone];
-  // Z de 0 à 4 → angle -130 à +130 degrés (260° de sweep)
   const pct  = Math.min(1, Math.max(0, z / 4));
   const deg  = -130 + pct * 260;
   const r    = 48;
   const cx   = 60;
   const cy   = 60;
 
-  // Arc background
   const arcPath = (startDeg: number, endDeg: number, color: string) => {
     const toRad  = (d: number) => (d * Math.PI) / 180;
     const x1 = cx + r * Math.cos(toRad(startDeg));
@@ -116,27 +111,23 @@ function ZScoreGauge({ z, zone }: { z: number; zone: BankruptcyRiskZone }) {
   return (
     <div className="flex flex-col items-center">
       <svg width="120" height="80" viewBox="0 0 120 80">
-        {/* Arcs zones */}
         {arcPath(-130, -43, '#ef4444')}
         {arcPath(-43,   44, '#f97316')}
         {arcPath( 44,  130, '#22c55e')}
-        {/* Aiguille */}
         <line x1={cx} y1={cy} x2={needleX} y2={needleY}
           stroke={cfg.color} strokeWidth="3" strokeLinecap="round"/>
         <circle cx={cx} cy={cy} r="5" fill={cfg.color}/>
-        {/* Score au centre */}
         <text x={cx} y={cy + 20} textAnchor="middle" fontSize="16" fontWeight="700"
           fill={cfg.color}>{z.toFixed(2)}</text>
         <text x={cx} y={cy + 30} textAnchor="middle" fontSize="8"
           fill="currentColor" opacity="0.5">Z-Score</text>
-        {/* Labels */}
-        <text x="16" y="75" textAnchor="middle" fontSize="7" fill="#ef4444">Détresse</text>
-        <text x="62" y="20" textAnchor="middle" fontSize="7" fill="#f97316">Grise</text>
-        <text x="104" y="75" textAnchor="middle" fontSize="7" fill="#22c55e">Sûre</text>
+        <text x="16" y="75" textAnchor="middle" fontSize="7" fill="#ef4444">{t('bankruptcy.zoneDistressShort')}</text>
+        <text x="62" y="20" textAnchor="middle" fontSize="7" fill="#f97316">{t('bankruptcy.zoneGreyShort')}</text>
+        <text x="104" y="75" textAnchor="middle" fontSize="7" fill="#22c55e">{t('bankruptcy.zoneSafeShort')}</text>
       </svg>
 
       <div className={`rounded-full border px-3 py-0.5 text-xs font-semibold ${cfg.text} ${cfg.border} ${cfg.bg}`}>
-        {cfg.label} · {cfg.range}
+        {t(`bankruptcy.zone${zone.charAt(0).toUpperCase() + zone.slice(1)}`)} · {cfg.range}
       </div>
     </div>
   );
@@ -165,10 +156,12 @@ function ProbBar({ label, pct, color }: { label: string; pct: number; color: str
 // ─── Résultat d'une prédiction ─────────────────────────────────────────────────
 
 function PredictionResultCard({ result }: { result: PredictionResult }) {
+  const { t } = useTranslation('vendorshield');
+
   if (!result.success) {
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">
-        <p className="font-medium">Prédiction échouée</p>
+        <p className="font-medium">{t('bankruptcy.predictionFailed')}</p>
         <p className="mt-0.5">{result.error}</p>
       </div>
     );
@@ -182,7 +175,7 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
       <div className="flex items-center gap-2 mb-2">
         <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
         <p className="text-sm font-semibold text-gray-900 dark:text-white">
-          Prédiction générée
+          {t('bankruptcy.predictionGenerated')}
         </p>
         {result.mock_mode && (
           <span className="text-[9px] bg-amber-50 border border-amber-200 text-amber-700 rounded-full px-1.5 py-px">
@@ -191,12 +184,12 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
         )}
       </div>
       <div className={`text-sm font-semibold ${cfg.text} mb-1`}>
-        Z = {result.z_score?.toFixed(2)} · {cfg.label}
+        Z = {result.z_score?.toFixed(2)} · {t(`bankruptcy.zone${zone.charAt(0).toUpperCase() + zone.slice(1)}`)}
       </div>
       <div className="space-y-1">
-        <ProbBar label="6 mois"  pct={result.probability_6m!}  color={result.probability_6m!  > 30 ? '#ef4444' : result.probability_6m!  > 15 ? '#f97316' : '#22c55e'} />
-        <ProbBar label="12 mois" pct={result.probability_12m!} color={result.probability_12m! > 30 ? '#ef4444' : result.probability_12m! > 15 ? '#f97316' : '#22c55e'} />
-        <ProbBar label="24 mois" pct={result.probability_24m!} color={result.probability_24m! > 30 ? '#ef4444' : result.probability_24m! > 15 ? '#f97316' : '#22c55e'} />
+        <ProbBar label={t('bankruptcy.label6m')}  pct={result.probability_6m!}  color={result.probability_6m!  > 30 ? '#ef4444' : result.probability_6m!  > 15 ? '#f97316' : '#22c55e'} />
+        <ProbBar label={t('bankruptcy.label12m')} pct={result.probability_12m!} color={result.probability_12m! > 30 ? '#ef4444' : result.probability_12m! > 15 ? '#f97316' : '#22c55e'} />
+        <ProbBar label={t('bankruptcy.label24m')} pct={result.probability_24m!} color={result.probability_24m! > 30 ? '#ef4444' : result.probability_24m! > 15 ? '#f97316' : '#22c55e'} />
       </div>
     </div>
   );
@@ -205,12 +198,19 @@ function PredictionResultCard({ result }: { result: PredictionResult }) {
 // ─── Détail d'une prédiction historique ──────────────────────────────────────
 
 function PredictionDetail({ p }: { p: BankruptcyPrediction }) {
+  const { t, i18n } = useTranslation('vendorshield');
   const [open, setOpen] = useState(false);
   const [horizon, setHorizon] = useState<'6m' | '12m' | '24m'>('12m');
   const cfg = ZONE_CFG[p.risk_zone];
 
   const narratives = { '6m': p.narrative_6m, '12m': p.narrative_12m, '24m': p.narrative_24m };
   const probColor = (pct: number) => pct > 30 ? '#ef4444' : pct > 15 ? '#f97316' : '#22c55e';
+
+  const horizonButtons: Array<{ key: '6m' | '12m' | '24m'; label: string }> = [
+    { key: '6m',  label: t('bankruptcy.btn6m') },
+    { key: '12m', label: t('bankruptcy.btn12m') },
+    { key: '24m', label: t('bankruptcy.btn24m') },
+  ];
 
   return (
     <div className="border-b border-gray-50 dark:border-gray-800/50 last:border-0">
@@ -221,7 +221,7 @@ function PredictionDetail({ p }: { p: BankruptcyPrediction }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <p className="text-xs text-gray-500">
-              {new Date(p.created_at).toLocaleString('fr-FR', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })}
+              {new Date(p.created_at).toLocaleString(i18n.language, { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })}
             </p>
             <span className={`text-[9px] rounded-full border px-1.5 py-0.5 font-medium ${cfg.text} ${cfg.border}`}>
               Z = {Number(p.z_score).toFixed(2)}
@@ -244,48 +244,43 @@ function PredictionDetail({ p }: { p: BankruptcyPrediction }) {
 
       {open && (
         <div className="pb-3 px-1 space-y-3">
-          {/* Gauge */}
           <ZScoreGauge z={Number(p.z_score)} zone={p.risk_zone} />
 
-          {/* Sélecteur horizon */}
           <div className="flex gap-1">
-            {(['6m', '12m', '24m'] as const).map(h => (
-              <button key={h}
+            {horizonButtons.map(({ key, label }) => (
+              <button key={key}
                 className={`flex-1 text-xs py-1 rounded-lg border transition-colors ${
-                  horizon === h
+                  horizon === key
                     ? 'bg-primary text-white border-primary'
                     : 'border-gray-200 dark:border-gray-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800'
                 }`}
-                onClick={() => setHorizon(h)}>
-                {h === '6m' ? '6 mois' : h === '12m' ? '1 an' : '2 ans'}
+                onClick={() => setHorizon(key)}>
+                {label}
               </button>
             ))}
           </div>
 
-          {/* Probabilités */}
           <div className="space-y-1.5">
-            {horizon === '6m'  && <ProbBar label="Probabilité défaut — 6 mois"  pct={p.probability_6m}  color={probColor(p.probability_6m)} />}
-            {horizon === '12m' && <ProbBar label="Probabilité défaut — 12 mois" pct={p.probability_12m} color={probColor(p.probability_12m)} />}
-            {horizon === '24m' && <ProbBar label="Probabilité défaut — 24 mois" pct={p.probability_24m} color={probColor(p.probability_24m)} />}
+            {horizon === '6m'  && <ProbBar label={t('bankruptcy.probDefault6m')}  pct={p.probability_6m}  color={probColor(p.probability_6m)} />}
+            {horizon === '12m' && <ProbBar label={t('bankruptcy.probDefault12m')} pct={p.probability_12m} color={probColor(p.probability_12m)} />}
+            {horizon === '24m' && <ProbBar label={t('bankruptcy.probDefault24m')} pct={p.probability_24m} color={probColor(p.probability_24m)} />}
           </div>
 
-          {/* Narrative */}
           {narratives[horizon] && (
             <div className={`rounded-lg border p-2.5 text-xs leading-relaxed ${cfg.bg} ${cfg.border} ${cfg.text}`}>
               {narratives[horizon]}
             </div>
           )}
 
-          {/* Facteurs de risque clés */}
           {p.key_risk_factors.length > 0 && (
             <div>
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">
-                Facteurs clés
+                {t('bankruptcy.keyFactors')}
               </p>
               {p.key_risk_factors.map((f, i) => (
                 <div key={i} className="flex items-start gap-2 py-1 border-b border-gray-50 dark:border-gray-800/50 last:border-0">
-                  <span className={`text-[9px] rounded-full px-1.5 py-0.5 shrink-0 mt-0.5 font-medium ${IMPACT_CFG[f.impact].cls}`}>
-                    {IMPACT_CFG[f.impact].label}
+                  <span className={`text-[9px] rounded-full px-1.5 py-0.5 shrink-0 mt-0.5 font-medium ${IMPACT_CLS[f.impact]}`}>
+                    {t(`bankruptcy.impact${f.impact.charAt(0).toUpperCase() + f.impact.slice(1)}`)}
                   </span>
                   <div>
                     <p className="text-xs font-medium text-gray-800 dark:text-gray-200">{f.factor}</p>
@@ -296,11 +291,10 @@ function PredictionDetail({ p }: { p: BankruptcyPrediction }) {
             </div>
           )}
 
-          {/* Signaux précurseurs */}
           {p.early_warning_signals.length > 0 && (
             <div>
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">
-                Signaux à surveiller
+                {t('bankruptcy.earlyWarnings')}
               </p>
               {p.early_warning_signals.map((s, i) => (
                 <p key={i} className="text-[10px] text-gray-500 flex items-start gap-1 py-0.5">
@@ -323,6 +317,7 @@ interface Props {
 }
 
 export function BankruptcyPanel({ supplierId, predictions: initialPredictions }: Props) {
+  const { t } = useTranslation('vendorshield');
   const [isPending, startTransition] = useTransition();
   const [result, setResult]          = useState<PredictionResult | null>(null);
   const [preds, setPreds]            = useState<BankruptcyPrediction[]>(initialPredictions);
@@ -336,7 +331,6 @@ export function BankruptcyPanel({ supplierId, predictions: initialPredictions }:
       const r = await triggerBankruptcyPredictionAction(supplierId);
       setResult(r);
       if (r.success) {
-        // Ajouter une entrée placeholder dans l'historique
         setPreds(prev => [{
           id:                    r.prediction_id!,
           supplier_id:           supplierId,
@@ -370,60 +364,56 @@ export function BankruptcyPanel({ supplierId, predictions: initialPredictions }:
               <Brain className="h-4 w-4 text-indigo-600" />
             </div>
             <div>
-              <CardTitle className="text-sm font-semibold">Prédiction faillite</CardTitle>
+              <CardTitle className="text-sm font-semibold">{t('bankruptcy.title')}</CardTitle>
               <CardDescription className="text-[10px]">
-                Altman Z adapté · 3 horizons · LLM
+                {t('bankruptcy.subtitle')}
               </CardDescription>
             </div>
           </div>
           {cfg && (
             <span className={`text-[10px] font-medium rounded-full border px-2 py-0.5 ${cfg.text} ${cfg.border} ${cfg.bg}`}>
-              {cfg.label}
+              {t(`bankruptcy.zone${latestZone!.charAt(0).toUpperCase() + latestZone!.slice(1)}`)}
             </span>
           )}
         </div>
       </CardHeader>
 
       <CardContent className="space-y-3">
-        {/* Bouton */}
         <Button onClick={handleRun} disabled={isPending} className="w-full gap-2" size="sm">
           {isPending
-            ? <><Loader2 className="h-3.5 w-3.5 animate-spin"/>Analyse en cours...</>
-            : <><Zap className="h-3.5 w-3.5"/>Calculer le risque faillite</>
+            ? <><Loader2 className="h-3.5 w-3.5 animate-spin"/>{t('bankruptcy.analyzing')}</>
+            : <><Zap className="h-3.5 w-3.5"/>{t('bankruptcy.runButton')}</>
           }
         </Button>
 
-        {/* Loading */}
         {isPending && (
           <div className="flex items-center gap-2.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/30 p-3">
             <Loader2 className="h-4 w-4 animate-spin text-indigo-600 shrink-0"/>
             <div>
-              <p className="text-sm font-medium text-indigo-700 dark:text-indigo-300">Calcul du score Z adapté Altman...</p>
-              <p className="text-xs text-indigo-500 mt-0.5">Analyse des 3 horizons temporels</p>
+              <p className="text-sm font-medium text-indigo-700 dark:text-indigo-300">{t('bankruptcy.calculatingZ')}</p>
+              <p className="text-xs text-indigo-500 mt-0.5">{t('bankruptcy.calculating3Horizons')}</p>
             </div>
           </div>
         )}
 
-        {/* Résultat immédiat */}
         {result && !isPending && <PredictionResultCard result={result} />}
 
-        {/* Historique */}
         {preds.length > 0 ? (
           <div>
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">
-              Historique des prédictions
+              {t('bankruptcy.historyTitle')}
             </p>
             {preds.slice(0, 4).map(p => <PredictionDetail key={p.id} p={p} />)}
           </div>
         ) : !result && !isPending ? (
           <div className="py-4 text-center">
             <Brain className="h-7 w-7 text-gray-200 dark:text-gray-700 mx-auto mb-1.5"/>
-            <p className="text-xs text-gray-400">Aucune prédiction réalisée</p>
+            <p className="text-xs text-gray-400">{t('bankruptcy.noPredictions')}</p>
           </div>
         ) : null}
 
         <p className="text-[9px] text-gray-300 dark:text-gray-700 text-center">
-          Modèle Altman Z adapté · Groq Llama 3.3 · À titre indicatif
+          {t('bankruptcy.footer')}
         </p>
       </CardContent>
     </Card>

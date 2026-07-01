@@ -98,6 +98,16 @@
       "packaging": "Emballage",
       "maintenance": "Maintenance",
       "other": "Autre"
+    },
+    "severity": {
+      "critical": "Critique",
+      "warning": "Avertissement",
+      "info": "Info"
+    },
+    "priority": {
+      "high": "↑ Haute",
+      "medium": "→ Moyenne",
+      "low": "↓ Basse"
     }
   },
   "suppliers": {
@@ -207,7 +217,9 @@
     "exportJsonDesc": "Données structurées complètes",
     "exportPdfDesc": "Rapport de conformité imprimable",
     "exportCsvAssessmentDesc": "Détail des 24 critères",
-    "exportJsonAssessmentDesc": "Évaluation + facteurs + scores"
+    "exportJsonAssessmentDesc": "Évaluation + facteurs + scores",
+    "retry": "Réessayer",
+    "errorTitle": "Une erreur est survenue"
   },
   "onboarding": {
     "stepIdentity": "Identité",
@@ -420,8 +432,19 @@
       "opLte": "≤ (inférieur ou égal)",
       "opGt": "> (supérieur à)",
       "opGte": "≥ (supérieur ou égal)",
-      "emailActive": "Email activé"
-    }
+      "emailActive": "Email activé",
+      "title": "Règles d'alerte automatiques",
+      "desc": "Ces règles évaluent automatiquement les scores à chaque mise à jour et déclenchent une alerte si la condition est vérifiée. Le trigger SQL <code>check_alert_rules()</code> est exécuté après chaque évaluation approuvée.",
+      "activeCount": "{{count}} règle active",
+      "activeCount_other": "{{count}} règles actives",
+      "inactiveCount": "{{count}} désactivée",
+      "inactiveCount_other": "{{count}} désactivées",
+      "newRule": "Nouvelle règle",
+      "emptyTitle": "Aucune règle configurée",
+      "emptyDesc": "Créez votre première règle pour automatiser les alertes.",
+      "emptyCreate": "Créer une règle"
+    },
+    "pageOf": "Page {{page}} sur {{pageCount}}"
   },
   "auditLog": {
     "actionCreate": "Création",
@@ -886,5 +909,70 @@
     "cancel": "Annuler",
     "generating": "Génération...",
     "generateLink": "Générer le lien"
+  },
+  "bankruptcy": {
+    "title": "Prédiction faillite",
+    "subtitle": "Altman Z adapté · 3 horizons · LLM",
+    "zoneSafe": "Zone sûre",
+    "zoneSafeDesc": "Santé financière satisfaisante — faible risque de défaillance",
+    "zoneSafeShort": "Sûre",
+    "zoneGrey": "Zone grise",
+    "zoneGreyDesc": "Fragilités financières identifiées — surveillance renforcée requise",
+    "zoneGreyShort": "Grise",
+    "zoneDistress": "Détresse financière",
+    "zoneDistressDesc": "Risque de défaillance élevé — action immédiate recommandée",
+    "zoneDistressShort": "Détresse",
+    "impactHigh": "Élevé",
+    "impactMedium": "Moyen",
+    "impactLow": "Faible",
+    "predictionFailed": "Prédiction échouée",
+    "predictionGenerated": "Prédiction générée",
+    "label6m": "6 mois",
+    "label12m": "12 mois",
+    "label24m": "24 mois",
+    "btn6m": "6 mois",
+    "btn12m": "1 an",
+    "btn24m": "2 ans",
+    "probDefault6m": "Probabilité défaut — 6 mois",
+    "probDefault12m": "Probabilité défaut — 12 mois",
+    "probDefault24m": "Probabilité défaut — 24 mois",
+    "keyFactors": "Facteurs clés",
+    "earlyWarnings": "Signaux à surveiller",
+    "analyzing": "Analyse en cours...",
+    "runButton": "Calculer le risque faillite",
+    "calculatingZ": "Calcul du score Z adapté Altman...",
+    "calculating3Horizons": "Analyse des 3 horizons temporels",
+    "historyTitle": "Historique des prédictions",
+    "noPredictions": "Aucune prédiction réalisée",
+    "footer": "Modèle Altman Z adapté · Groq Llama 3.3 · À titre indicatif"
+  },
+  "ai": {
+    "title": "Analyse IA",
+    "subtitle": "Signaux de risque automatiques",
+    "notConfigured": "Non configuré",
+    "simulation": "Simulation",
+    "analysisFailed": "Analyse échouée",
+    "analysisCompleted": "Analyse terminée",
+    "confidence": "confiance",
+    "signal": "{{count}} signal",
+    "signal_other": "{{count}} signaux",
+    "alertsCreated": "{{count}} alerte créée →",
+    "alertsCreated_other": "{{count}} alertes créées →",
+    "recommendations": "Recommandations",
+    "source": "Source :",
+    "analyzing": "Analyse en cours...",
+    "simulating": "Simulation en cours...",
+    "simulateButton": "Simuler une analyse",
+    "analyzeButton": "Analyser avec l'IA",
+    "analyzeButtonLlama": "Analyse avec Llama 3.3...",
+    "configRequired": "Configuration requise",
+    "configHowTo": "Pour activer l'IA :",
+    "analyzingContext": "Analyse du contexte fournisseur",
+    "historyTitle": "Historique",
+    "noAnalysis": "Aucune analyse réalisée",
+    "footerMock": "Mode simulation — données fictives réalistes",
+    "footerOpenrouter": "Llama 3.3 via OpenRouter — modèle gratuit",
+    "footerGroq": "Llama 3.3 via Groq — API gratuite",
+    "footerUnconfigured": "Configurer OPENROUTER_API_KEY ou MOCK_AI=true"
   }
 }

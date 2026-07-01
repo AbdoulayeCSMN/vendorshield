@@ -98,6 +98,16 @@
       "packaging": "Packaging",
       "maintenance": "Maintenance",
       "other": "Other"
+    },
+    "severity": {
+      "critical": "Critical",
+      "warning": "Warning",
+      "info": "Info"
+    },
+    "priority": {
+      "high": "↑ High",
+      "medium": "→ Medium",
+      "low": "↓ Low"
     }
   },
   "suppliers": {
@@ -207,7 +217,9 @@
     "exportJsonDesc": "Complete structured data",
     "exportPdfDesc": "Printable compliance report",
     "exportCsvAssessmentDesc": "Detail of the 24 criteria",
-    "exportJsonAssessmentDesc": "Assessment + factors + scores"
+    "exportJsonAssessmentDesc": "Assessment + factors + scores",
+    "retry": "Retry",
+    "errorTitle": "An error occurred"
   },
   "onboarding": {
     "stepIdentity": "Identity",
@@ -420,8 +432,19 @@
       "opLte": "≤ (less or equal)",
       "opGt": "> (greater than)",
       "opGte": "≥ (greater or equal)",
-      "emailActive": "Email activated"
-    }
+      "emailActive": "Email activated",
+      "title": "Automatic Alert Rules",
+      "desc": "These rules automatically evaluate scores on each update and trigger an alert if the condition is met. The SQL trigger <code>check_alert_rules()</code> runs after each approved assessment.",
+      "activeCount": "{{count}} active rule",
+      "activeCount_other": "{{count}} active rules",
+      "inactiveCount": "{{count}} disabled",
+      "inactiveCount_other": "{{count}} disabled",
+      "newRule": "New rule",
+      "emptyTitle": "No rules configured",
+      "emptyDesc": "Create your first rule to automate alerts.",
+      "emptyCreate": "Create a rule"
+    },
+    "pageOf": "Page {{page}} of {{pageCount}}"
   },
   "auditLog": {
     "actionCreate": "Created",
@@ -886,5 +909,70 @@
     "cancel": "Cancel",
     "generating": "Generating...",
     "generateLink": "Generate link"
+  },
+  "bankruptcy": {
+    "title": "Bankruptcy Prediction",
+    "subtitle": "Adapted Altman Z · 3 horizons · LLM",
+    "zoneSafe": "Safe zone",
+    "zoneSafeDesc": "Satisfactory financial health — low risk of failure",
+    "zoneSafeShort": "Safe",
+    "zoneGrey": "Grey zone",
+    "zoneGreyDesc": "Financial fragility identified — enhanced monitoring required",
+    "zoneGreyShort": "Grey",
+    "zoneDistress": "Financial distress",
+    "zoneDistressDesc": "High risk of failure — immediate action recommended",
+    "zoneDistressShort": "Distress",
+    "impactHigh": "High",
+    "impactMedium": "Medium",
+    "impactLow": "Low",
+    "predictionFailed": "Prediction failed",
+    "predictionGenerated": "Prediction generated",
+    "label6m": "6 months",
+    "label12m": "12 months",
+    "label24m": "24 months",
+    "btn6m": "6 mo",
+    "btn12m": "1 yr",
+    "btn24m": "2 yr",
+    "probDefault6m": "Default probability — 6 months",
+    "probDefault12m": "Default probability — 12 months",
+    "probDefault24m": "Default probability — 24 months",
+    "keyFactors": "Key factors",
+    "earlyWarnings": "Warning signals",
+    "analyzing": "Analyzing...",
+    "runButton": "Calculate bankruptcy risk",
+    "calculatingZ": "Calculating adapted Altman Z-score...",
+    "calculating3Horizons": "Analyzing 3 time horizons",
+    "historyTitle": "Prediction history",
+    "noPredictions": "No prediction made",
+    "footer": "Adapted Altman Z model · Groq Llama 3.3 · For informational purposes only"
+  },
+  "ai": {
+    "title": "AI Analysis",
+    "subtitle": "Automatic risk signals",
+    "notConfigured": "Not configured",
+    "simulation": "Simulation",
+    "analysisFailed": "Analysis failed",
+    "analysisCompleted": "Analysis completed",
+    "confidence": "confidence",
+    "signal": "{{count}} signal",
+    "signal_other": "{{count}} signals",
+    "alertsCreated": "{{count}} alert created →",
+    "alertsCreated_other": "{{count}} alerts created →",
+    "recommendations": "Recommendations",
+    "source": "Source:",
+    "analyzing": "Analyzing...",
+    "simulating": "Simulating...",
+    "simulateButton": "Simulate an analysis",
+    "analyzeButton": "Analyze with AI",
+    "analyzeButtonLlama": "Analyzing with Llama 3.3...",
+    "configRequired": "Configuration required",
+    "configHowTo": "To enable AI:",
+    "analyzingContext": "Analyzing supplier context",
+    "historyTitle": "History",
+    "noAnalysis": "No analysis performed",
+    "footerMock": "Simulation mode — realistic mock data",
+    "footerOpenrouter": "Llama 3.3 via OpenRouter — free model",
+    "footerGroq": "Llama 3.3 via Groq — free API",
+    "footerUnconfigured": "Configure OPENROUTER_API_KEY or MOCK_AI=true"
   }
 }

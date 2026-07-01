@@ -86,7 +86,7 @@ export function AlertsKpiBar({ kpis }: Props) {
                 <Icon className="h-4 w-4" />
               </div>
               {isActive && (
-                <span className="text-[10px] font-medium text-primary">Filtré</span>
+                <span className="text-[10px] font-medium text-primary">{t('alerts.filtered')}</span>
               )}
             </div>
             <p className="text-2xl font-bold tabular-nums text-gray-900 dark:text-white">

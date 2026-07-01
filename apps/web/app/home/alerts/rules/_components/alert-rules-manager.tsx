@@ -310,6 +310,7 @@ function CreateRuleDialog({
 // ─── Composant principal ──────────────────────────────────────────────────────
 
 export function AlertRulesManager({ rules }: { rules: AlertRule[] }) {
+  const { t } = useTranslation('vendorshield');
   const [showCreate, setShowCreate] = useState(false);
 
   const activeRules = rules.filter((r) => r.is_active);
@@ -320,36 +321,34 @@ export function AlertRulesManager({ rules }: { rules: AlertRule[] }) {
       {/* Info */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Règles d'alerte automatiques</CardTitle>
+          <CardTitle className="text-base">{t('alerts.rules.title')}</CardTitle>
           <CardDescription>
-            Ces règles évaluent automatiquement les scores à chaque mise à jour
-            et déclenchent une alerte si la condition est vérifiée.
-            Le trigger SQL <code className="text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">check_alert_rules()</code> est exécuté après chaque évaluation approuvée.
+            {t('alerts.rules.desc')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
             <div className="flex gap-4 text-sm text-gray-500">
-              <span>{activeRules.length} règle{activeRules.length !== 1 ? 's' : ''} active{activeRules.length !== 1 ? 's' : ''}</span>
+              <span>{t('alerts.rules.activeCount', { count: activeRules.length })}</span>
               {inactiveRules.length > 0 && (
-                <span>{inactiveRules.length} désactivée{inactiveRules.length !== 1 ? 's' : ''}</span>
+                <span>{t('alerts.rules.inactiveCount', { count: inactiveRules.length })}</span>
               )}
             </div>
             <Button size="sm" onClick={() => setShowCreate(true)}>
               <Plus className="mr-1.5 h-4 w-4" />
-              Nouvelle règle
+              {t('alerts.rules.newRule')}
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Règles actives */}
+      {/* Règles */}
       {rules.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 rounded-xl border border-dashed border-gray-200 dark:border-gray-700 text-center">
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Aucune règle configurée</p>
-          <p className="mt-1 text-xs text-gray-400">Créez votre première règle pour automatiser les alertes.</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('alerts.rules.emptyTitle')}</p>
+          <p className="mt-1 text-xs text-gray-400">{t('alerts.rules.emptyDesc')}</p>
           <Button size="sm" className="mt-3" onClick={() => setShowCreate(true)}>
-            <Plus className="mr-1.5 h-4 w-4" />Créer une règle
+            <Plus className="mr-1.5 h-4 w-4" />{t('alerts.rules.emptyCreate')}
           </Button>
         </div>
       ) : (
