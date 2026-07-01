@@ -219,7 +219,8 @@
     "exportCsvAssessmentDesc": "Detail of the 24 criteria",
     "exportJsonAssessmentDesc": "Assessment + factors + scores",
     "retry": "Retry",
-    "errorTitle": "An error occurred"
+    "errorTitle": "An error occurred",
+    "errorDesc": "Unable to display this page right now. Try again, or return to the dashboard."
   },
   "onboarding": {
     "stepIdentity": "Identity",
@@ -471,7 +472,9 @@
     "emptyTitle": "No journal entry",
     "entriesCount": "{{count}} entry",
     "entriesCount_other": "{{count}} entries",
-    "clearFilters": "Clear"
+    "clearFilters": "Clear",
+    "detailTitle": "Entry detail",
+    "changesLabel": "Changes"
   },
   "imports": {
     "failed": "Import failed. Please try again.",
@@ -552,7 +555,7 @@
     "critHighSubtitle": "{{critical}} critical, {{high}} high",
     "lowRisk": "Low risk",
     "lowRiskSubtitle": "Suppliers with score ≥ 70",
-    "openAlerts": "Open alerts",
+    "openAlerts": "{{count}} alert",
     "openAlertsSubtitle": "incl. {{critical}} critical",
     "soleSources": "Sole sources",
     "soleSourcesSubtitle": "Unique suppliers — high risk",
@@ -593,7 +596,22 @@
     "soleSourceDesc": "{{count}} unique supplier — total dependency without alternative",
     "soleSourceDesc_other": "{{count}} unique suppliers — total dependency without alternative",
     "hSpend": "Annual spend",
-    "hScore": "Reliability score"
+    "hScore": "Reliability score",
+    "catByCategory": "Risks by category",
+    "catByCategoryDesc": "Distribution of risk levels by supplier type",
+    "noData": "No data available.",
+    "geoByCountryDesc": "Suppliers by country of origin",
+    "noCountryData": "No country data available for suppliers.",
+    "atRisk": "{{count}} at risk",
+    "moreCountries": "+{{count}} more country",
+    "moreCountries_other": "+{{count}} more countries",
+    "topRiskyByScore": "Sorted by ascending global score (highest risk first)",
+    "noSuppliersEvaluated": "No suppliers evaluated yet.",
+    "openAlerts_other": "{{count}} alerts",
+    "soleSourceNoAlt": "{{count}} supplier without alternative — critical dependency risk",
+    "soleSourceNoAlt_other": "{{count}} suppliers without alternative — critical dependency risk",
+    "soleSourceGoodDiv": "No sole source — good diversification.",
+    "soleSourceSpendWarning": "{{amount}} in annual purchases concentrated on suppliers without identified alternatives."
   },
   "delivery": {
     "title": "Delivery reports",

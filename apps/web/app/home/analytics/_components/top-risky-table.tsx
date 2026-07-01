@@ -47,12 +47,12 @@ export function TopRiskyTable({ suppliers }: Props) {
           <AlertTriangle className="h-4 w-4 text-red-500" />
           <CardTitle className="text-sm font-semibold">{t('dashboard.topRisky')}</CardTitle>
         </div>
-        <CardDescription>Classés par score global croissant (risque le plus élevé en premier)</CardDescription>
+        <CardDescription>{t('analytics.topRiskyByScore')}</CardDescription>
       </CardHeader>
       <CardContent className="p-0">
         {suppliers.length === 0 ? (
           <div className="flex items-center justify-center py-10 text-sm text-gray-400 px-6">
-            Aucun fournisseur évalué pour le moment.
+            {t('analytics.noSuppliersEvaluated')}
           </div>
         ) : (
           <div className="divide-y divide-gray-50 dark:divide-gray-800/50">
@@ -86,7 +86,7 @@ export function TopRiskyTable({ suppliers }: Props) {
                     {categoryLabels[s.category]}
                     {s.open_alerts > 0 && (
                       <span className="ml-2 text-red-500">
-                        · {s.open_alerts} alerte{s.open_alerts > 1 ? 's' : ''}
+                        · {t('analytics.openAlerts', { count: s.open_alerts })}
                       </span>
                     )}
                   </p>

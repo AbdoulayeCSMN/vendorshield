@@ -34,12 +34,12 @@ export function SoleSourcePanel({ suppliers }: Props) {
       <CardHeader>
         <div className="flex items-center gap-2">
           <AlertTriangle className="h-4 w-4 text-amber-500" />
-          <CardTitle className="text-sm font-semibold">Fournisseurs sole source</CardTitle>
+          <CardTitle className="text-sm font-semibold">{t('analytics.soleSourceTitle')}</CardTitle>
         </div>
         <CardDescription>
           {suppliers.length === 0
-            ? 'Aucun fournisseur unique identifié'
-            : `${suppliers.length} fournisseur${suppliers.length > 1 ? 's' : ''} sans alternative — risque de dépendance critique`}
+            ? t('analytics.noSoleSource')
+            : t('analytics.soleSourceNoAlt', { count: suppliers.length })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -47,7 +47,7 @@ export function SoleSourcePanel({ suppliers }: Props) {
           <div className="flex items-center justify-center py-8 text-sm text-gray-400">
             <div className="text-center">
               <ShieldAlert className="h-10 w-10 text-gray-200 mx-auto mb-2" />
-              Aucun sole source — bonne diversification.
+              {t('analytics.soleSourceGoodDiv')}
             </div>
           </div>
         ) : (
@@ -57,10 +57,7 @@ export function SoleSourcePanel({ suppliers }: Props) {
               <div className="mb-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900 p-3">
                 <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
                 <p className="text-xs text-amber-700 dark:text-amber-400">
-                  <span className="font-semibold">
-                    {formatEur(totalSpend)} d'achats annuels
-                  </span>{' '}
-                  concentrés sur des fournisseurs sans alternative identifiée.
+                  {t('analytics.soleSourceSpendWarning', { amount: formatEur(totalSpend) })}
                 </p>
               </div>
             )}

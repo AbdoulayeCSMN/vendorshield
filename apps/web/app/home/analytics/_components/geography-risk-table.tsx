@@ -10,6 +10,8 @@ import {
   CardTitle,
 } from '@kit/ui/card';
 
+import { useTranslation } from 'react-i18next';
+
 import type { GeoRiskEntry } from '~/lib/vendorshield/analytics.server';
 
 interface Props {
@@ -17,6 +19,7 @@ interface Props {
 }
 
 export function GeographyRiskTable({ entries }: Props) {
+  const { t } = useTranslation('vendorshield');
   const top = entries.slice(0, 10);
   const maxCount = Math.max(...entries.map((e) => e.supplier_count), 1);
 
@@ -25,14 +28,14 @@ export function GeographyRiskTable({ entries }: Props) {
       <CardHeader>
         <div className="flex items-center gap-2">
           <Globe className="h-4 w-4 text-purple-500" />
-          <CardTitle className="text-sm font-semibold">Exposition géographique</CardTitle>
+          <CardTitle className="text-sm font-semibold">{t('dashboard.geoExposure')}</CardTitle>
         </div>
-        <CardDescription>Fournisseurs par pays d'origine</CardDescription>
+        <CardDescription>{t('analytics.geoByCountryDesc')}</CardDescription>
       </CardHeader>
       <CardContent>
         {entries.length === 0 ? (
           <div className="flex items-center justify-center py-10 text-sm text-gray-400">
-            Aucun pays renseigné sur les fournisseurs.
+            {t('analytics.noCountryData')}
           </div>
         ) : (
           <div className="space-y-2.5">
@@ -61,7 +64,7 @@ export function GeographyRiskTable({ entries }: Props) {
                       </span>
                       {hasRisk && (
                         <span className="text-[10px] text-red-500 font-medium">
-                          {entry.critical_count + entry.high_count} à risque
+                          {t('analytics.atRisk', { count: entry.critical_count + entry.high_count })}
                         </span>
                       )}
                     </div>
@@ -89,7 +92,7 @@ export function GeographyRiskTable({ entries }: Props) {
 
             {entries.length > 10 && (
               <p className="text-xs text-gray-400 pt-1 text-center">
-                +{entries.length - 10} autre{entries.length - 10 > 1 ? 's' : ''} pays
+                {t('analytics.moreCountries', { count: entries.length - 10 })}
               </p>
             )}
           </div>

@@ -219,7 +219,8 @@
     "exportCsvAssessmentDesc": "Détail des 24 critères",
     "exportJsonAssessmentDesc": "Évaluation + facteurs + scores",
     "retry": "Réessayer",
-    "errorTitle": "Une erreur est survenue"
+    "errorTitle": "Une erreur est survenue",
+    "errorDesc": "Impossible d'afficher cette page pour le moment. Réessayez ou revenez au tableau de bord."
   },
   "onboarding": {
     "stepIdentity": "Identité",
@@ -471,7 +472,9 @@
     "emptyTitle": "Aucune entrée dans le journal",
     "entriesCount": "{{count}} entrée",
     "entriesCount_other": "{{count}} entrées",
-    "clearFilters": "Effacer"
+    "clearFilters": "Effacer",
+    "detailTitle": "Détail de l'entrée",
+    "changesLabel": "Modifications"
   },
   "imports": {
     "failed": "Import échoué. Réessayez.",
@@ -552,7 +555,7 @@
     "critHighSubtitle": "{{critical}} critiques, {{high}} élevés",
     "lowRisk": "Risque faible",
     "lowRiskSubtitle": "Fournisseurs score ≥ 70",
-    "openAlerts": "Alertes ouvertes",
+    "openAlerts": "{{count}} alerte",
     "openAlertsSubtitle": "dont {{critical}} critiques",
     "soleSources": "Sole sources",
     "soleSourcesSubtitle": "Fournisseurs uniques — risque élevé",
@@ -593,7 +596,22 @@
     "soleSourceDesc": "{{count}} fournisseur unique — dépendance totale sans alternative",
     "soleSourceDesc_other": "{{count}} fournisseurs uniques — dépendance totale sans alternative",
     "hSpend": "Dépense annuelle",
-    "hScore": "Score fiabilité"
+    "hScore": "Score fiabilité",
+    "catByCategory": "Risques par catégorie",
+    "catByCategoryDesc": "Distribution des niveaux de risque par type de fournisseur",
+    "noData": "Aucune donnée disponible.",
+    "geoByCountryDesc": "Fournisseurs par pays d'origine",
+    "noCountryData": "Aucun pays renseigné sur les fournisseurs.",
+    "atRisk": "{{count}} à risque",
+    "moreCountries": "+{{count}} autre pays",
+    "moreCountries_other": "+{{count}} autres pays",
+    "topRiskyByScore": "Classés par score global croissant (risque le plus élevé en premier)",
+    "noSuppliersEvaluated": "Aucun fournisseur évalué pour le moment.",
+    "openAlerts_other": "{{count}} alertes",
+    "soleSourceNoAlt": "{{count}} fournisseur sans alternative — risque de dépendance critique",
+    "soleSourceNoAlt_other": "{{count}} fournisseurs sans alternative — risque de dépendance critique",
+    "soleSourceGoodDiv": "Aucun sole source — bonne diversification.",
+    "soleSourceSpendWarning": "{{amount}} d'achats annuels concentrés sur des fournisseurs sans alternative identifiée."
   },
   "delivery": {
     "title": "Rapports de livraison",

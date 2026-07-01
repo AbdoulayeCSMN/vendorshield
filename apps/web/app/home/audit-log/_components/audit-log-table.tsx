@@ -145,7 +145,7 @@ function EntryDetailDialog({
   open: boolean;
   onClose: () => void;
 }) {
-  const { t } = useTranslation('vendorshield');
+  const { t, i18n } = useTranslation('vendorshield');
   if (!entry) return null;
   const cfg = ACTION_CFG[entry.action] ?? ACTION_CFG.view;
 
@@ -157,14 +157,14 @@ function EntryDetailDialog({
             <span className={`rounded-md p-1.5 ${cfg.cls}`}>
               <cfg.icon className="h-4 w-4" />
             </span>
-            Détail de l'entrée
+            {t('auditLog.detailTitle')}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
-              <p className="text-xs text-gray-500">Action</p>
+              <p className="text-xs text-gray-500">{t('auditLog.labelAction')}</p>
               <p className="font-medium">{t(cfg.labelKey)}</p>
             </div>
             <div>
@@ -175,9 +175,9 @@ function EntryDetailDialog({
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-500">Date</p>
+              <p className="text-xs text-gray-500">{t('auditLog.labelDate')}</p>
               <p className="font-medium">
-                {new Date(entry.created_at).toLocaleString('fr-FR')}
+                {new Date(entry.created_at).toLocaleString(i18n.language)}
               </p>
             </div>
             <div>
@@ -188,7 +188,7 @@ function EntryDetailDialog({
 
           {entry.changes && (
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-2">Modifications</p>
+              <p className="text-xs font-medium text-gray-500 mb-2">{t('auditLog.changesLabel')}</p>
               <DiffViewer changes={entry.changes} />
             </div>
           )}
@@ -209,7 +209,7 @@ interface Props {
 }
 
 export function AuditLogTable({ entries, total, page, pageCount, filters }: Props) {
-  const { t } = useTranslation('vendorshield');
+  const { t, i18n } = useTranslation('vendorshield');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -297,7 +297,7 @@ export function AuditLogTable({ entries, total, page, pageCount, filters }: Prop
                   >
                     <TableCell className="py-3">
                       <p className="text-xs text-gray-500 tabular-nums">
-                        {new Date(entry.created_at).toLocaleString('fr-FR', {
+                        {new Date(entry.created_at).toLocaleString(i18n.language, {
                           day: '2-digit', month: '2-digit', year: '2-digit',
                           hour: '2-digit', minute: '2-digit',
                         })}
@@ -346,15 +346,15 @@ export function AuditLogTable({ entries, total, page, pageCount, filters }: Prop
       {/* Pagination */}
       {pageCount > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500">Page {page} sur {pageCount}</p>
+          <p className="text-sm text-gray-500">{t('alerts.pageOf', { page, pageCount })}</p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" disabled={page <= 1 || isPending}
               onClick={() => updateParam('page', String(page - 1))}>
-              <ChevronLeft className="h-4 w-4 mr-1" />Précédent
+              <ChevronLeft className="h-4 w-4 mr-1" />{t('suppliers.prev')}
             </Button>
             <Button variant="outline" size="sm" disabled={page >= pageCount || isPending}
               onClick={() => updateParam('page', String(page + 1))}>
-              Suivant<ChevronRight className="h-4 w-4 ml-1" />
+              {t('suppliers.next')}<ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
         </div>

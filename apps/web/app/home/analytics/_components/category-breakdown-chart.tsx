@@ -54,13 +54,13 @@ export function CategoryBreakdownChart({ categories }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm font-semibold">Risques par catégorie</CardTitle>
-        <CardDescription>Distribution des niveaux de risque par type de fournisseur</CardDescription>
+        <CardTitle className="text-sm font-semibold">{t('analytics.catByCategory')}</CardTitle>
+        <CardDescription>{t('analytics.catByCategoryDesc')}</CardDescription>
       </CardHeader>
       <CardContent>
         {isEmpty ? (
           <div className="flex h-[220px] items-center justify-center text-sm text-gray-400">
-            Aucune donnée disponible.
+            {t('analytics.noData')}
           </div>
         ) : (
           <ChartContainer config={chartConfig} className="h-[220px] w-full">
