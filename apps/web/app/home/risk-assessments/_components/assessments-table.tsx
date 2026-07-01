@@ -94,7 +94,7 @@ interface Props {
 }
 
 export function AssessmentsTable({ assessments, total, page, pageCount, filters }: Props) {
-  const { t } = useTranslation('vendorshield');
+  const { t, i18n } = useTranslation('vendorshield');
   const { assessmentStatusLabels, categoryLabels } = useEnumLabels();
   const router = useRouter();
   const pathname = usePathname();
@@ -153,10 +153,10 @@ export function AssessmentsTable({ assessments, total, page, pageCount, filters 
             <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-gray-50 dark:bg-gray-800">
               <FileText className="h-7 w-7 text-gray-300" />
             </div>
-            <p className="text-sm font-medium text-gray-900 dark:text-white">Aucune évaluation</p>
-            <p className="mt-1 text-xs text-gray-400">Lancez une première évaluation de risque.</p>
+            <p className="text-sm font-medium text-gray-900 dark:text-white">{t('assessments.tableEmptyTitle')}</p>
+            <p className="mt-1 text-xs text-gray-400">{t('assessments.tableEmptyDesc')}</p>
             <Button asChild size="sm" className="mt-4">
-              <Link href="/home/risk-assessments/new">Créer une évaluation</Link>
+              <Link href="/home/risk-assessments/new">{t('assessments.tableEmptyCreate')}</Link>
             </Button>
           </div>
         ) : (
@@ -165,20 +165,20 @@ export function AssessmentsTable({ assessments, total, page, pageCount, filters 
               <TableRow className="hover:bg-transparent border-gray-100 dark:border-gray-800">
                 <TableHead>
                   <button onClick={() => toggleSort('assessment_date')} className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-900 dark:hover:text-white">
-                    Évaluation <ArrowUpDown className="h-3 w-3" />
+                    {t('assessments.colAssessment')} <ArrowUpDown className="h-3 w-3" />
                   </button>
                 </TableHead>
-                <TableHead className="hidden md:table-cell text-xs font-medium text-gray-500">Fournisseur</TableHead>
-                <TableHead className="text-center hidden lg:table-cell text-xs font-medium text-gray-500">Fin.</TableHead>
-                <TableHead className="text-center hidden lg:table-cell text-xs font-medium text-gray-500">Ops.</TableHead>
-                <TableHead className="text-center hidden lg:table-cell text-xs font-medium text-gray-500">Géo.</TableHead>
+                <TableHead className="hidden md:table-cell text-xs font-medium text-gray-500">{t('suppliers.hSupplier')}</TableHead>
+                <TableHead className="text-center hidden lg:table-cell text-xs font-medium text-gray-500">{t('suppliers.hFinancial')}</TableHead>
+                <TableHead className="text-center hidden lg:table-cell text-xs font-medium text-gray-500">{t('suppliers.hOperational')}</TableHead>
+                <TableHead className="text-center hidden lg:table-cell text-xs font-medium text-gray-500">{t('suppliers.hGeo')}</TableHead>
                 <TableHead className="text-center hidden lg:table-cell text-xs font-medium text-gray-500">ESG</TableHead>
                 <TableHead className="text-center">
                   <button onClick={() => toggleSort('global_score')} className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-900 dark:hover:text-white mx-auto">
                     Score <ArrowUpDown className="h-3 w-3" />
                   </button>
                 </TableHead>
-                <TableHead className="text-xs font-medium text-gray-500">Statut</TableHead>
+                <TableHead className="text-xs font-medium text-gray-500">{t('assessments.colStatus')}</TableHead>
                 <TableHead className="w-10" />
               </TableRow>
             </TableHeader>
@@ -192,7 +192,7 @@ export function AssessmentsTable({ assessments, total, page, pageCount, filters 
                   <TableCell className="py-3">
                     <p className="font-medium text-sm text-gray-900 dark:text-white truncate max-w-[200px]">{a.title}</p>
                     <p className="text-xs text-gray-400 mt-0.5">
-                      {new Date(a.assessment_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      {new Date(a.assessment_date).toLocaleDateString(i18n.language, { day: 'numeric', month: 'short', year: 'numeric' })}
                     </p>
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
@@ -228,11 +228,11 @@ export function AssessmentsTable({ assessments, total, page, pageCount, filters 
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                          <Link href={`/home/risk-assessments/${a.id}`}>Voir le détail</Link>
+                          <Link href={`/home/risk-assessments/${a.id}`}>{t('suppliers.aViewDetail')}</Link>
                         </DropdownMenuItem>
                         {a.supplier && (
                           <DropdownMenuItem asChild>
-                            <Link href={`/home/suppliers/${a.supplier.id}`}>Voir le fournisseur</Link>
+                            <Link href={`/home/suppliers/${a.supplier.id}`}>{t('assessments.viewSupplier')}</Link>
                           </DropdownMenuItem>
                         )}
                       </DropdownMenuContent>
@@ -248,13 +248,13 @@ export function AssessmentsTable({ assessments, total, page, pageCount, filters 
       {/* Pagination */}
       {pageCount > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500">Page {page} sur {pageCount}</p>
+          <p className="text-sm text-gray-500">{t('alerts.pageOf', { page, pageCount })}</p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" disabled={page <= 1 || isPending} onClick={() => updateParam('page', String(page - 1))}>
-              <ChevronLeft className="h-4 w-4 mr-1" />Précédent
+              <ChevronLeft className="h-4 w-4 mr-1" />{t('suppliers.prev')}
             </Button>
             <Button variant="outline" size="sm" disabled={page >= pageCount || isPending} onClick={() => updateParam('page', String(page + 1))}>
-              Suivant<ChevronRight className="h-4 w-4 ml-1" />
+              {t('suppliers.next')}<ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
         </div>

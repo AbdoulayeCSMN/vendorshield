@@ -312,7 +312,9 @@
     "riskMapPrioritiesDesc": "Fournisseurs du quadrant critique (forte probabilité × fort impact).",
     "riskMapEmpty": "Aucun fournisseur dans le quadrant critique. 🎉",
     "billing": "Abonnement & facturation",
-    "billingDesc": "Choisissez le plan adapté à votre portefeuille fournisseurs."
+    "billingDesc": "Choisissez le plan adapté à votre portefeuille fournisseurs.",
+    "notFound": "Ressource introuvable",
+    "notFoundDesc": "Cette page n'existe pas, a été supprimée, ou ne fait pas partie de votre compte."
   },
   "copilot": {
     "welcomeTitle": "Comment puis-je vous aider ?",
@@ -649,7 +651,13 @@
     "statusArchived": "Archivée",
     "emptyTitle": "Aucune évaluation pour l'instant",
     "emptyDesc": "Commencez par créer une évaluation de risque.",
-    "emptyFilteredTitle": "Aucune évaluation ne correspond aux filtres"
+    "emptyFilteredTitle": "Aucune évaluation ne correspond aux filtres",
+    "tableEmptyTitle": "Aucune évaluation",
+    "tableEmptyDesc": "Lancez une première évaluation de risque.",
+    "tableEmptyCreate": "Créer une évaluation",
+    "colAssessment": "Évaluation",
+    "colStatus": "Statut",
+    "viewSupplier": "Voir le fournisseur"
   },
   "audits": {
     "title": "Audits",

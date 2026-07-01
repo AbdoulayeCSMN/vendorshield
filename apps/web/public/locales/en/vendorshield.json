@@ -312,7 +312,9 @@
     "riskMapPrioritiesDesc": "Suppliers in the critical quadrant (high probability × high impact).",
     "riskMapEmpty": "No supplier in the critical quadrant. 🎉",
     "billing": "Subscription & Billing",
-    "billingDesc": "Choose the plan that fits your supplier portfolio."
+    "billingDesc": "Choose the plan that fits your supplier portfolio.",
+    "notFound": "Resource not found",
+    "notFoundDesc": "This page does not exist, has been deleted, or is not part of your account."
   },
   "copilot": {
     "welcomeTitle": "How can I help you?",
@@ -649,7 +651,13 @@
     "statusArchived": "Archived",
     "emptyTitle": "No assessment yet",
     "emptyDesc": "Start by creating a risk assessment.",
-    "emptyFilteredTitle": "No assessment matches the filters"
+    "emptyFilteredTitle": "No assessment matches the filters",
+    "tableEmptyTitle": "No assessment",
+    "tableEmptyDesc": "Start your first risk assessment.",
+    "tableEmptyCreate": "Create an assessment",
+    "colAssessment": "Assessment",
+    "colStatus": "Status",
+    "viewSupplier": "View supplier"
   },
   "audits": {
     "title": "Audits",
