@@ -9,27 +9,23 @@ import {
   DropdownMenuTrigger,
 } from '@kit/ui/dropdown-menu';
 import { NavigationMenu, NavigationMenuList } from '@kit/ui/navigation-menu';
-import { Trans } from '@kit/ui/trans';
+
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 
 import { SiteNavigationItem } from './site-navigation-item';
 
-const links: Record<string, { label: string; path: string }> = {
-  Features: {
-    label: 'Fonctionnalités',
-    path: '/#features',
-  },
-  Pricing: {
-    label: 'Tarifs',
-    path: '/pricing',
-  },
-  FAQ: {
-    label: 'FAQ',
-    path: '/faq',
-  },
-};
+type NavLink = { label: string; path: string };
 
-export function SiteNavigation() {
-  const NavItems = Object.entries(links).map(([key, item]) => (
+export async function SiteNavigation() {
+  const { t } = await createI18nServerInstance();
+
+  const links: NavLink[] = [
+    { label: t('marketing:navFeatures'), path: '/#features' },
+    { label: t('marketing:pricing'), path: '/pricing' },
+    { label: t('marketing:faq'), path: '/faq' },
+  ];
+
+  const NavItems = links.map((item) => (
     <SiteNavigationItem key={item.path} path={item.path}>
       {item.label}
     </SiteNavigationItem>
@@ -44,20 +40,20 @@ export function SiteNavigation() {
       </div>
 
       <div className={'flex justify-start sm:items-center md:hidden'}>
-        <MobileDropdown />
+        <MobileDropdown links={links} openLabel={t('marketing:navOpenMenu')} />
       </div>
     </>
   );
 }
 
-function MobileDropdown() {
+function MobileDropdown({ links, openLabel }: { links: NavLink[]; openLabel: string }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger aria-label={'Ouvrir le menu'}>
+      <DropdownMenuTrigger aria-label={openLabel}>
         <Menu className={'h-8 w-8'} />
       </DropdownMenuTrigger>
       <DropdownMenuContent className={'w-full'}>
-        {Object.values(links).map((item) => (
+        {links.map((item) => (
           <DropdownMenuItem key={item.path} asChild>
             <Link className="flex w-full h-full items-center" href={item.path}>
               {item.label}

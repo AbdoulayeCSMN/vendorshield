@@ -40,6 +40,9 @@
   "copyright": "© Copyright {{year}} {{product}}. All Rights Reserved.",
   "ctaStartFree": "Start for free",
   "ctaSignIn": "Sign in",
+  "getStarted": "Get Started",
+  "navFeatures": "Features",
+  "navOpenMenu": "Open menu",
   "home": {
     "pillBadge": "New",
     "pillText": "The supplier risk management platform",
@@ -76,7 +79,13 @@
     "stat4Value": "real-time",
     "stat4Label": "Alerts & monitoring",
     "finalCtaHeading": "Ready to secure your supply chain?",
-    "finalCtaSubtitle": "Get started for free. No credit card required."
+    "finalCtaSubtitle": "Get started for free. No credit card required.",
+    "demoKpiSuppliers": "Suppliers",
+    "demoKpiAlerts": "Active alerts",
+    "demoKpiAvgScore": "Avg. score",
+    "demoHighRisk": "HIGH-RISK SUPPLIERS",
+    "demoRiskHigh": "High",
+    "demoRiskMedium": "Medium"
   },
   "pricingPage": {
     "popularBadge": "Popular",

@@ -40,6 +40,9 @@
   "copyright": "© {{year}} {{product}}. Tous droits réservés.",
   "ctaStartFree": "Démarrer gratuitement",
   "ctaSignIn": "Se connecter",
+  "getStarted": "Commencer",
+  "navFeatures": "Fonctionnalités",
+  "navOpenMenu": "Ouvrir le menu",
   "home": {
     "pillBadge": "Nouveau",
     "pillText": "La plateforme de gestion des risques fournisseurs",
@@ -76,7 +79,13 @@
     "stat4Value": "temps réel",
     "stat4Label": "Alertes & surveillance",
     "finalCtaHeading": "Prêt à sécuriser votre supply chain ?",
-    "finalCtaSubtitle": "Commencez gratuitement. Aucune carte de crédit requise."
+    "finalCtaSubtitle": "Commencez gratuitement. Aucune carte de crédit requise.",
+    "demoKpiSuppliers": "Fournisseurs",
+    "demoKpiAlerts": "Alertes actives",
+    "demoKpiAvgScore": "Score moyen",
+    "demoHighRisk": "FOURNISSEURS À RISQUE ÉLEVÉ",
+    "demoRiskHigh": "Élevé",
+    "demoRiskMedium": "Moyen"
   },
   "pricingPage": {
     "popularBadge": "Populaire",

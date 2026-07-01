@@ -48,7 +48,7 @@ async function Home() {
           }
           subtitle={<span>{t('marketing:home.heroSubtitle')}</span>}
           cta={<MainCallToActionButton t={t} />}
-          image={<DashboardPreview />}
+          image={<DashboardPreview t={t} />}
         />
       </div>
 
@@ -237,7 +237,10 @@ function StatCard({ value, label }: { value: string; label: string }) {
   );
 }
 
-function DashboardPreview() {
+function DashboardPreview({ t }: { t: (key: string) => string }) {
+  const riskHigh = t('marketing:home.demoRiskHigh');
+  const riskMedium = t('marketing:home.demoRiskMedium');
+
   return (
     <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-xl overflow-hidden">
       {/* Fake browser chrome */}
@@ -254,16 +257,16 @@ function DashboardPreview() {
       {/* Dashboard mock */}
       <div className="p-6 bg-gray-50 dark:bg-gray-950">
         <div className="grid grid-cols-3 gap-3 mb-4">
-          <MiniKPICard label="Fournisseurs" value="47" color="blue" />
-          <MiniKPICard label="Alertes actives" value="3" color="red" />
-          <MiniKPICard label="Score moyen" value="72" color="green" />
+          <MiniKPICard label={t('marketing:home.demoKpiSuppliers')} value="47" color="blue" />
+          <MiniKPICard label={t('marketing:home.demoKpiAlerts')} value="3" color="red" />
+          <MiniKPICard label={t('marketing:home.demoKpiAvgScore')} value="72" color="green" />
         </div>
         <div className="rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4">
-          <div className="text-xs font-semibold text-gray-500 mb-3">FOURNISSEURS À RISQUE ÉLEVÉ</div>
+          <div className="text-xs font-semibold text-gray-500 mb-3">{t('marketing:home.demoHighRisk')}</div>
           {[
-            { name: 'Acier Pro SARL', score: 28, risk: 'Élevé', country: '🇨🇳' },
-            { name: 'LogiTrans SA', score: 41, risk: 'Moyen', country: '🇹🇷' },
-            { name: 'ChimFlex Inc.', score: 35, risk: 'Élevé', country: '🇷🇺' },
+            { name: 'Acier Pro SARL', score: 28, risk: riskHigh, country: '🇨🇳' },
+            { name: 'LogiTrans SA', score: 41, risk: riskMedium, country: '🇹🇷' },
+            { name: 'ChimFlex Inc.', score: 35, risk: riskHigh, country: '🇷🇺' },
           ].map((s) => (
             <div key={s.name} className="flex items-center justify-between py-2 border-b border-gray-50 dark:border-gray-700 last:border-0">
               <div className="flex items-center gap-2">
