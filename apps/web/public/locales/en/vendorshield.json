@@ -538,7 +538,18 @@
     "aiAdvice": "AI strategic advice",
     "wellDiversified": "Your portfolio is well diversified. Continue regular monitoring of critical suppliers.",
     "monoSource": "Sole source",
-    "alternatives": "Alternatives:"
+    "alternatives": "Alternatives:",
+    "spendByRisk": "Spend exposed by risk level",
+    "spendByRiskDesc": "Annual spend breakdown ({{count}} active suppliers).",
+    "mainContributors": "Main contributors",
+    "sarDesc": "Spend × probability of incident.",
+    "noSpendData": "No spend data available.",
+    "stressTestTitle": "Stress-test — top 3 failure",
+    "stressTestDesc": "If your 3 largest suppliers were to fail simultaneously, {{pct}}% of your annual spend (≈ {{amount}}) would need to be secured urgently.",
+    "stressTestSoleSources": "Including {{count}} sole-source(s) with no immediate alternative.",
+    "tooltipSpend": "Spend",
+    "tooltipSuppCount": "{{count}} supp.",
+    "tooltipRiskLabel": "Risk {{level}}"
   },
   "supplyChain": {
     "tier1": "Tier 1 Suppliers",

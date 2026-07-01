@@ -10,31 +10,33 @@ import {
   YAxis,
 } from 'recharts';
 
+import { useTranslation } from 'react-i18next';
+
+import { useEnumLabels } from '~/lib/vendorshield/use-labels';
+
 const RISK_COLOR: Record<string, string> = {
   critical: '#dc2626',
-  high: '#ea580c',
-  medium: '#d97706',
-  low: '#16a34a',
-  unrated: '#9ca3af',
+  high:     '#ea580c',
+  medium:   '#d97706',
+  low:      '#16a34a',
+  unrated:  '#9ca3af',
 };
-
-const RISK_LABEL: Record<string, string> = {
-  critical: 'Critique',
-  high: 'Élevé',
-  medium: 'Moyen',
-  low: 'Faible',
-  unrated: 'Non évalué',
-};
-
-const eur = (n: number) =>
-  new Intl.NumberFormat('fr-FR', { notation: 'compact', style: 'currency', currency: 'EUR' }).format(n);
 
 export function ExposureSpendChart({
   data,
 }: {
   data: { level: string; spend: number; count: number }[];
 }) {
-  const rows = data.map((d) => ({ ...d, label: RISK_LABEL[d.level] ?? d.level }));
+  const { t, i18n } = useTranslation('vendorshield');
+  const { riskLevelLabels } = useEnumLabels();
+
+  const eur = (n: number) =>
+    new Intl.NumberFormat(i18n.language, { notation: 'compact', style: 'currency', currency: 'EUR' }).format(n);
+
+  const rows = data.map((d) => ({
+    ...d,
+    label: riskLevelLabels[d.level as keyof typeof riskLevelLabels] ?? d.level,
+  }));
 
   return (
     <div className="h-56 w-full">
@@ -43,8 +45,11 @@ export function ExposureSpendChart({
           <XAxis dataKey="label" tick={{ fontSize: 11 }} />
           <YAxis tickFormatter={(v) => eur(Number(v))} tick={{ fontSize: 11 }} width={64} />
           <Tooltip
-            formatter={(v: number, _n, p) => [`${eur(v)} · ${p.payload.count} fourn.`, 'Dépense']}
-            labelFormatter={(l) => `Risque ${l}`}
+            formatter={(v: number, _n, p) => [
+              `${eur(v)} · ${t('exposure.tooltipSuppCount', { count: p.payload.count })}`,
+              t('exposure.tooltipSpend'),
+            ]}
+            labelFormatter={(l) => t('exposure.tooltipRiskLabel', { level: l })}
           />
           <Bar dataKey="spend" radius={[4, 4, 0, 0]}>
             {rows.map((r) => (

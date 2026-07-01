@@ -110,9 +110,9 @@ async function ExposurePage() {
           {/* Répartition dépense par risque */}
           <Card className="xl:col-span-2">
             <CardHeader>
-              <CardTitle className="text-base">Dépense exposée par niveau de risque</CardTitle>
+              <CardTitle className="text-base">{t('vendorshield:exposure.spendByRisk')}</CardTitle>
               <CardDescription>
-                Répartition de la dépense annuelle ({e.supplier_count} fournisseurs actifs).
+                {t('vendorshield:exposure.spendByRiskDesc', { count: e.supplier_count })}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -120,16 +120,16 @@ async function ExposurePage() {
             </CardContent>
           </Card>
 
-          {/* Top contributeurs au SaR */}
+          {/* Top contributors */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Principaux contributeurs</CardTitle>
-              <CardDescription>Dépense × probabilité d&apos;incident.</CardDescription>
+              <CardTitle className="text-base">{t('vendorshield:exposure.mainContributors')}</CardTitle>
+              <CardDescription>{t('vendorshield:exposure.sarDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
                 {e.contributors.length === 0 && (
-                  <li className="text-muted-foreground text-sm">Aucune donnée de dépense.</li>
+                  <li className="text-muted-foreground text-sm">{t('vendorshield:exposure.noSpendData')}</li>
                 )}
                 {e.contributors.map((c) => (
                   <li key={c.id}>
@@ -152,17 +152,18 @@ async function ExposurePage() {
         {/* Stress-test */}
         <Card className="mt-6 border-amber-200 bg-amber-50/40 dark:bg-amber-950/10">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Stress-test — défaillance du top 3</CardTitle>
+            <CardTitle className="text-base">{t('vendorshield:exposure.stressTestTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm">
-              Si vos 3 plus gros fournisseurs venaient à défaillir simultanément,{' '}
-              <strong>{e.top3_share}%</strong> de votre dépense annuelle (≈{' '}
-              <strong>{eur((e.total_spend * e.top3_share) / 100)}</strong>) serait à sécuriser en urgence.
+              {t('vendorshield:exposure.stressTestDesc', {
+                pct: e.top3_share,
+                amount: eur((e.total_spend * e.top3_share) / 100),
+              })}
               {e.sole_source_count > 0 && (
                 <>
                   {' '}
-                  Dont <strong>{e.sole_source_count} mono-source(s)</strong> sans alternative immédiate.
+                  {t('vendorshield:exposure.stressTestSoleSources', { count: e.sole_source_count })}
                 </>
               )}
             </p>

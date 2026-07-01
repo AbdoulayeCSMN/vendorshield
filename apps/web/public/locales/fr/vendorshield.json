@@ -538,7 +538,18 @@
     "aiAdvice": "Conseil stratégique IA",
     "wellDiversified": "Votre portefeuille est correctement diversifié. Continuez le suivi régulier des fournisseurs critiques.",
     "monoSource": "Mono-source",
-    "alternatives": "Alternatives :"
+    "alternatives": "Alternatives :",
+    "spendByRisk": "Dépense exposée par niveau de risque",
+    "spendByRiskDesc": "Répartition de la dépense annuelle ({{count}} fournisseurs actifs).",
+    "mainContributors": "Principaux contributeurs",
+    "sarDesc": "Dépense × probabilité d'incident.",
+    "noSpendData": "Aucune donnée de dépense.",
+    "stressTestTitle": "Stress-test — défaillance du top 3",
+    "stressTestDesc": "Si vos 3 plus gros fournisseurs venaient à défaillir simultanément, {{pct}}% de votre dépense annuelle (≈ {{amount}}) serait à sécuriser en urgence.",
+    "stressTestSoleSources": "Dont {{count}} mono-source(s) sans alternative immédiate.",
+    "tooltipSpend": "Dépense",
+    "tooltipSuppCount": "{{count}} fourn.",
+    "tooltipRiskLabel": "Risque {{level}}"
   },
   "supplyChain": {
     "tier1": "Fournisseurs Tier 1",
