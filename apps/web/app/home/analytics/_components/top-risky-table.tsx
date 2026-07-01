@@ -12,18 +12,17 @@ import {
   CardTitle,
 } from '@kit/ui/card';
 
-import {
-  CATEGORY_LABELS,
-  RISK_LEVEL_LABELS,
-  type RiskLevel,
-  type SupplierRiskSummary,
-} from '~/lib/vendorshield/types';
+import { useTranslation } from 'react-i18next';
+
+import type { RiskLevel, SupplierRiskSummary } from '~/lib/vendorshield/types';
+import { useEnumLabels } from '~/lib/vendorshield/use-labels';
 
 interface Props {
   suppliers: SupplierRiskSummary[];
 }
 
 function RiskBadge({ level }: { level: RiskLevel | null }) {
+  const { riskLevelLabels } = useEnumLabels();
   if (!level) return null;
   const cfg = {
     critical: 'text-red-700 bg-red-50 border-red-200',
@@ -33,18 +32,20 @@ function RiskBadge({ level }: { level: RiskLevel | null }) {
   } as const;
   return (
     <span className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-medium ${cfg[level]}`}>
-      {RISK_LEVEL_LABELS[level]}
+      {riskLevelLabels[level]}
     </span>
   );
 }
 
 export function TopRiskyTable({ suppliers }: Props) {
+  const { t } = useTranslation('vendorshield');
+  const { categoryLabels } = useEnumLabels();
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
           <AlertTriangle className="h-4 w-4 text-red-500" />
-          <CardTitle className="text-sm font-semibold">Top 10 fournisseurs à risque</CardTitle>
+          <CardTitle className="text-sm font-semibold">{t('dashboard.topRisky')}</CardTitle>
         </div>
         <CardDescription>Classés par score global croissant (risque le plus élevé en premier)</CardDescription>
       </CardHeader>
@@ -82,7 +83,7 @@ export function TopRiskyTable({ suppliers }: Props) {
                     )}
                   </p>
                   <p className="text-xs text-gray-400 truncate">
-                    {CATEGORY_LABELS[s.category]}
+                    {categoryLabels[s.category]}
                     {s.open_alerts > 0 && (
                       <span className="ml-2 text-red-500">
                         · {s.open_alerts} alerte{s.open_alerts > 1 ? 's' : ''}

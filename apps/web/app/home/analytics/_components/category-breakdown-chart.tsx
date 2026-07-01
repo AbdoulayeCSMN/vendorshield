@@ -18,25 +18,30 @@ import {
   ChartTooltipContent,
 } from '@kit/ui/chart';
 
-import { CATEGORY_LABELS } from '~/lib/vendorshield/types';
+import { useTranslation } from 'react-i18next';
+
 import type { CategoryRiskEntry } from '~/lib/vendorshield/analytics.server';
+import { useEnumLabels } from '~/lib/vendorshield/use-labels';
 
 interface Props {
   categories: CategoryRiskEntry[];
 }
 
-const chartConfig = {
-  low:      { label: 'Faible',    color: '#22c55e' },
-  medium:   { label: 'Modéré',   color: '#eab308' },
-  high:     { label: 'Élevé',    color: '#f97316' },
-  critical: { label: 'Critique', color: '#ef4444' },
-} satisfies ChartConfig;
-
 export function CategoryBreakdownChart({ categories }: Props) {
+  const { t } = useTranslation('vendorshield');
+  const { categoryLabels } = useEnumLabels();
+
+  const chartConfig = {
+    low:      { label: t('dashboard.riskLow'),      color: '#22c55e' },
+    medium:   { label: t('dashboard.riskMedium'),   color: '#eab308' },
+    high:     { label: t('dashboard.riskHigh'),     color: '#f97316' },
+    critical: { label: t('dashboard.riskCritical'), color: '#ef4444' },
+  } satisfies ChartConfig;
+
   const data = categories
-    .slice(0, 8) // max 8 catégories pour lisibilité
+    .slice(0, 8)
     .map((c) => ({
-      category: CATEGORY_LABELS[c.category as keyof typeof CATEGORY_LABELS] ?? c.category,
+      category: categoryLabels[c.category as keyof typeof categoryLabels] ?? c.category,
       low:      c.low_count,
       medium:   c.medium_count,
       high:     c.high_count,

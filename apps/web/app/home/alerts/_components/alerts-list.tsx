@@ -56,11 +56,10 @@ import {
 } from '~/lib/vendorshield/actions/alert.actions';
 import type { AlertWithSupplier, AlertsFilters } from '~/lib/vendorshield/alerts.server';
 import {
-  ALERT_SEVERITY_LABELS,
-  CATEGORY_LABELS,
   type AlertSeverity,
   type AlertStatus,
 } from '~/lib/vendorshield/types';
+import { useEnumLabels } from '~/lib/vendorshield/use-labels';
 
 // ─── Icône et couleur selon sévérité ─────────────────────────────────────────
 
@@ -164,6 +163,7 @@ function AlertCard({
   onResolve: (id: string) => void;
 }) {
   const { t, i18n } = useTranslation('vendorshield');
+  const { severityLabels } = useEnumLabels();
   const [isPending, startTransition] = useTransition();
   const sev = SEVERITY_CFG[alert.severity as AlertSeverity] ?? SEVERITY_CFG.info;
   const sta = STATUS_CFG[alert.status as AlertStatus] ?? STATUS_CFG.open;
@@ -200,7 +200,7 @@ function AlertCard({
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
             <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${sev.badge} border`}>
-              {ALERT_SEVERITY_LABELS[alert.severity as AlertSeverity]}
+              {severityLabels[alert.severity as AlertSeverity]}
             </span>
             <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${sta.cls}`}>
               {t(sta.labelKey)}

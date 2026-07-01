@@ -43,20 +43,19 @@ import {
   toggleAlertRuleAction,
 } from '~/lib/vendorshield/actions/alert.actions';
 import {
-  CATEGORY_LABELS,
-  CRITICALITY_LABELS,
-  DIMENSION_LABELS,
   type AlertRule,
   type AlertSeverity,
   type RiskDimension,
   type SupplierCategory,
   type SupplierCriticality,
 } from '~/lib/vendorshield/types';
+import { useEnumLabels } from '~/lib/vendorshield/use-labels';
 
 // ─── Composant règle ──────────────────────────────────────────────────────────
 
 function RuleCard({ rule }: { rule: AlertRule }) {
   const { t } = useTranslation('vendorshield');
+  const { categoryLabels, criticalityLabels, dimensionLabels } = useEnumLabels();
   const [isPending, startTransition] = useTransition();
 
   const handleToggle = (active: boolean) => {
@@ -85,7 +84,7 @@ function RuleCard({ rule }: { rule: AlertRule }) {
   };
 
   const dimensionLabel = rule.dimension
-    ? DIMENSION_LABELS[rule.dimension as RiskDimension]
+    ? dimensionLabels[rule.dimension as RiskDimension]
     : t('alerts.rules.fieldGlobal');
 
   const conditionText = `${dimensionLabel} ${rule.operator} ${rule.threshold}`;
@@ -124,16 +123,16 @@ function RuleCard({ rule }: { rule: AlertRule }) {
           </span>
           {rule.applies_to_category && (
             <span className="text-xs text-gray-400">
-              · Catégorie : {CATEGORY_LABELS[rule.applies_to_category as SupplierCategory]}
+              · {t('suppliers.hCategory')} : {categoryLabels[rule.applies_to_category as SupplierCategory]}
             </span>
           )}
           {rule.applies_to_criticality && (
             <span className="text-xs text-gray-400">
-              · Criticité : {CRITICALITY_LABELS[rule.applies_to_criticality as SupplierCriticality]}
+              · {t('suppliers.hCriticality')} : {criticalityLabels[rule.applies_to_criticality as SupplierCriticality]}
             </span>
           )}
           {rule.notify_email && (
-            <span className="text-xs text-gray-400">· Email activé</span>
+            <span className="text-xs text-gray-400">· {t('alerts.rules.emailActive')}</span>
           )}
         </div>
       </div>
@@ -161,6 +160,8 @@ function CreateRuleDialog({
   open: boolean;
   onClose: () => void;
 }) {
+  const { t } = useTranslation('vendorshield');
+  const { categoryLabels, criticalityLabels, dimensionLabels } = useEnumLabels();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -180,9 +181,9 @@ function CreateRuleDialog({
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Nouvelle règle d'alerte</DialogTitle>
+          <DialogTitle>{t('alerts.rules.newTitle')}</DialogTitle>
           <DialogDescription>
-            Définissez la condition qui déclenchera automatiquement une alerte.
+            {t('alerts.rules.newDesc')}
           </DialogDescription>
         </DialogHeader>
 
@@ -196,20 +197,20 @@ function CreateRuleDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
-              <Label className="text-sm font-medium">Nom <span className="text-red-500">*</span></Label>
-              <Input name="name" required placeholder="Ex: Score global critique" className="mt-1.5" />
+              <Label className="text-sm font-medium">{t('alerts.rules.labelName')} <span className="text-red-500">*</span></Label>
+              <Input name="name" required placeholder={t('alerts.rules.namePlaceholder')} className="mt-1.5" />
             </div>
 
             {/* Dimension */}
             <div>
-              <Label className="text-sm font-medium">Dimension</Label>
+              <Label className="text-sm font-medium">{t('alerts.rules.labelDimension')}</Label>
               <Select name="dimension" defaultValue="">
                 <SelectTrigger className="mt-1.5">
-                  <SelectValue placeholder="Score global" />
+                  <SelectValue placeholder={t('alerts.rules.fieldGlobal')} />
                 </SelectTrigger>
                 <SelectContent>
                   {(['financial', 'operational', 'geopolitical', 'esg'] as RiskDimension[]).map((d) => (
-                    <SelectItem key={d} value={d}>{DIMENSION_LABELS[d]}</SelectItem>
+                    <SelectItem key={d} value={d}>{dimensionLabels[d]}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -217,51 +218,51 @@ function CreateRuleDialog({
 
             {/* Opérateur */}
             <div>
-              <Label className="text-sm font-medium">Opérateur</Label>
+              <Label className="text-sm font-medium">{t('alerts.rules.labelOperator')}</Label>
               <Select name="operator" defaultValue="<">
                 <SelectTrigger className="mt-1.5">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="<">{'< (inférieur à)'}</SelectItem>
-                  <SelectItem value="<=">{'≤ (inférieur ou égal)'}</SelectItem>
-                  <SelectItem value=">">{'> (supérieur à)'}</SelectItem>
-                  <SelectItem value=">=">{'≥ (supérieur ou égal)'}</SelectItem>
+                  <SelectItem value="<">{t('alerts.rules.opLt')}</SelectItem>
+                  <SelectItem value="<=">{t('alerts.rules.opLte')}</SelectItem>
+                  <SelectItem value=">">{t('alerts.rules.opGt')}</SelectItem>
+                  <SelectItem value=">=">{t('alerts.rules.opGte')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Seuil */}
             <div>
-              <Label className="text-sm font-medium">Seuil (0-100) <span className="text-red-500">*</span></Label>
+              <Label className="text-sm font-medium">{t('alerts.rules.labelThreshold')} <span className="text-red-500">*</span></Label>
               <Input name="threshold" type="number" min={0} max={100} required placeholder="40" className="mt-1.5" />
             </div>
 
             {/* Sévérité */}
             <div>
-              <Label className="text-sm font-medium">Sévérité</Label>
+              <Label className="text-sm font-medium">{t('alerts.rules.labelSeverity')}</Label>
               <Select name="severity" defaultValue="warning">
                 <SelectTrigger className="mt-1.5">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="info">Information</SelectItem>
-                  <SelectItem value="warning">Avertissement</SelectItem>
-                  <SelectItem value="critical">Critique</SelectItem>
+                  <SelectItem value="info">{t('alerts.rules.severityInfo')}</SelectItem>
+                  <SelectItem value="warning">{t('alerts.rules.severityWarning')}</SelectItem>
+                  <SelectItem value="critical">{t('alerts.rules.severityCritical')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Catégorie */}
             <div>
-              <Label className="text-sm font-medium">Catégorie (optionnel)</Label>
+              <Label className="text-sm font-medium">{t('alerts.rules.labelCategory')}</Label>
               <Select name="applies_to_category" defaultValue="">
                 <SelectTrigger className="mt-1.5">
-                  <SelectValue placeholder="Toutes" />
+                  <SelectValue placeholder={t('alerts.rules.filterAll')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {(Object.keys(CATEGORY_LABELS) as SupplierCategory[]).map((c) => (
-                    <SelectItem key={c} value={c}>{CATEGORY_LABELS[c]}</SelectItem>
+                  {(Object.keys(categoryLabels) as SupplierCategory[]).map((c) => (
+                    <SelectItem key={c} value={c}>{categoryLabels[c]}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -269,36 +270,36 @@ function CreateRuleDialog({
 
             {/* Criticité */}
             <div>
-              <Label className="text-sm font-medium">Criticité (optionnel)</Label>
+              <Label className="text-sm font-medium">{t('alerts.rules.labelCriticality')}</Label>
               <Select name="applies_to_criticality" defaultValue="">
                 <SelectTrigger className="mt-1.5">
-                  <SelectValue placeholder="Toutes" />
+                  <SelectValue placeholder={t('alerts.rules.filterAll')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {(Object.keys(CRITICALITY_LABELS) as SupplierCriticality[]).map((c) => (
-                    <SelectItem key={c} value={c}>{CRITICALITY_LABELS[c]}</SelectItem>
+                  {(Object.keys(criticalityLabels) as SupplierCriticality[]).map((c) => (
+                    <SelectItem key={c} value={c}>{criticalityLabels[c]}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
             <div className="col-span-2">
-              <Label className="text-sm font-medium">Description (optionnel)</Label>
-              <Textarea name="description" placeholder="Décrivez l'objectif de cette règle..." className="mt-1.5 resize-none" rows={2} />
+              <Label className="text-sm font-medium">{t('alerts.rules.labelDescription')}</Label>
+              <Textarea name="description" placeholder={t('alerts.rules.descPlaceholder')} className="mt-1.5 resize-none" rows={2} />
             </div>
 
             {/* Notify email */}
             <div className="col-span-2 flex items-center gap-3">
               <input type="checkbox" id="notify_email" name="notify_email" value="true" defaultChecked className="h-4 w-4 rounded border-gray-300 accent-primary" />
               <label htmlFor="notify_email" className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
-                Envoyer un email lors du déclenchement
+                {t('alerts.rules.labelNotifyEmail')}
               </label>
             </div>
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>Annuler</Button>
-            <Button type="submit" disabled={isPending}>Créer la règle</Button>
+            <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>{t('common.cancel')}</Button>
+            <Button type="submit" disabled={isPending}>{t('alerts.rules.create')}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

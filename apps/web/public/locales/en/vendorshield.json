@@ -279,7 +279,26 @@
       "severityWarning": "Warning",
       "severityCritical": "Critical",
       "fieldGlobal": "Global score",
-      "filterAll": "All"
+      "filterAll": "All",
+      "newTitle": "New alert rule",
+      "newDesc": "Define the condition that will automatically trigger an alert.",
+      "labelName": "Name",
+      "labelDimension": "Dimension",
+      "labelOperator": "Operator",
+      "labelThreshold": "Threshold (0-100)",
+      "labelSeverity": "Severity",
+      "labelCategory": "Category (optional)",
+      "labelCriticality": "Criticality (optional)",
+      "labelDescription": "Description (optional)",
+      "labelNotifyEmail": "Send email on trigger",
+      "namePlaceholder": "e.g. Critical global score",
+      "descPlaceholder": "Describe the purpose of this rule...",
+      "create": "Create rule",
+      "opLt": "< (less than)",
+      "opLte": "≤ (less or equal)",
+      "opGt": "> (greater than)",
+      "opGte": "≥ (greater or equal)",
+      "emailActive": "Email activated"
     }
   },
   "auditLog": {

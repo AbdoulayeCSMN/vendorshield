@@ -50,12 +50,13 @@ import type {
   SoleSourceItem,
   TopRiskySupplier,
 } from '~/lib/vendorshield/analytics.server';
+import { useTranslation } from 'react-i18next';
+
 import {
-  CATEGORY_LABELS,
-  CRITICALITY_LABELS,
   formatEur,
   type RiskLevel,
 } from '~/lib/vendorshield/types';
+import { useEnumLabels } from '~/lib/vendorshield/use-labels';
 import type { BankruptcyPrediction } from '~/lib/vendorshield/actions/prediction.actions';
 
 // ─── Constantes couleurs ──────────────────────────────────────────────────────
@@ -171,23 +172,25 @@ export function AnalyticsDashboard({
   countryExposure,
   bankruptcyOverview,
 }: Props) {
+  const { t } = useTranslation('vendorshield');
+  const { criticalityLabels } = useEnumLabels();
   const totalRisk = riskDistribution.reduce((s, r) => s + r.count, 0);
 
   // ── Chart configs Shadcn ──
   const distConfig: ChartConfig = {
-    count: { label: 'Fournisseurs' },
-    critical: { label: 'Critique',  color: RISK_COLORS.critical },
-    high:     { label: 'Élevé',     color: RISK_COLORS.high },
-    medium:   { label: 'Modéré',    color: RISK_COLORS.medium },
-    low:      { label: 'Faible',    color: RISK_COLORS.low },
+    count:    { label: t('analytics.suppliersLabel') },
+    critical: { label: t('dashboard.riskCritical'), color: RISK_COLORS.critical },
+    high:     { label: t('dashboard.riskHigh'),     color: RISK_COLORS.high },
+    medium:   { label: t('dashboard.riskMedium'),   color: RISK_COLORS.medium },
+    low:      { label: t('dashboard.riskLow'),      color: RISK_COLORS.low },
   };
 
   const dimConfig: ChartConfig = {
-    avg_score:    { label: 'Score moyen' },
-    financial:    { label: 'Financier',      color: DIMENSION_COLORS.financial },
-    operational:  { label: 'Opérationnel',   color: DIMENSION_COLORS.operational },
-    geopolitical: { label: 'Géopolitique',   color: DIMENSION_COLORS.geopolitical },
-    esg:          { label: 'ESG',            color: DIMENSION_COLORS.esg },
+    avg_score:    { label: t('analytics.avgScoreLabel') },
+    financial:    { label: t('dashboard.dimFinancial'),    color: DIMENSION_COLORS.financial },
+    operational:  { label: t('dashboard.dimOperational'),  color: DIMENSION_COLORS.operational },
+    geopolitical: { label: t('dashboard.dimGeopolitical'), color: DIMENSION_COLORS.geopolitical },
+    esg:          { label: t('dashboard.dimEsg'),          color: DIMENSION_COLORS.esg },
   };
 
   const catConfig: ChartConfig = {
@@ -655,7 +658,7 @@ export function AnalyticsDashboard({
                           s.criticality === 'high' ? 'bg-orange-50 text-orange-700' :
                           'bg-gray-50 text-gray-600'
                         }`}>
-                          {CRITICALITY_LABELS[s.criticality as keyof typeof CRITICALITY_LABELS] ?? s.criticality}
+                          {criticalityLabels[s.criticality as keyof typeof criticalityLabels] ?? s.criticality}
                         </span>
                       </td>
                       <td className="py-2.5 pr-4 text-sm text-gray-600 dark:text-gray-400 hidden lg:table-cell">

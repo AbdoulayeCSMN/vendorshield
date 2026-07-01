@@ -39,12 +39,11 @@ import {
   TableRow,
 } from '@kit/ui/table';
 
+import { useTranslation } from 'react-i18next';
+
 import type { AssessmentsFilters, AssessmentWithSupplier } from '~/lib/vendorshield/assessments.server';
-import {
-  ASSESSMENT_STATUS_LABELS,
-  CATEGORY_LABELS,
-  type AssessmentStatus,
-} from '~/lib/vendorshield/types';
+import { type AssessmentStatus } from '~/lib/vendorshield/types';
+import { useEnumLabels } from '~/lib/vendorshield/use-labels';
 
 // ─── Score delta badge ────────────────────────────────────────────────────────
 
@@ -74,11 +73,12 @@ const STATUS_CFG: Record<AssessmentStatus, { cls: string; dot: string }> = {
 };
 
 function StatusBadge({ status }: { status: AssessmentStatus }) {
+  const { assessmentStatusLabels } = useEnumLabels();
   const { cls, dot } = STATUS_CFG[status] ?? STATUS_CFG.draft;
   return (
     <span className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-medium ${cls}`}>
       <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
-      {ASSESSMENT_STATUS_LABELS[status]}
+      {assessmentStatusLabels[status]}
     </span>
   );
 }
@@ -94,6 +94,8 @@ interface Props {
 }
 
 export function AssessmentsTable({ assessments, total, page, pageCount, filters }: Props) {
+  const { t } = useTranslation('vendorshield');
+  const { assessmentStatusLabels, categoryLabels } = useEnumLabels();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -129,18 +131,18 @@ export function AssessmentsTable({ assessments, total, page, pageCount, filters 
           onValueChange={(v) => updateParam('status', v)}
         >
           <SelectTrigger className="w-44">
-            <SelectValue placeholder="Tous les statuts" />
+            <SelectValue placeholder={t('assessments.filterAllStatuses')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tous les statuts</SelectItem>
-            {(Object.keys(ASSESSMENT_STATUS_LABELS) as AssessmentStatus[]).map((s) => (
-              <SelectItem key={s} value={s}>{ASSESSMENT_STATUS_LABELS[s]}</SelectItem>
+            <SelectItem value="all">{t('assessments.filterAllStatuses')}</SelectItem>
+            {(Object.keys(assessmentStatusLabels) as AssessmentStatus[]).map((s) => (
+              <SelectItem key={s} value={s}>{assessmentStatusLabels[s]}</SelectItem>
             ))}
           </SelectContent>
         </Select>
 
         <span className="ml-auto text-sm text-gray-500">
-          {total} évaluation{total !== 1 ? 's' : ''}
+          {t('pages.assessmentsDesc', { count: total })}
         </span>
       </div>
 
@@ -199,7 +201,7 @@ export function AssessmentsTable({ assessments, total, page, pageCount, filters 
                         <span>{a.supplier.country_code ? countryFlag(a.supplier.country_code) : '🏢'}</span>
                         <div>
                           <p className="text-sm text-gray-700 dark:text-gray-300 truncate max-w-[150px]">{a.supplier.name}</p>
-                          <p className="text-xs text-gray-400">{CATEGORY_LABELS[a.supplier.category]}</p>
+                          <p className="text-xs text-gray-400">{categoryLabels[a.supplier.category]}</p>
                         </div>
                       </div>
                     )}

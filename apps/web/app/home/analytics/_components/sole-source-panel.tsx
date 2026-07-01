@@ -12,17 +12,18 @@ import {
   CardTitle,
 } from '@kit/ui/card';
 
-import {
-  CATEGORY_LABELS,
-  CRITICALITY_LABELS,
-  type SupplierRiskSummary,
-} from '~/lib/vendorshield/types';
+import { useTranslation } from 'react-i18next';
+
+import type { SupplierRiskSummary } from '~/lib/vendorshield/types';
+import { useEnumLabels } from '~/lib/vendorshield/use-labels';
 
 interface Props {
   suppliers: SupplierRiskSummary[];
 }
 
 export function SoleSourcePanel({ suppliers }: Props) {
+  const { t } = useTranslation('vendorshield');
+  const { categoryLabels, criticalityLabels } = useEnumLabels();
   const totalSpend = suppliers.reduce(
     (s, sup) => s + (sup.annual_spend_eur ?? 0),
     0,
@@ -90,11 +91,11 @@ export function SoleSourcePanel({ suppliers }: Props) {
                       </p>
                       <div className="flex items-center gap-1.5 mt-0.5">
                         <span className="text-xs text-gray-400">
-                          {CATEGORY_LABELS[s.category]}
+                          {categoryLabels[s.category]}
                         </span>
                         <span className="text-gray-200">·</span>
                         <span className="text-xs text-amber-600 font-medium">
-                          {CRITICALITY_LABELS[s.criticality]}
+                          {criticalityLabels[s.criticality]}
                         </span>
                         {s.annual_spend_eur && (
                           <>

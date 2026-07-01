@@ -279,7 +279,26 @@
       "severityWarning": "Avertissement",
       "severityCritical": "Critique",
       "fieldGlobal": "Score global",
-      "filterAll": "Toutes"
+      "filterAll": "Toutes",
+      "newTitle": "Nouvelle règle d'alerte",
+      "newDesc": "Définissez la condition qui déclenchera automatiquement une alerte.",
+      "labelName": "Nom",
+      "labelDimension": "Dimension",
+      "labelOperator": "Opérateur",
+      "labelThreshold": "Seuil (0-100)",
+      "labelSeverity": "Sévérité",
+      "labelCategory": "Catégorie (optionnel)",
+      "labelCriticality": "Criticité (optionnel)",
+      "labelDescription": "Description (optionnel)",
+      "labelNotifyEmail": "Envoyer un email lors du déclenchement",
+      "namePlaceholder": "Ex : Score global critique",
+      "descPlaceholder": "Décrivez l'objectif de cette règle...",
+      "create": "Créer la règle",
+      "opLt": "< (inférieur à)",
+      "opLte": "≤ (inférieur ou égal)",
+      "opGt": "> (supérieur à)",
+      "opGte": "≥ (supérieur ou égal)",
+      "emailActive": "Email activé"
     }
   },
   "auditLog": {
