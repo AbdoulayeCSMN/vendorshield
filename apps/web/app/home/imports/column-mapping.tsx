@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Loader2, Sparkles } from 'lucide-react';
 
+import { useTranslation } from 'react-i18next';
+
 import { Button } from '@kit/ui/button';
 
 import { suggestColumnMappingAction } from '~/lib/vendorshield/actions/import-mapping.actions';
@@ -17,6 +19,7 @@ interface ColumnMappingProps {
 }
 
 export function ColumnMapping({ rows, importType, onComplete }: ColumnMappingProps) {
+  const { t } = useTranslation('vendorshield');
   const headers = useMemo(
     () => (rows.length ? Object.keys(rows[0]).filter((h) => h !== 'row_number') : []),
     [rows],
@@ -58,7 +61,7 @@ export function ColumnMapping({ rows, importType, onComplete }: ColumnMappingPro
   if (loading) {
     return (
       <div className="text-muted-foreground flex items-center gap-2 py-8 text-sm">
-        <Loader2 className="h-4 w-4 animate-spin" /> Détection automatique des colonnes par l'IA…
+        <Loader2 className="h-4 w-4 animate-spin" /> {t('imports.aiDetecting')}
       </div>
     );
   }
@@ -67,11 +70,11 @@ export function ColumnMapping({ rows, importType, onComplete }: ColumnMappingPro
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-600">
-          Associez les colonnes de votre fichier aux champs Avilyre. Modifiable si besoin.
+          {t('imports.mapDesc')}
         </p>
         {aiSuggested && (
           <span className="text-primary inline-flex items-center gap-1 text-xs font-medium">
-            <Sparkles className="h-3.5 w-3.5" /> Pré-rempli par l'IA
+            <Sparkles className="h-3.5 w-3.5" /> {t('imports.aiPrefilled')}
           </span>
         )}
       </div>
@@ -90,7 +93,7 @@ export function ColumnMapping({ rows, importType, onComplete }: ColumnMappingPro
                 f.required && !mapping[f.key] ? 'border-red-300' : ''
               }`}
             >
-              <option value="">— Ignorer —</option>
+              <option value="">{t('imports.ignore')}</option>
               {headers.map((h) => (
                 <option key={h} value={h}>
                   {h}
@@ -103,13 +106,13 @@ export function ColumnMapping({ rows, importType, onComplete }: ColumnMappingPro
 
       {missingRequired.length > 0 && (
         <p className="text-xs text-red-600">
-          Champ(s) obligatoire(s) non mappé(s) : {missingRequired.map((f) => f.label).join(', ')}
+          {t('imports.requiredUnmapped', { fields: missingRequired.map((f) => f.label).join(', ') })}
         </p>
       )}
 
       <div className="flex justify-end">
         <Button onClick={() => onComplete(mapping)} disabled={missingRequired.length > 0}>
-          Continuer
+          {t('imports.continue')}
         </Button>
       </div>
     </div>

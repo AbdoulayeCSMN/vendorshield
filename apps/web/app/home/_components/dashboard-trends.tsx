@@ -27,11 +27,11 @@ import type {
   AssessmentTrendItem,
 } from '~/lib/vendorshield/analytics.server';
 
-function Delta({ value, invert = false }: { value: number | null; invert?: boolean }) {
+function Delta({ value, invert = false, stableLabel }: { value: number | null; invert?: boolean; stableLabel: string }) {
   if (value === null || value === 0) {
     return (
       <span className="text-muted-foreground inline-flex items-center gap-0.5 text-xs">
-        <Minus className="h-3 w-3" /> stable
+        <Minus className="h-3 w-3" /> {stableLabel}
       </span>
     );
   }
@@ -77,7 +77,7 @@ export function DashboardTrends({
             <CardTitle className="text-sm font-semibold">{t('analytics.avgScoreTrend')}</CardTitle>
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold tabular-nums">{lastScore ?? '—'}</span>
-              <Delta value={scoreDelta} />
+              <Delta value={scoreDelta} stableLabel={t('analytics.stableLabel')} />
             </div>
           </div>
           <CardDescription className="text-xs">{t('analytics.last12MonthsAssessments')}</CardDescription>
@@ -103,7 +103,7 @@ export function DashboardTrends({
             <CardTitle className="text-sm font-semibold">{t('analytics.alertsPerWeek')}</CardTitle>
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold tabular-nums">{alertsTotal}</span>
-              <Delta value={alertsDelta} invert />
+              <Delta value={alertsDelta} invert stableLabel={t('analytics.stableLabel')} />
             </div>
           </div>
           <CardDescription className="text-xs">{t('analytics.last8WeeksVsPrev')}</CardDescription>

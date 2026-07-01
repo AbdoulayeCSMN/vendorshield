@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { Cloud, Loader2, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface UploadZoneProps {
   onFileUpload: (file: File, rows: any[], columnMapping: Record<string, string>) => void;
@@ -9,6 +10,7 @@ interface UploadZoneProps {
 }
 
 export function UploadZone({ onFileUpload, onValidationResult }: UploadZoneProps) {
+  const { t } = useTranslation('vendorshield');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -288,12 +290,10 @@ export function UploadZone({ onFileUpload, onValidationResult }: UploadZoneProps
           <Cloud className="w-12 h-12 mx-auto text-gray-400 mb-4" />
         )}
         <h3 className="text-lg font-medium text-gray-900 mb-1">
-          {isProcessing ? 'Validation en cours...' : 'Déposer le fichier ici'}
+          {isProcessing ? t('imports.processing') : t('imports.dropHere')}
         </h3>
         <p className="text-sm text-gray-600 mb-4">
-          {isProcessing
-            ? 'Validation des données...'
-            : 'ou cliquer pour parcourir'}
+          {isProcessing ? t('imports.validating') : t('imports.browseOrClick')}
         </p>
         {!isProcessing && (
           <>
@@ -307,13 +307,13 @@ export function UploadZone({ onFileUpload, onValidationResult }: UploadZoneProps
             />
             <label htmlFor="file-upload" className="inline-block">
               <div className="px-4 py-2 bg-blue-600 text-white rounded-md font-medium cursor-pointer hover:bg-blue-700">
-                Sélectionner un fichier
+                {t('imports.selectFile')}
               </div>
             </label>
           </>
         )}
         <p className="text-xs text-gray-500 mt-4">
-          CSV, Excel (.xlsx, .xls) ou JSON
+          {t('imports.acceptedFormats')}
         </p>
       </div>
 

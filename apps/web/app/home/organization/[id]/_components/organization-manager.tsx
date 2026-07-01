@@ -6,14 +6,12 @@ import {
   Clock,
   Crown,
   Mail,
-  MoreHorizontal,
   Plus,
-  Shield,
   Trash2,
-  UserCheck,
   Users,
-  X,
 } from 'lucide-react';
+
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@kit/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@kit/ui/card';
@@ -25,13 +23,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@kit/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@kit/ui/dropdown-menu';
 import { Input } from '@kit/ui/input';
 import { Label } from '@kit/ui/label';
 import {
@@ -51,13 +42,10 @@ import {
 import {
   PLAN_LABELS,
   ROLE_LABELS,
-  ROLE_PERMISSIONS,
   type OrgInvitation,
   type OrgMemberRole,
   type Organization,
 } from '~/lib/vendorshield/types';
-
-// ─── Role badge ───────────────────────────────────────────────────────────────
 
 const ROLE_COLORS: Record<OrgMemberRole, string> = {
   owner:   'bg-amber-50 text-amber-700 border-amber-200',
@@ -75,8 +63,6 @@ function RoleBadge({ role }: { role: OrgMemberRole }) {
   );
 }
 
-// ─── Dialog invitation ────────────────────────────────────────────────────────
-
 function InviteDialog({
   orgId,
   open,
@@ -86,6 +72,7 @@ function InviteDialog({
   open: boolean;
   onClose: (token?: string) => void;
 }) {
+  const { t } = useTranslation('vendorshield');
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [successToken, setSuccessToken] = useState<string | null>(null);
@@ -112,20 +99,18 @@ function InviteDialog({
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Inviter un collaborateur</DialogTitle>
-          <DialogDescription>
-            Un lien d'invitation valide 7 jours sera généré.
-          </DialogDescription>
+          <DialogTitle>{t('org.inviteTitle')}</DialogTitle>
+          <DialogDescription>{t('org.inviteDesc')}</DialogDescription>
         </DialogHeader>
 
         {successToken ? (
           <div className="space-y-3">
             <div className="rounded-lg bg-green-50 border border-green-200 p-3">
               <p className="text-sm font-medium text-green-700 mb-2">
-                ✓ Invitation créée
+                {t('org.inviteSuccess')}
               </p>
               <p className="text-xs text-green-600 mb-2">
-                Partagez ce lien avec votre collaborateur :
+                {t('org.inviteShare')}
               </p>
               <div className="flex items-center gap-2">
                 <Input
@@ -138,12 +123,12 @@ function InviteDialog({
                   variant="outline"
                   onClick={() => navigator.clipboard.writeText(inviteUrl ?? '')}
                 >
-                  Copier
+                  {t('org.copy')}
                 </Button>
               </div>
             </div>
             <Button className="w-full" onClick={() => onClose(successToken)}>
-              Terminé
+              {t('org.done')}
             </Button>
           </div>
         ) : (
@@ -156,7 +141,7 @@ function InviteDialog({
 
             <div>
               <Label className="text-sm font-medium">
-                Adresse email <span className="text-red-500">*</span>
+                {t('org.labelEmail')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 name="email"
@@ -168,7 +153,7 @@ function InviteDialog({
             </div>
 
             <div>
-              <Label className="text-sm font-medium">Rôle</Label>
+              <Label className="text-sm font-medium">{t('org.labelRole')}</Label>
               <Select name="role" defaultValue="analyst">
                 <SelectTrigger className="mt-1.5">
                   <SelectValue />
@@ -181,10 +166,10 @@ function InviteDialog({
                       <div>
                         <p className="font-medium">{ROLE_LABELS[role]}</p>
                         <p className="text-xs text-gray-400">
-                          {role === 'admin'   && 'Accès complet sauf facturation'}
-                          {role === 'analyst' && 'Créer et modifier évaluations'}
-                          {role === 'viewer'  && 'Lecture seule'}
-                          {role === 'auditor' && 'Lecture + journal d\'audit'}
+                          {role === 'admin'   && t('org.roleAdminDesc')}
+                          {role === 'analyst' && t('org.roleAnalystDesc')}
+                          {role === 'viewer'  && t('org.roleViewerDesc')}
+                          {role === 'auditor' && t('org.roleAuditorDesc')}
                         </p>
                       </div>
                     </SelectItem>
@@ -195,10 +180,10 @@ function InviteDialog({
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onClose()} disabled={isPending}>
-                Annuler
+                {t('org.cancel')}
               </Button>
               <Button type="submit" disabled={isPending}>
-                {isPending ? 'Génération...' : 'Générer le lien'}
+                {isPending ? t('org.generating') : t('org.generateLink')}
               </Button>
             </DialogFooter>
           </form>
@@ -208,8 +193,6 @@ function InviteDialog({
   );
 }
 
-// ─── Composant principal ──────────────────────────────────────────────────────
-
 interface Props {
   org: Organization;
   members: OrgMemberWithEmail[];
@@ -217,6 +200,7 @@ interface Props {
 }
 
 export function OrganizationManager({ org, members, pendingInvitations }: Props) {
+  const { t, i18n } = useTranslation('vendorshield');
   const [isPending, startTransition] = useTransition();
   const [showInvite, setShowInvite] = useState(false);
 
@@ -227,16 +211,18 @@ export function OrganizationManager({ org, members, pendingInvitations }: Props)
   };
 
   const handleRemove = (memberId: string) => {
-    if (!confirm('Retirer ce membre de l\'organisation ?')) return;
+    if (!confirm(t('auditLog.actionDelete') + '?')) return;
     startTransition(async () => {
       await removeMemberAction(org.id, memberId);
     });
   };
 
+  const expiresFormatter = new Intl.DateTimeFormat(i18n.language, { day: 'numeric', month: 'short' });
+
   return (
     <div className="space-y-6 max-w-3xl">
 
-      {/* Info organisation */}
+      {/* Org info */}
       <Card>
         <CardHeader>
           <div className="flex items-start justify-between">
@@ -244,7 +230,7 @@ export function OrganizationManager({ org, members, pendingInvitations }: Props)
               <CardTitle className="text-base">{org.name}</CardTitle>
               <CardDescription>
                 Plan {PLAN_LABELS[org.plan as keyof typeof PLAN_LABELS] ?? org.plan} ·
-                {' '}{org.max_suppliers} fournisseurs · {org.max_members} membre{org.max_members > 1 ? 's' : ''}
+                {' '}{org.max_suppliers} {t('suppliers.hSupplier').toLowerCase()} · {org.max_members} {t('auditLog.entityMember').toLowerCase()}{org.max_members > 1 ? 's' : ''}
               </CardDescription>
             </div>
             <span className={`rounded-full border px-3 py-1 text-xs font-medium ${
@@ -258,21 +244,21 @@ export function OrganizationManager({ org, members, pendingInvitations }: Props)
         </CardHeader>
       </Card>
 
-      {/* Membres */}
+      {/* Members */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-base flex items-center gap-2">
                 <Users className="h-4 w-4" />
-                Membres ({members.length}/{org.max_members})
+                {t('auditLog.entityMember')}s ({members.length}/{org.max_members})
               </CardTitle>
-              <CardDescription>Gérez les accès à votre organisation.</CardDescription>
+              <CardDescription>{t('org.inviteDesc')}</CardDescription>
             </div>
             {members.length < org.max_members && (
               <Button size="sm" onClick={() => setShowInvite(true)}>
                 <Plus className="mr-1.5 h-4 w-4" />
-                Inviter
+                {t('org.generateLink')}
               </Button>
             )}
           </div>
@@ -284,22 +270,19 @@ export function OrganizationManager({ org, members, pendingInvitations }: Props)
               key={member.id}
               className="flex items-center gap-3 rounded-xl border border-gray-100 dark:border-gray-800 p-3"
             >
-              {/* Avatar */}
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-sm font-semibold text-gray-600 dark:text-gray-400">
                 {(member.display_name ?? member.email ?? '?').charAt(0).toUpperCase()}
               </div>
 
-              {/* Infos */}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                  {member.display_name ?? member.email ?? 'Utilisateur'}
+                  {member.display_name ?? member.email ?? t('common.loading')}
                 </p>
                 {member.email && (
                   <p className="text-xs text-gray-400 truncate">{member.email}</p>
                 )}
               </div>
 
-              {/* Rôle */}
               {member.role === 'owner' ? (
                 <div className="flex items-center gap-1.5">
                   <Crown className="h-3.5 w-3.5 text-amber-500" />
@@ -324,7 +307,6 @@ export function OrganizationManager({ org, members, pendingInvitations }: Props)
                 </Select>
               )}
 
-              {/* Actions */}
               {member.role !== 'owner' && (
                 <Button
                   variant="ghost"
@@ -341,19 +323,19 @@ export function OrganizationManager({ org, members, pendingInvitations }: Props)
 
           {members.length >= org.max_members && (
             <p className="text-xs text-center text-gray-400 pt-2">
-              Limite du plan atteinte. Passer à Pro pour inviter plus de membres.
+              {t('onboarding.benefit1')}
             </p>
           )}
         </CardContent>
       </Card>
 
-      {/* Invitations en attente */}
+      {/* Pending invitations */}
       {pendingInvitations.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-sm font-semibold flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              Invitations en attente ({pendingInvitations.length})
+              {t('questionnaire.status.pending')} ({pendingInvitations.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -368,9 +350,7 @@ export function OrganizationManager({ org, members, pendingInvitations }: Props)
                     {inv.email}
                   </p>
                   <p className="text-xs text-gray-400">
-                    Expire le {new Date(inv.expires_at).toLocaleDateString('fr-FR', {
-                      day: 'numeric', month: 'short',
-                    })}
+                    {t('questionnaire.sentOn', { date: expiresFormatter.format(new Date(inv.expires_at)) })}
                   </p>
                 </div>
                 <RoleBadge role={inv.role as OrgMemberRole} />

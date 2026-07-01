@@ -3,6 +3,7 @@ import { PageBody, PageHeader } from '@kit/ui/page';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 
 import { withI18n } from '~/lib/i18n/with-i18n';
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { isSuperAdmin } from '~/lib/billing/admin.server';
 import { getSubscriptionForAccount } from '~/lib/billing/billing.server';
 
@@ -11,6 +12,7 @@ import { BillingPlans } from './_components/billing-plans';
 import { PaymentLinkGenerator } from './_components/payment-link-generator';
 
 async function BillingPage() {
+  const { t } = await createI18nServerInstance();
   const client = getSupabaseServerClient();
   const { data } = await client.auth.getClaims();
   const accountId = data?.claims?.sub as string | undefined;
@@ -20,15 +22,13 @@ async function BillingPage() {
     ? await getSubscriptionForAccount(accountId)
     : null;
 
-  // Outils de vente assistée (lien à envoyer à un prospect) — réservés au
-  // founder, pas affichés sur la page d'abonnement des clients.
   const showSalesTools = isSuperAdmin(email);
 
   return (
     <>
       <PageHeader
-        title="Abonnement & facturation"
-        description="Choisissez le plan adapté à votre portefeuille fournisseurs."
+        title={t('pages.billing', { ns: 'vendorshield' })}
+        description={t('pages.billingDesc', { ns: 'vendorshield' })}
       />
       <PageBody className="flex flex-col gap-6">
         <BillingPlans subscription={subscription} />

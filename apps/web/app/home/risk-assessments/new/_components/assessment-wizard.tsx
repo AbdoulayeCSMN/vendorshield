@@ -16,6 +16,8 @@ import {
   Zap,
 } from 'lucide-react';
 
+import { useTranslation } from 'react-i18next';
+
 import { Button } from '@kit/ui/button';
 import {
   Card,
@@ -42,14 +44,11 @@ import {
   finalizeAssessmentAction,
   updateFactorScoresAction,
 } from '~/lib/vendorshield/actions/assessment.actions';
+import { useEnumLabels } from '~/lib/vendorshield/use-labels';
 import type { ScoringTemplate, Supplier } from '~/lib/vendorshield/types';
-import {
-  CATEGORY_LABELS,
-  DIMENSION_LABELS,
-  type RiskDimension,
-} from '~/lib/vendorshield/types';
+import type { RiskDimension } from '~/lib/vendorshield/types';
 
-// ─── Types internes ───────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface FactorScore {
   factor_id: string;
@@ -67,100 +66,102 @@ interface DimensionScores {
   esg: FactorScore[];
 }
 
-// ─── 24 facteurs par défaut (alignés sur seed_default_risk_factors) ───────────
-// IDs seront remplacés par ceux de la DB après création
+// ─── Static factor metadata (key + weight only; labels resolved via i18n) ────
 
-const DEFAULT_FACTORS: Record<RiskDimension, { key: string; label: string; weight: number }[]> = {
+const FACTOR_META: Record<RiskDimension, { key: string; weight: number }[]> = {
   financial: [
-    { key: 'credit_rating',         label: 'Notation de crédit & solvabilité',   weight: 3 },
-    { key: 'payment_delays',        label: 'Historique de retards de paiement',  weight: 2 },
-    { key: 'revenue_stability',     label: "Stabilité du chiffre d'affaires",    weight: 2 },
-    { key: 'debt_ratio',            label: "Niveau d'endettement",               weight: 2 },
-    { key: 'customer_concentration',label: 'Concentration client (dépendance)',  weight: 2 },
-    { key: 'profitability',         label: 'Rentabilité & marges',               weight: 2 },
+    { key: 'credit_rating',          weight: 3 },
+    { key: 'payment_delays',         weight: 2 },
+    { key: 'revenue_stability',      weight: 2 },
+    { key: 'debt_ratio',             weight: 2 },
+    { key: 'customer_concentration', weight: 2 },
+    { key: 'profitability',          weight: 2 },
   ],
   operational: [
-    { key: 'delivery_reliability',  label: 'Fiabilité des délais de livraison',  weight: 3 },
-    { key: 'quality_certifications',label: 'Certifications qualité (ISO, etc.)', weight: 3 },
-    { key: 'capacity_flexibility',  label: 'Flexibilité et capacité de production', weight: 2 },
-    { key: 'substitutability',      label: 'Facilité de substitution fournisseur', weight: 3 },
-    { key: 'it_security',           label: 'Sécurité informatique & cyber-risques', weight: 2 },
-    { key: 'bcp_existence',         label: "Plan de continuité d'activité (BCP)", weight: 2 },
-    { key: 'subcontractor_risk',    label: 'Risque sous-traitants',              weight: 2 },
+    { key: 'delivery_reliability',   weight: 3 },
+    { key: 'quality_certifications', weight: 3 },
+    { key: 'capacity_flexibility',   weight: 2 },
+    { key: 'substitutability',       weight: 3 },
+    { key: 'it_security',            weight: 2 },
+    { key: 'bcp_existence',          weight: 2 },
+    { key: 'subcontractor_risk',     weight: 2 },
   ],
   geopolitical: [
-    { key: 'country_risk',          label: 'Indice de risque pays (stabilité)',  weight: 4 },
-    { key: 'sanctions_exposure',    label: 'Exposition aux sanctions & embargos', weight: 4 },
-    { key: 'trade_restrictions',    label: 'Restrictions commerciales & douanières', weight: 3 },
-    { key: 'currency_risk',         label: 'Risque de change',                   weight: 2 },
-    { key: 'infrastructure',        label: 'Qualité infrastructures transport/énergie', weight: 2 },
+    { key: 'country_risk',           weight: 4 },
+    { key: 'sanctions_exposure',     weight: 4 },
+    { key: 'trade_restrictions',     weight: 3 },
+    { key: 'currency_risk',          weight: 2 },
+    { key: 'infrastructure',         weight: 2 },
   ],
   esg: [
-    { key: 'carbon_footprint',      label: 'Empreinte carbone & politique climat', weight: 3 },
-    { key: 'labor_practices',       label: 'Conditions & pratiques de travail',  weight: 3 },
-    { key: 'human_rights',          label: 'Droits humains (devoir de vigilance)', weight: 3 },
-    { key: 'corruption_bribery',    label: 'Anti-corruption & conformité légale', weight: 3 },
-    { key: 'environmental_compliance', label: 'Conformité environnementale réglementaire', weight: 2 },
-    { key: 'data_privacy',          label: 'Protection des données (RGPD)',      weight: 2 },
+    { key: 'carbon_footprint',        weight: 3 },
+    { key: 'labor_practices',         weight: 3 },
+    { key: 'human_rights',            weight: 3 },
+    { key: 'corruption_bribery',      weight: 3 },
+    { key: 'environmental_compliance',weight: 2 },
+    { key: 'data_privacy',            weight: 2 },
   ],
 };
 
-// ─── Guides de score (affichés sous le slider) ────────────────────────────────
+// ─── Score guide thresholds (factor key → score → i18n key suffix) ───────────
 
-const SCORE_GUIDES: Record<string, Record<number, string>> = {
-  credit_rating:          { 0: 'Défaut / liquidation', 25: 'Risque très élevé (C)', 50: 'Risque élevé (B)', 75: 'Risque modéré (BB)', 100: 'Risque minimal (AA-AAA)' },
-  delivery_reliability:   { 0: 'OTD < 60%', 25: 'OTD 60-75%', 50: 'OTD 75-85%', 75: 'OTD 85-95%', 100: 'OTD > 95%' },
-  substitutability:       { 0: 'Unique — impossible à remplacer', 25: '1 alternative difficile', 50: '2-3 alternatives avec délai', 75: 'Plusieurs alternatives', 100: 'Substitution immédiate' },
-  country_risk:           { 0: 'Zone de conflit armé', 25: 'Risque très élevé', 50: 'Risque élevé', 75: 'Risque modéré', 100: 'Pays OCDE stable' },
-  sanctions_exposure:     { 0: 'Entité sanctionnée', 25: 'Surveillance active', 50: 'Exposition indirecte', 75: 'Zone grise', 100: 'Aucune exposition' },
-  labor_practices:        { 0: 'Violations graves documentées', 25: 'Non-conformités significatives', 50: 'Conformité basique', 75: 'Bonnes pratiques', 100: 'Certifié SA8000' },
-  human_rights:           { 0: 'Violations documentées', 25: 'Risques sans plan', 50: 'Politique partielle', 75: 'Dispositif solide', 100: 'Référence sectorielle' },
+const GUIDE_THRESHOLDS: Record<string, number[]> = {
+  credit_rating:        [0, 25, 50, 75, 100],
+  delivery_reliability: [0, 25, 50, 75, 100],
+  substitutability:     [0, 25, 50, 75, 100],
+  country_risk:         [0, 25, 50, 75, 100],
+  sanctions_exposure:   [0, 25, 50, 75, 100],
+  labor_practices:      [0, 25, 50, 75, 100],
+  human_rights:         [0, 25, 50, 75, 100],
 };
 
-function getScoreGuide(factorKey: string, score: number): string {
-  const guide = SCORE_GUIDES[factorKey];
-  if (!guide) return '';
-  const thresholds = Object.keys(guide).map(Number).sort((a, b) => a - b);
+function getGuideKey(factorKey: string, score: number): string | null {
+  const thresholds = GUIDE_THRESHOLDS[factorKey];
+  if (!thresholds) return null;
   const closest = thresholds.reduce((prev, curr) =>
     Math.abs(curr - score) < Math.abs(prev - score) ? curr : prev,
   );
-  return guide[closest] ?? '';
+  return `assessment.guide.${factorKey}_${closest}`;
 }
 
-// ─── Composant slider de score ────────────────────────────────────────────────
+// ─── Slider component ──────────────────────────────────────────────────────────
 
 function FactorScoreSlider({
   factor,
   value,
   evidence,
+  guideText,
+  sliderMin,
+  sliderMax,
+  evidencePlaceholder,
   onChange,
   onEvidenceChange,
 }: {
   factor: { key: string; label: string; weight: number };
   value: number;
   evidence: string;
+  guideText: string;
+  sliderMin: string;
+  sliderMax: string;
+  evidencePlaceholder: string;
   onChange: (score: number) => void;
   onEvidenceChange: (text: string) => void;
 }) {
   const color =
     value >= 70 ? 'text-green-600' : value >= 40 ? 'text-orange-600' : 'text-red-600';
-  const guide = getScoreGuide(factor.key, value);
 
   return (
     <div className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 space-y-3">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
           <p className="text-sm font-medium text-gray-900 dark:text-white">{factor.label}</p>
-          {guide && (
-            <p className="mt-0.5 text-xs text-gray-400 italic">{guide}</p>
+          {guideText && (
+            <p className="mt-0.5 text-xs text-gray-400 italic">{guideText}</p>
           )}
         </div>
-        <div className={`text-xl font-bold tabular-nums shrink-0 ${color}`}>
-          {value}
-        </div>
+        <div className={`text-xl font-bold tabular-nums shrink-0 ${color}`}>{value}</div>
       </div>
 
-      {/* Slider HTML natif */}
       <div className="relative">
         <input
           type="range"
@@ -177,13 +178,12 @@ function FactorScoreSlider({
           }}
         />
         <div className="flex justify-between text-[10px] text-gray-300 mt-0.5">
-          <span>0 — Risque max</span>
+          <span>{sliderMin}</span>
           <span>50</span>
-          <span>100 — Risque min</span>
+          <span>{sliderMax}</span>
         </div>
       </div>
 
-      {/* Boutons de sélection rapide */}
       <div className="flex gap-1.5">
         {[0, 25, 50, 75, 100].map((v) => (
           <button
@@ -201,9 +201,8 @@ function FactorScoreSlider({
         ))}
       </div>
 
-      {/* Evidence */}
       <Textarea
-        placeholder="Justification, source de données... (optionnel)"
+        placeholder={evidencePlaceholder}
         value={evidence}
         onChange={(e) => onEvidenceChange(e.target.value)}
         className="resize-none text-xs min-h-0"
@@ -213,7 +212,7 @@ function FactorScoreSlider({
   );
 }
 
-// ─── Calcul du score de dimension ────────────────────────────────────────────
+// ─── Dimension score calculation ──────────────────────────────────────────────
 
 function calcDimensionScore(factors: FactorScore[]): number {
   if (factors.length === 0) return 0;
@@ -222,7 +221,7 @@ function calcDimensionScore(factors: FactorScore[]): number {
   return Math.round(factors.reduce((s, f) => s + f.score * f.weight, 0) / totalWeight);
 }
 
-// ─── Étapes du wizard ─────────────────────────────────────────────────────────
+// ─── Dimension steps ──────────────────────────────────────────────────────────
 
 const DIMENSION_STEPS: { dim: RiskDimension; icon: React.ReactNode; color: string }[] = [
   { dim: 'financial',    icon: <TrendingUp className="h-4 w-4" />,   color: 'text-blue-600 bg-blue-50' },
@@ -230,8 +229,6 @@ const DIMENSION_STEPS: { dim: RiskDimension; icon: React.ReactNode; color: strin
   { dim: 'geopolitical', icon: <Globe className="h-4 w-4" />,        color: 'text-purple-600 bg-purple-50' },
   { dim: 'esg',          icon: <Shield className="h-4 w-4" />,       color: 'text-green-600 bg-green-50' },
 ];
-
-// Step 0 = config, Steps 1-4 = dimensions, Step 5 = synthèse
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -241,21 +238,19 @@ interface Props {
   preselectedSupplierId?: string;
 }
 
-// ─── Composant principal ──────────────────────────────────────────────────────
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }: Props) {
+  const { t } = useTranslation('vendorshield');
+  const { categoryLabels, dimensionLabels } = useEnumLabels();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  // ── State de l'étape courante ──
-  const [step, setStep] = useState(0); // 0=config, 1-4=dimensions, 5=synthèse
+  const [step, setStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
-
-  // ── State de l'évaluation créée ──
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
-  const [factorIds, setFactorIds] = useState<Record<string, string>>({}); // key → uuid DB
+  const [factorIds, setFactorIds] = useState<Record<string, string>>({});
 
-  // ── Step 0 : configuration ──
   const [config, setConfig] = useState({
     supplier_id: preselectedSupplierId ?? '',
     title: '',
@@ -268,14 +263,13 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
     template_id: '',
   });
 
-  // ── State des scores par dimension ──
   const [scores, setScores] = useState<DimensionScores>(() => {
     const init: DimensionScores = { financial: [], operational: [], geopolitical: [], esg: [] };
-    for (const [dim, factors] of Object.entries(DEFAULT_FACTORS) as [RiskDimension, typeof DEFAULT_FACTORS[RiskDimension]][]) {
+    for (const [dim, factors] of Object.entries(FACTOR_META) as [RiskDimension, typeof FACTOR_META[RiskDimension]][]) {
       init[dim] = factors.map((f) => ({
         factor_id: '',
         factor_key: f.key,
-        factor_label: f.label,
+        factor_label: f.key,
         score: 50,
         evidence: '',
         weight: f.weight,
@@ -284,7 +278,6 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
     return init;
   });
 
-  // ── Score prévisionnels globaux ──
   const previewScores = {
     financial:    calcDimensionScore(scores.financial),
     operational:  calcDimensionScore(scores.operational),
@@ -298,7 +291,6 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
      previewScores.esg          * config.weight_esg) / 100
   );
 
-  // ── Appliquer un template ──
   const applyTemplate = (templateId: string) => {
     const tpl = templates.find((t) => t.id === templateId);
     if (!tpl) return;
@@ -312,7 +304,6 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
     }));
   };
 
-  // ── Mise à jour d'un score ──
   const updateScore = useCallback(
     (dim: RiskDimension, factorKey: string, score: number) => {
       setScores((prev) => ({
@@ -339,16 +330,12 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
 
   const totalSteps = 6;
 
-  // ─── Passage Step 0 → Step 1 : créer l'évaluation en DB ──────────────────
-
   const handleCreateAssessment = () => {
     setError(null);
-    if (!config.supplier_id) { setError('Veuillez sélectionner un fournisseur.'); return; }
-    if (!config.title.trim()) { setError('Veuillez saisir un titre.'); return; }
-    if (config.weight_financial + config.weight_operational + config.weight_geopolitical + config.weight_esg !== 100) {
-      setError('Les pondérations doivent totaliser 100 %.');
-      return;
-    }
+    if (!config.supplier_id) { setError(t('assessment.errorNoSupplier')); return; }
+    if (!config.title.trim()) { setError(t('assessment.errorNoTitle')); return; }
+    const weightSum = config.weight_financial + config.weight_operational + config.weight_geopolitical + config.weight_esg;
+    if (weightSum !== 100) { setError(t('assessment.errorWeights')); return; }
 
     const fd = new FormData();
     fd.set('supplier_id', config.supplier_id);
@@ -364,7 +351,6 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
       const result = await createAssessmentAction(fd);
       if (!result.success) { setError(result.error); return; }
 
-      // Récupérer les IDs des facteurs créés par seed_default_risk_factors
       const { getSupabaseBrowserClient } = await import('@kit/supabase/browser-client');
       const client = getSupabaseBrowserClient();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -378,7 +364,6 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
         for (const row of data) ids[row.factor_key] = row.id;
         setFactorIds(ids);
 
-        // Injecter les IDs dans les scores
         setScores((prev) => {
           const next = { ...prev };
           for (const [dim, factors] of Object.entries(next) as [RiskDimension, FactorScore[]][]) {
@@ -395,8 +380,6 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
       setStep(1);
     });
   };
-
-  // ─── Sauvegarde d'une dimension et passage à la suivante ─────────────────
 
   const handleSaveDimensionAndNext = (dim: RiskDimension) => {
     if (!assessmentId) return;
@@ -417,8 +400,6 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
     });
   };
 
-  // ─── Finalisation ────────────────────────────────────────────────────────
-
   const [synthNotes, setSynthNotes] = useState({ analyst_notes: '', executive_summary: '', mitigation_plan: '' });
 
   const handleFinalize = () => {
@@ -431,27 +412,43 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
     startTransition(async () => {
       setError(null);
       await finalizeAssessmentAction(assessmentId, fd);
-      // redirect() est appelé dans l'action — ce code ne s'exécute pas
     });
   };
-
-  // ─── Rendu par étape ──────────────────────────────────────────────────────
 
   const currentDimStep = step >= 1 && step <= 4 ? DIMENSION_STEPS[step - 1] : null;
   const currentDimKey  = currentDimStep?.dim ?? null;
 
+  const stepLabels = [
+    t('assessment.stepConfig'),
+    t('dashboard.dimFinancial'),
+    t('dashboard.dimOperational'),
+    t('dashboard.dimGeopolitical'),
+    t('dashboard.dimEsg'),
+    t('assessment.stepSummary'),
+  ];
+
+  const weightDimensions = [
+    { key: 'weight_financial' as const,    label: t('dashboard.dimFinancial') },
+    { key: 'weight_operational' as const,  label: t('dashboard.dimOperational') },
+    { key: 'weight_geopolitical' as const, label: t('dashboard.dimGeopolitical') },
+    { key: 'weight_esg' as const,          label: t('dashboard.dimEsg') },
+  ];
+
+  const sliderMin = t('assessment.sliderMin');
+  const sliderMax = t('assessment.sliderMax');
+  const evidencePlaceholder = t('assessment.evidencePlaceholder');
+
   return (
     <div className="space-y-6">
-      {/* ── Progress bar ── */}
+      {/* Progress bar */}
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs text-gray-500">
-          <span>Étape {step + 1} sur {totalSteps}</span>
+          <span>{t('assessment.stepOf', { current: step + 1, total: totalSteps })}</span>
           <span>{Math.round(((step) / (totalSteps - 1)) * 100)}%</span>
         </div>
         <Progress value={Math.round((step / (totalSteps - 1)) * 100)} className="h-2" />
-        {/* Indicateurs d'étapes */}
         <div className="flex items-center gap-1">
-          {['Configuration', 'Financier', 'Opérationnel', 'Géopolitique', 'ESG', 'Synthèse'].map((label, i) => (
+          {stepLabels.map((label, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
               <div className={`h-1.5 rounded-full w-full transition-colors ${i < step ? 'bg-primary' : i === step ? 'bg-primary/50' : 'bg-gray-200 dark:bg-gray-800'}`} />
               <span className={`text-[10px] hidden sm:block truncate ${i === step ? 'text-primary font-medium' : 'text-gray-400'}`}>{label}</span>
@@ -460,7 +457,6 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
         </div>
       </div>
 
-      {/* ── Erreur globale ── */}
       {error && (
         <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
@@ -468,23 +464,22 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
         </div>
       )}
 
-      {/* ────────────────────────────────────────────────────────────── */}
-      {/* STEP 0 — Configuration                                         */}
-      {/* ────────────────────────────────────────────────────────────── */}
+      {/* ── STEP 0 — Configuration ── */}
       {step === 0 && (
         <div className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Paramètres de l'évaluation</CardTitle>
-              <CardDescription>Sélectionnez le fournisseur et configurez les pondérations.</CardDescription>
+              <CardTitle className="text-base">{t('assessment.paramsTitle')}</CardTitle>
+              <CardDescription>{t('assessment.paramsDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Fournisseur */}
               <div>
-                <Label className="text-sm font-medium">Fournisseur <span className="text-red-500">*</span></Label>
+                <Label className="text-sm font-medium">
+                  {t('assessment.labelSupplier')} <span className="text-red-500">*</span>
+                </Label>
                 <Select value={config.supplier_id} onValueChange={(v) => setConfig((c) => ({ ...c, supplier_id: v }))}>
                   <SelectTrigger className="mt-1.5">
-                    <SelectValue placeholder="Choisir un fournisseur actif..." />
+                    <SelectValue placeholder={t('assessment.supplierPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {suppliers.map((s) => (
@@ -492,7 +487,7 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
                         <span className="flex items-center gap-2">
                           {s.country_code && <span>{countryFlag(s.country_code)}</span>}
                           <span>{s.name}</span>
-                          <span className="text-xs text-gray-400">— {CATEGORY_LABELS[s.category]}</span>
+                          <span className="text-xs text-gray-400">— {categoryLabels[s.category]}</span>
                         </span>
                       </SelectItem>
                     ))}
@@ -500,66 +495,56 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
                 </Select>
               </div>
 
-              {/* Titre */}
               <div>
-                <Label className="text-sm font-medium">Titre de l'évaluation <span className="text-red-500">*</span></Label>
+                <Label className="text-sm font-medium">
+                  {t('assessment.labelTitle')} <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   className="mt-1.5"
-                  placeholder={`Évaluation risque ${new Date().getFullYear()}`}
+                  placeholder={`Assessment ${new Date().getFullYear()}`}
                   value={config.title}
                   onChange={(e) => setConfig((c) => ({ ...c, title: e.target.value }))}
                 />
               </div>
 
-              {/* Dates */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium">Date d'évaluation</Label>
+                  <Label className="text-sm font-medium">{t('assessment.labelDate')}</Label>
                   <Input type="date" className="mt-1.5" value={config.assessment_date} onChange={(e) => setConfig((c) => ({ ...c, assessment_date: e.target.value }))} />
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Prochaine révision</Label>
+                  <Label className="text-sm font-medium">{t('assessment.labelNextReview')}</Label>
                   <Input type="date" className="mt-1.5" value={config.next_review_date} onChange={(e) => setConfig((c) => ({ ...c, next_review_date: e.target.value }))} />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Template & pondérations */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Pondérations des dimensions</CardTitle>
-              <CardDescription>Choisissez un template sectoriel ou personnalisez les pondérations (total = 100%).</CardDescription>
+              <CardTitle className="text-base">{t('assessment.weightsTitle')}</CardTitle>
+              <CardDescription>{t('assessment.weightsDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Template */}
               <div>
-                <Label className="text-sm font-medium">Template sectoriel</Label>
+                <Label className="text-sm font-medium">{t('assessment.templateLabel')}</Label>
                 <Select value={config.template_id} onValueChange={applyTemplate}>
                   <SelectTrigger className="mt-1.5">
-                    <SelectValue placeholder="Choisir un template..." />
+                    <SelectValue placeholder={t('assessment.templatePlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    {templates.map((t) => (
-                      <SelectItem key={t.id} value={t.id}>
-                        {t.name}
-                        {t.industry && <span className="ml-1 text-xs text-gray-400">— {t.industry}</span>}
+                    {templates.map((tmpl) => (
+                      <SelectItem key={tmpl.id} value={tmpl.id}>
+                        {tmpl.name}
+                        {tmpl.industry && <span className="ml-1 text-xs text-gray-400">— {tmpl.industry}</span>}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              {/* Sliders pondérations */}
               <div className="space-y-3">
-                {(
-                  [
-                    { key: 'weight_financial',    label: 'Financier',      color: 'accent-blue-500' },
-                    { key: 'weight_operational',   label: 'Opérationnel',   color: 'accent-orange-500' },
-                    { key: 'weight_geopolitical',  label: 'Géopolitique',   color: 'accent-purple-500' },
-                    { key: 'weight_esg',           label: 'Conformité ESG', color: 'accent-green-500' },
-                  ] as const
-                ).map(({ key, label }) => (
+                {weightDimensions.map(({ key, label }) => (
                   <div key={key} className="flex items-center gap-3">
                     <span className="w-28 text-sm text-gray-600 dark:text-gray-400 shrink-0">{label}</span>
                     <input
@@ -577,18 +562,16 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
                   </div>
                 ))}
 
-                {/* Total */}
-                <div className={`flex items-center justify-end gap-2 pt-1 text-sm font-medium ${
-                  config.weight_financial + config.weight_operational + config.weight_geopolitical + config.weight_esg === 100
-                    ? 'text-green-600'
-                    : 'text-red-600'
-                }`}>
-                  Total : {config.weight_financial + config.weight_operational + config.weight_geopolitical + config.weight_esg}%
-                  {config.weight_financial + config.weight_operational + config.weight_geopolitical + config.weight_esg === 100
-                    ? <Check className="h-4 w-4" />
-                    : <AlertTriangle className="h-4 w-4" />
-                  }
-                </div>
+                {(() => {
+                  const total = config.weight_financial + config.weight_operational + config.weight_geopolitical + config.weight_esg;
+                  const ok = total === 100;
+                  return (
+                    <div className={`flex items-center justify-end gap-2 pt-1 text-sm font-medium ${ok ? 'text-green-600' : 'text-red-600'}`}>
+                      {t('assessment.weightTotal')} : {total}%
+                      {ok ? <Check className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
+                    </div>
+                  );
+                })()}
               </div>
             </CardContent>
           </Card>
@@ -596,82 +579,76 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
           <div className="flex justify-end">
             <Button onClick={handleCreateAssessment} disabled={isPending} size="lg">
               {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              {isPending ? 'Création...' : 'Commencer l\'évaluation →'}
+              {isPending ? t('assessment.btnStarting') : t('assessment.btnStart')}
             </Button>
           </div>
         </div>
       )}
 
-      {/* ────────────────────────────────────────────────────────────── */}
-      {/* STEPS 1-4 — Scoring par dimension                               */}
-      {/* ────────────────────────────────────────────────────────────── */}
+      {/* ── STEPS 1-4 — Dimension scoring ── */}
       {step >= 1 && step <= 4 && currentDimStep && currentDimKey && (
         <div className="space-y-4">
-          {/* En-tête dimension */}
           <div className="flex items-center justify-between">
             <div className={`flex items-center gap-2 rounded-lg px-3 py-2 ${currentDimStep.color}`}>
               {currentDimStep.icon}
-              <span className="text-sm font-semibold">{DIMENSION_LABELS[currentDimKey]}</span>
+              <span className="text-sm font-semibold">{dimensionLabels[currentDimKey]}</span>
             </div>
             <div className="text-right">
               <div className="text-2xl font-bold tabular-nums text-gray-900 dark:text-white">
                 {previewScores[currentDimKey]}
                 <span className="text-sm font-normal text-gray-400">/100</span>
               </div>
-              <div className="text-xs text-gray-400">Score prévisnel</div>
+              <div className="text-xs text-gray-400">{t('assessment.scorePreview')}</div>
             </div>
           </div>
 
-          {/* Info contextuelle */}
           <div className="flex items-start gap-2 rounded-lg bg-gray-50 dark:bg-gray-800/50 p-3 text-xs text-gray-500">
             <Info className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-            <span>
-              Évaluez chaque critère de 0 (risque maximal) à 100 (risque minimal).
-              Le score moyen pondéré déterminera le score de dimension.
-            </span>
+            <span>{t('assessment.riskHint')}</span>
           </div>
 
-          {/* Facteurs */}
           <div className="space-y-3">
-            {scores[currentDimKey].map((factor) => (
-              <FactorScoreSlider
-                key={factor.factor_key}
-                factor={{ key: factor.factor_key, label: factor.factor_label, weight: factor.weight }}
-                value={factor.score}
-                evidence={factor.evidence}
-                onChange={(score) => updateScore(currentDimKey, factor.factor_key, score)}
-                onEvidenceChange={(evidence) => updateEvidence(currentDimKey, factor.factor_key, evidence)}
-              />
-            ))}
+            {scores[currentDimKey].map((factor) => {
+              const guideKey = getGuideKey(factor.factor_key, factor.score);
+              const guideText = guideKey ? t(guideKey) : '';
+              const factorLabel = t(`assessment.factor.${factor.factor_key}`, { defaultValue: factor.factor_key });
+              return (
+                <FactorScoreSlider
+                  key={factor.factor_key}
+                  factor={{ key: factor.factor_key, label: factorLabel, weight: factor.weight }}
+                  value={factor.score}
+                  evidence={factor.evidence}
+                  guideText={guideText}
+                  sliderMin={sliderMin}
+                  sliderMax={sliderMax}
+                  evidencePlaceholder={evidencePlaceholder}
+                  onChange={(score) => updateScore(currentDimKey, factor.factor_key, score)}
+                  onEvidenceChange={(evidence) => updateEvidence(currentDimKey, factor.factor_key, evidence)}
+                />
+              );
+            })}
           </div>
 
-          {/* Navigation */}
           <div className="flex justify-between pt-2">
             <Button variant="outline" onClick={() => setStep((s) => s - 1)} disabled={isPending}>
               <ChevronLeft className="mr-1 h-4 w-4" />
-              Précédent
+              {t('assessment.btnPrev')}
             </Button>
-            <Button
-              onClick={() => handleSaveDimensionAndNext(currentDimKey)}
-              disabled={isPending}
-            >
+            <Button onClick={() => handleSaveDimensionAndNext(currentDimKey)} disabled={isPending}>
               {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              {step < 4 ? 'Dimension suivante' : 'Passer à la synthèse'}
+              {step < 4 ? t('assessment.btnNextDim') : t('assessment.btnToSummary')}
               {!isPending && <ChevronRight className="ml-1 h-4 w-4" />}
             </Button>
           </div>
         </div>
       )}
 
-      {/* ────────────────────────────────────────────────────────────── */}
-      {/* STEP 5 — Synthèse & finalisation                               */}
-      {/* ────────────────────────────────────────────────────────────── */}
+      {/* ── STEP 5 — Summary & finalization ── */}
       {step === 5 && (
         <div className="space-y-4">
-          {/* Récapitulatif des scores */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Récapitulatif des scores</CardTitle>
+              <CardTitle className="text-base">{t('assessment.summaryTitle')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-3 mb-4 lg:grid-cols-4">
@@ -681,18 +658,17 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
                     <div className="text-xl font-bold tabular-nums text-gray-900 dark:text-white">
                       {previewScores[dim]}
                     </div>
-                    <div className="text-xs text-gray-400 mt-0.5">{DIMENSION_LABELS[dim]}</div>
+                    <div className="text-xs text-gray-400 mt-0.5">{dimensionLabels[dim]}</div>
                   </div>
                 ))}
               </div>
 
-              {/* Score global */}
               <div className={`rounded-xl p-4 text-center ${
                 previewGlobal >= 70 ? 'bg-green-50 dark:bg-green-950/30' :
                 previewGlobal >= 40 ? 'bg-orange-50 dark:bg-orange-950/30' :
                 'bg-red-50 dark:bg-red-950/30'
               }`}>
-                <p className="text-xs font-medium text-gray-500 mb-1">Score global prévisnel</p>
+                <p className="text-xs font-medium text-gray-500 mb-1">{t('assessment.globalScorePreview')}</p>
                 <p className={`text-5xl font-bold tabular-nums ${
                   previewGlobal >= 70 ? 'text-green-600' :
                   previewGlobal >= 40 ? 'text-orange-600' :
@@ -702,45 +678,47 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
                   <span className="text-lg font-normal text-gray-400">/100</span>
                 </p>
                 <p className="mt-1 text-sm text-gray-500">
-                  Risque {previewGlobal >= 70 ? 'faible' : previewGlobal >= 40 ? 'modéré' : previewGlobal >= 20 ? 'élevé' : 'critique'}
+                  {previewGlobal >= 70 ? t('assessment.riskLow') :
+                   previewGlobal >= 40 ? t('assessment.riskModerate') :
+                   previewGlobal >= 20 ? t('assessment.riskHigh') :
+                   t('assessment.riskCritical')}
                 </p>
               </div>
             </CardContent>
           </Card>
 
-          {/* Notes analyste */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Notes & plan de mitigation</CardTitle>
-              <CardDescription>Ces informations enrichissent l'évaluation et peuvent être partagées.</CardDescription>
+              <CardTitle className="text-base">{t('assessment.notesTitle')}</CardTitle>
+              <CardDescription>{t('assessment.notesDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label className="text-sm font-medium">Synthèse exécutive</Label>
+                <Label className="text-sm font-medium">{t('assessment.execSummaryLabel')}</Label>
                 <Textarea
                   className="mt-1.5 resize-none"
                   rows={2}
-                  placeholder="Résumé des principaux risques identifiés..."
+                  placeholder={t('assessment.execSummaryPlaceholder')}
                   value={synthNotes.executive_summary}
                   onChange={(e) => setSynthNotes((n) => ({ ...n, executive_summary: e.target.value }))}
                 />
               </div>
               <div>
-                <Label className="text-sm font-medium">Notes de l'analyste</Label>
+                <Label className="text-sm font-medium">{t('assessment.analystNotesLabel')}</Label>
                 <Textarea
                   className="mt-1.5 resize-none"
                   rows={3}
-                  placeholder="Détails, observations, contexte particulier..."
+                  placeholder={t('assessment.analystNotesPlaceholder')}
                   value={synthNotes.analyst_notes}
                   onChange={(e) => setSynthNotes((n) => ({ ...n, analyst_notes: e.target.value }))}
                 />
               </div>
               <div>
-                <Label className="text-sm font-medium">Plan de mitigation</Label>
+                <Label className="text-sm font-medium">{t('assessment.mitigationLabel')}</Label>
                 <Textarea
                   className="mt-1.5 resize-none"
                   rows={3}
-                  placeholder="Actions recommandées pour réduire les risques identifiés..."
+                  placeholder={t('assessment.mitigationPlaceholder')}
                   value={synthNotes.mitigation_plan}
                   onChange={(e) => setSynthNotes((n) => ({ ...n, mitigation_plan: e.target.value }))}
                 />
@@ -748,15 +726,14 @@ export function AssessmentWizard({ suppliers, templates, preselectedSupplierId }
             </CardContent>
           </Card>
 
-          {/* Navigation */}
           <div className="flex justify-between pt-2">
             <Button variant="outline" onClick={() => setStep(4)} disabled={isPending}>
               <ChevronLeft className="mr-1 h-4 w-4" />
-              Précédent
+              {t('assessment.btnPrev')}
             </Button>
             <Button onClick={handleFinalize} disabled={isPending} size="lg">
               {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4" />}
-              {isPending ? 'Finalisation...' : 'Finaliser l\'évaluation'}
+              {isPending ? t('assessment.btnFinalizing') : t('assessment.btnFinalize')}
             </Button>
           </div>
         </div>

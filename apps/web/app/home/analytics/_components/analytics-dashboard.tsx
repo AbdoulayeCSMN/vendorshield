@@ -92,6 +92,7 @@ function KpiCard({
   colorCls: string;
   href?: string;
 }) {
+  const { t } = useTranslation('vendorshield');
   const inner = (
     <Card className={`group transition-shadow hover:shadow-md ${href ? 'cursor-pointer' : ''}`}>
       <CardContent className="pt-5">
@@ -109,7 +110,7 @@ function KpiCard({
         </div>
         {href && (
           <div className="mt-3 flex items-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-            Voir le détail <ArrowUpRight className="ml-1 h-3 w-3" />
+            {t('analytics.viewDetail')} <ArrowUpRight className="ml-1 h-3 w-3" />
           </div>
         )}
       </CardContent>
@@ -194,12 +195,12 @@ export function AnalyticsDashboard({
   };
 
   const catConfig: ChartConfig = {
-    avg_score: { label: 'Score moyen', color: '#6366f1' },
+    avg_score: { label: t('analytics.avgScoreLabel'), color: '#6366f1' },
   };
 
   const trendConfig: ChartConfig = {
-    completed: { label: 'Évaluations',   color: '#6366f1' },
-    avg_score: { label: 'Score moyen',   color: '#22c55e' },
+    completed: { label: t('analytics.assessmentsLabel'), color: '#6366f1' },
+    avg_score: { label: t('analytics.avgScoreLabel'),   color: '#22c55e' },
   };
 
   return (
@@ -208,38 +209,38 @@ export function AnalyticsDashboard({
       {/* ── Row 1 : KPIs ── */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <KpiCard
-          label="Fournisseurs actifs"
+          label={t('analytics.activeSuppliers')}
           value={kpis?.active_suppliers ?? '—'}
-          sub={`${kpis?.total_suppliers ?? 0} au total`}
+          sub={t('analytics.activeSubtitle', { total: kpis?.total_suppliers ?? 0 })}
           icon={<Building2 className="h-5 w-5 text-blue-600" />}
           colorCls="bg-blue-50 dark:bg-blue-950"
           href="/home/suppliers"
         />
         <KpiCard
-          label="Score fiabilité moyen"
+          label={t('analytics.avgScore')}
           value={kpis?.avg_global_score !== null && kpis?.avg_global_score !== undefined ? `${kpis.avg_global_score}/100` : '—'}
           sub={
             kpis?.avg_global_score
-              ? kpis.avg_global_score >= 70 ? 'Risque faible'
-              : kpis.avg_global_score >= 40 ? 'Risque modéré'
-              : 'Risque élevé'
+              ? kpis.avg_global_score >= 70 ? t('dashboard.riskLow')
+              : kpis.avg_global_score >= 40 ? t('dashboard.riskMedium')
+              : t('dashboard.riskHigh')
               : undefined
           }
           icon={<Shield className="h-5 w-5 text-orange-600" />}
           colorCls="bg-orange-50 dark:bg-orange-950"
         />
         <KpiCard
-          label="Fournisseurs critiques"
+          label={t('analytics.critHighRisk')}
           value={(kpis?.critical_risk_count ?? 0) + (kpis?.high_risk_count ?? 0)}
-          sub={`${kpis?.critical_risk_count ?? 0} critiques · ${kpis?.high_risk_count ?? 0} élevés`}
+          sub={t('analytics.critHighSubtitle', { critical: kpis?.critical_risk_count ?? 0, high: kpis?.high_risk_count ?? 0 })}
           icon={<ShieldAlert className="h-5 w-5 text-red-600" />}
           colorCls="bg-red-50 dark:bg-red-950"
           href="/home/suppliers?risk_level=critical"
         />
         <KpiCard
-          label="Alertes ouvertes"
+          label={t('analytics.openAlerts')}
           value={kpis?.open_alerts_total ?? 0}
-          sub={`dont ${kpis?.critical_alerts_total ?? 0} critiques`}
+          sub={t('analytics.openAlertsSubtitle', { critical: kpis?.critical_alerts_total ?? 0 })}
           icon={<AlertTriangle className="h-5 w-5 text-red-600" />}
           colorCls="bg-red-50 dark:bg-red-950"
           href="/home/alerts"
@@ -252,8 +253,8 @@ export function AnalyticsDashboard({
         {/* Donut distribution risque */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-semibold">Distribution des niveaux de risque</CardTitle>
-            <CardDescription>{totalRisk} fournisseurs évalués</CardDescription>
+            <CardTitle className="text-sm font-semibold">{t('dashboard.riskDistribution')}</CardTitle>
+            <CardDescription>{t('dashboard.suppliersEvaluated', { count: totalRisk })}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-6">
@@ -312,11 +313,11 @@ export function AnalyticsDashboard({
           </CardContent>
         </Card>
 
-        {/* Scores moyens par dimension */}
+        {/* Average scores by dimension */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-semibold">Scores moyens par dimension</CardTitle>
-            <CardDescription>Moyenne pondérée de l'ensemble du portefeuille</CardDescription>
+            <CardTitle className="text-sm font-semibold">{t('analytics.dimScoresTitle')}</CardTitle>
+            <CardDescription>{t('analytics.dimScoresDesc')}</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={dimConfig} className="h-48">
@@ -339,7 +340,7 @@ export function AnalyticsDashboard({
                   cursor={{ fill: 'var(--color-muted)', opacity: 0.3 }}
                   content={<ChartTooltipContent />}
                 />
-                <Bar dataKey="avg_score" name="Score moyen" radius={[0, 4, 4, 0]}>
+                <Bar dataKey="avg_score" name={t('analytics.avgScoreLabel')} radius={[0, 4, 4, 0]}>
                   {dimensionScores.map((entry) => (
                     <Cell
                       key={entry.dimension}
@@ -353,11 +354,11 @@ export function AnalyticsDashboard({
         </Card>
       </div>
 
-      {/* ── Row 3 : Tendance évaluations ── */}
+      {/* ── Row 3 : Assessment trend ── */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-semibold">Tendance des évaluations — 12 derniers mois</CardTitle>
-          <CardDescription>Nombre d'évaluations complétées et score moyen mensuel</CardDescription>
+          <CardTitle className="text-sm font-semibold">{t('analytics.trendTitle')}</CardTitle>
+          <CardDescription>{t('analytics.trendDesc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={trendConfig} className="h-56">
@@ -394,7 +395,7 @@ export function AnalyticsDashboard({
                 yAxisId="count"
                 type="monotone"
                 dataKey="completed"
-                name="Évaluations"
+                name={t('analytics.assessmentsLabel')}
                 stroke="#6366f1"
                 strokeWidth={2}
                 dot={{ fill: '#6366f1', r: 3 }}
@@ -404,7 +405,7 @@ export function AnalyticsDashboard({
                 yAxisId="score"
                 type="monotone"
                 dataKey="avg_score"
-                name="Score moyen"
+                name={t('analytics.avgScoreLabel')}
                 stroke="#22c55e"
                 strokeWidth={2}
                 strokeDasharray="4 2"
@@ -416,12 +417,12 @@ export function AnalyticsDashboard({
         </CardContent>
       </Card>
 
-      {/* ── Row 4 : Score par catégorie ── */}
+      {/* ── Row 4 : Score by category ── */}
       {categoryScores.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-semibold">Score moyen par catégorie fournisseur</CardTitle>
-            <CardDescription>Du plus risqué (gauche) au moins risqué (droite)</CardDescription>
+            <CardTitle className="text-sm font-semibold">{t('analytics.catScoreTitle')}</CardTitle>
+            <CardDescription>{t('analytics.catScoreDesc')}</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={catConfig} className="h-52">
@@ -444,12 +445,12 @@ export function AnalyticsDashboard({
                   content={
                     <ChartTooltipContent
                       formatter={(value, name, item) =>
-                        [`${value}/100 (${item.payload.count} fournisseurs)`, 'Score moyen']
+                        [t('analytics.tooltipScore', { score: value, count: item.payload.count }), t('analytics.avgScoreLabel')]
                       }
                     />
                   }
                 />
-                <Bar dataKey="avg_score" name="Score moyen" radius={[4, 4, 0, 0]}>
+                <Bar dataKey="avg_score" name={t('analytics.avgScoreLabel')} radius={[4, 4, 0, 0]}>
                   {categoryScores.map((entry) => (
                     <Cell
                       key={entry.category}
@@ -472,20 +473,20 @@ export function AnalyticsDashboard({
       {/* ── Row 5 : Top risqués + Pays ── */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 
-        {/* Top 10 fournisseurs risqués */}
+        {/* Top risky suppliers */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <div>
-              <CardTitle className="text-sm font-semibold">Fournisseurs les plus risqués</CardTitle>
-              <CardDescription>Score global les plus bas (actifs)</CardDescription>
+              <CardTitle className="text-sm font-semibold">{t('dashboard.topRisky')}</CardTitle>
+              <CardDescription>{t('analytics.topRiskyDesc')}</CardDescription>
             </div>
             <Link href="/home/suppliers?sort=global_score&order=asc" className="text-xs text-primary hover:underline flex items-center gap-1">
-              Voir tous <ArrowUpRight className="h-3 w-3" />
+              {t('analytics.viewAll')} <ArrowUpRight className="h-3 w-3" />
             </Link>
           </CardHeader>
           <CardContent className="space-y-2">
             {topRiskySuppliers.length === 0 ? (
-              <p className="text-sm text-gray-400 py-4 text-center">Aucun fournisseur évalué</p>
+              <p className="text-sm text-gray-400 py-4 text-center">{t('dashboard.noSupplierEvaluated')}</p>
             ) : (
               topRiskySuppliers.map((s, i) => (
                 <Link
@@ -515,15 +516,15 @@ export function AnalyticsDashboard({
           </CardContent>
         </Card>
 
-        {/* Exposition pays */}
+        {/* Geographic exposure */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold">Exposition géographique</CardTitle>
-            <CardDescription>Pays avec le score moyen le plus bas</CardDescription>
+            <CardTitle className="text-sm font-semibold">{t('dashboard.geoExposure')}</CardTitle>
+            <CardDescription>{t('analytics.geoDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             {countryExposure.length === 0 ? (
-              <p className="text-sm text-gray-400 py-4 text-center">Aucune donnée géographique</p>
+              <p className="text-sm text-gray-400 py-4 text-center">{t('analytics.noGeoData')}</p>
             ) : (
               countryExposure.map((c) => (
                 <div key={c.country_code} className="flex items-center gap-3 py-1.5">
@@ -531,7 +532,7 @@ export function AnalyticsDashboard({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <p className="text-sm text-gray-700 dark:text-gray-300 truncate">{c.country_name}</p>
-                      <span className="text-xs text-gray-400 shrink-0 ml-2">{c.count} fournisseur{c.count > 1 ? 's' : ''}</span>
+                      <span className="text-xs text-gray-400 shrink-0 ml-2">{t('analytics.suppliersCountInline', { count: c.count })}</span>
                     </div>
                     <ScoreBar score={c.avg_score} />
                   </div>
@@ -551,12 +552,10 @@ export function AnalyticsDashboard({
                 <TrendingUp className="h-4 w-4 text-rose-500" />
                 Bankruptcy Overview
               </CardTitle>
-              <CardDescription>
-                Projection Altman Z-score sur les fournisseurs les plus exposés
-              </CardDescription>
+              <CardDescription>{t('analytics.bankruptcyDesc')}</CardDescription>
             </div>
             <Link href="/home/suppliers?sort=global_score&order=asc" className="text-xs text-primary hover:underline flex items-center gap-1 shrink-0">
-              Voir fournisseurs <ArrowUpRight className="h-3 w-3" />
+              {t('analytics.viewSuppliers')} <ArrowUpRight className="h-3 w-3" />
             </Link>
           </div>
         </CardHeader>
@@ -578,7 +577,7 @@ export function AnalyticsDashboard({
 
           <div className="space-y-2">
             {bankruptcyOverview.latest.length === 0 ? (
-              <p className="text-sm text-gray-400 py-3 text-center">Aucune prédiction de faillite disponible</p>
+              <p className="text-sm text-gray-400 py-3 text-center">{t('analytics.noBankruptcyData')}</p>
             ) : (
               bankruptcyOverview.latest.slice(0, 5).map((row) => {
                 const zoneClass =
@@ -620,15 +619,14 @@ export function AnalyticsDashboard({
               <div>
                 <CardTitle className="text-sm font-semibold flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4 text-amber-500" />
-                  Exposition sole source
+                  {t('analytics.soleSourceTitle')}
                 </CardTitle>
                 <CardDescription>
-                  {soleSourceSuppliers.length} fournisseur{soleSourceSuppliers.length > 1 ? 's uniques' : ' unique'} —
-                  dépendance totale sans alternative disponible
+                  {t('analytics.soleSourceDesc', { count: soleSourceSuppliers.length })}
                 </CardDescription>
               </div>
               <Link href="/home/suppliers?sort=global_score&order=asc" className="text-xs text-primary hover:underline flex items-center gap-1">
-                Voir tous <ArrowUpRight className="h-3 w-3" />
+                {t('analytics.viewAll')} <ArrowUpRight className="h-3 w-3" />
               </Link>
             </div>
           </CardHeader>
@@ -637,10 +635,10 @@ export function AnalyticsDashboard({
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 dark:border-gray-800">
-                    <th className="text-left text-xs font-medium text-gray-500 pb-2">Fournisseur</th>
-                    <th className="text-left text-xs font-medium text-gray-500 pb-2 hidden md:table-cell">Criticité</th>
-                    <th className="text-left text-xs font-medium text-gray-500 pb-2 hidden lg:table-cell">Dépense annuelle</th>
-                    <th className="text-left text-xs font-medium text-gray-500 pb-2 w-40">Score fiabilité</th>
+                    <th className="text-left text-xs font-medium text-gray-500 pb-2">{t('suppliers.hSupplier')}</th>
+                    <th className="text-left text-xs font-medium text-gray-500 pb-2 hidden md:table-cell">{t('suppliers.hCriticality')}</th>
+                    <th className="text-left text-xs font-medium text-gray-500 pb-2 hidden lg:table-cell">{t('analytics.hSpend')}</th>
+                    <th className="text-left text-xs font-medium text-gray-500 pb-2 w-40">{t('analytics.hScore')}</th>
                   </tr>
                 </thead>
                 <tbody>
