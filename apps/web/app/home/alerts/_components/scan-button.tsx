@@ -7,9 +7,12 @@ import { toast } from 'sonner';
 
 import { Button } from '@kit/ui/button';
 
+import { useTranslation } from 'react-i18next';
+
 import { runMonitoringScanAction } from '~/lib/vendorshield/actions/monitoring.actions';
 
 export function ScanButton() {
+  const { t } = useTranslation('vendorshield');
   const [pending, startTransition] = useTransition();
 
   const onClick = () =>
@@ -21,8 +24,8 @@ export function ScanButton() {
       }
       toast.success(
         res.created > 0
-          ? `${res.created} nouvelle(s) alerte(s) détectée(s)`
-          : 'Aucune nouvelle alerte — tout est à jour.',
+          ? t('alerts.newAlerts', { count: res.created })
+          : t('alerts.noNewAlerts'),
       );
     });
 
@@ -33,7 +36,7 @@ export function ScanButton() {
       ) : (
         <RadarIcon className="mr-1.5 h-4 w-4" />
       )}
-      Scanner maintenant
+      {t('alerts.scanNow')}
     </Button>
   );
 }

@@ -1,11 +1,13 @@
 'use client';
 
 import { Fragment, useState } from 'react';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@kit/ui/tabs';
 import { Card } from '@kit/ui/card';
 import { Button } from '@kit/ui/button';
 import { Upload, File, CheckCircle, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { UploadZone } from './upload-zone';
 import { ColumnMapping } from './column-mapping';
 import { QualityReport, ValidationError } from './quality-report';
@@ -28,6 +30,7 @@ interface ValidationResult {
 }
 
 export default function ImportsPage() {
+  const { t } = useTranslation('vendorshield');
   const [importType, setImportType] = useState<ImportType>('suppliers');
   const [step, setStep] = useState<'upload' | 'mapping' | 'quality' | 'confirm'>('upload');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -103,7 +106,7 @@ export default function ImportsPage() {
       setStep('upload');
     } catch (error) {
       console.error('Import failed:', error);
-      toast.error('Import échoué. Réessayez.');
+      toast.error(t('imports.failed'));
       setImportStatus('idle');
     }
   };
@@ -162,8 +165,8 @@ export default function ImportsPage() {
               <p className="text-sm font-medium text-gray-700 mb-2">Que voulez-vous importer ?</p>
               <div className="grid grid-cols-2 gap-3 max-w-md">
                 {([
-                  { v: 'suppliers', t: 'Fiches fournisseurs', d: 'Créer des fournisseurs (nom, pays, scores…)' },
-                  { v: 'deliveries', t: 'Livraisons', d: 'Historique de transactions (rapproché aux fournisseurs)' },
+                  { v: 'suppliers', t: t('imports.typeSuppliers'), d: t('imports.typeSuppliersDesc') },
+                  { v: 'deliveries', t: t('imports.typeDeliveries'), d: t('imports.typeDeliveriesDesc') },
                 ] as const).map((opt) => (
                   <button
                     key={opt.v}
@@ -239,7 +242,7 @@ export default function ImportsPage() {
                     onClick={handleQualityReview}
                     disabled={!canProceedToConfirm}
                   >
-                    {canProceedToConfirm ? 'Continuer' : 'Corriger les erreurs'}
+                    {canProceedToConfirm ? t('imports.continue') : t('imports.fixErrors')}
                   </Button>
                 </div>
               </Fragment>
@@ -278,7 +281,7 @@ export default function ImportsPage() {
                 onClick={handleImportStart}
                 disabled={importStatus === 'importing'}
               >
-                {importStatus === 'importing' ? 'Import en cours...' : 'Lancer l\'import'}
+                {importStatus === 'importing' ? t('imports.importing') : t('imports.launch')}
               </Button>
             </div>
           </Card>

@@ -5,6 +5,7 @@ import { PlusIcon } from 'lucide-react';
 import { Button } from '@kit/ui/button';
 import { PageBody, PageHeader } from '@kit/ui/page';
 
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { withI18n } from '~/lib/i18n/with-i18n';
 import type { AssessmentStatus } from '~/lib/vendorshield/types';
 import {
@@ -25,6 +26,7 @@ interface Props {
 }
 
 async function RiskAssessmentsPage({ searchParams }: Props) {
+  const { t } = await createI18nServerInstance();
   const params = await searchParams;
 
   const filters: AssessmentsFilters = {
@@ -41,13 +43,13 @@ async function RiskAssessmentsPage({ searchParams }: Props) {
   return (
     <>
       <PageHeader
-        title="Évaluations de risque"
-        description={`${total} évaluation${total > 1 ? 's' : ''}`}
+        title={t('vendorshield:pages.assessments')}
+        description={t('vendorshield:pages.assessmentsDesc', { count: total })}
       >
         <Button asChild size="sm">
           <Link href="/home/risk-assessments/new">
             <PlusIcon className="mr-1.5 h-4 w-4" />
-            Nouvelle évaluation
+            {t('vendorshield:pages.assessmentsNew')}
           </Link>
         </Button>
       </PageHeader>

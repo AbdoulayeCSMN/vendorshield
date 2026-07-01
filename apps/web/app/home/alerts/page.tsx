@@ -5,6 +5,7 @@ import { PlusIcon } from 'lucide-react';
 import { Button } from '@kit/ui/button';
 import { PageBody, PageHeader } from '@kit/ui/page';
 
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { withI18n } from '~/lib/i18n/with-i18n';
 import type { AlertSeverity, AlertStatus } from '~/lib/vendorshield/types';
 import {
@@ -27,6 +28,7 @@ interface Props {
 }
 
 async function AlertsPage({ searchParams }: Props) {
+  const { t } = await createI18nServerInstance();
   const params = await searchParams;
 
   const filters: AlertsFilters = {
@@ -47,18 +49,18 @@ async function AlertsPage({ searchParams }: Props) {
   return (
     <>
       <PageHeader
-        title="Alertes"
-        description={`${kpis.open_total} alerte${kpis.open_total !== 1 ? 's' : ''} ouvertes`}
+        title={t('vendorshield:pages.alerts')}
+        description={t('vendorshield:pages.alertsDesc', { count: kpis.open_total })}
       >
         <div className="flex gap-2">
           <ScanButton />
           <Button asChild variant="outline" size="sm">
-            <Link href="/home/alerts/rules">Règles</Link>
+            <Link href="/home/alerts/rules">{t('vendorshield:pages.alertRules')}</Link>
           </Button>
           <Button asChild size="sm">
             <Link href="/home/alerts/new">
               <PlusIcon className="mr-1.5 h-4 w-4" />
-              Alerte manuelle
+              {t('vendorshield:pages.newManualAlert')}
             </Link>
           </Button>
         </div>

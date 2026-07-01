@@ -5,6 +5,7 @@ import { PlusIcon } from 'lucide-react';
 import { Button } from '@kit/ui/button';
 import { PageBody, PageHeader } from '@kit/ui/page';
 
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { withI18n } from '~/lib/i18n/with-i18n';
 import type {
   RiskLevel,
@@ -35,6 +36,7 @@ interface SuppliersPageProps {
 }
 
 async function SuppliersPage({ searchParams }: SuppliersPageProps) {
+  const { t } = await createI18nServerInstance();
   const params = await searchParams;
 
   const filters: SuppliersFilters = {
@@ -54,16 +56,16 @@ async function SuppliersPage({ searchParams }: SuppliersPageProps) {
   return (
     <>
       <PageHeader
-        title="Fournisseurs"
-        description={`${total} fournisseur${total > 1 ? 's' : ''} dans votre portefeuille`}
+        title={t('vendorshield:pages.suppliers')}
+        description={t('vendorshield:pages.suppliersDesc', { count: total })}
       >
         <div className="flex items-center gap-2">
           <RetrainPredictionsButton />
-          <ExportButton context="suppliers" label="Exporter" />
+          <ExportButton context="suppliers" label={t('vendorshield:common.export')} />
           <Button asChild size="sm">
             <Link href="/home/suppliers/new">
               <PlusIcon className="mr-1.5 h-4 w-4" />
-              Nouveau fournisseur
+              {t('vendorshield:pages.suppliersNew')}
             </Link>
           </Button>
         </div>

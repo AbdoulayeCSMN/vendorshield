@@ -9,6 +9,8 @@ import {
   TrendingUp,
 } from 'lucide-react';
 
+import { useTranslation } from 'react-i18next';
+
 import type { AccountRiskDashboard } from '~/lib/vendorshield/types';
 
 interface Props {
@@ -38,6 +40,7 @@ function KpiCard({ title, value, subtitle, icon, iconBg, valueColor = 'text-gray
 }
 
 export function AnalyticsKpiRow({ kpis }: Props) {
+  const { t } = useTranslation('vendorshield');
   const avgScore = kpis?.avg_global_score ?? null;
   const scoreColor =
     avgScore === null ? 'text-gray-400'
@@ -50,48 +53,48 @@ export function AnalyticsKpiRow({ kpis }: Props) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
       <KpiCard
-        title="Fournisseurs actifs"
+        title={t('analytics.activeSuppliers')}
         value={kpis?.active_suppliers ?? '—'}
-        subtitle={`sur ${kpis?.total_suppliers ?? '—'} au total`}
+        subtitle={t('analytics.activeSubtitle', { total: kpis?.total_suppliers ?? '—' })}
         icon={<Building2 className="h-4 w-4 text-blue-600" />}
         iconBg="bg-blue-50 dark:bg-blue-950"
       />
       <KpiCard
-        title="Score moyen"
+        title={t('analytics.avgScore')}
         value={avgScore !== null ? `${avgScore}/100` : '—'}
-        subtitle="Score global agrégé"
+        subtitle={t('analytics.avgScoreSubtitle')}
         icon={<Shield className="h-4 w-4 text-purple-600" />}
         iconBg="bg-purple-50 dark:bg-purple-950"
         valueColor={scoreColor}
       />
       <KpiCard
-        title="Risque critique/élevé"
+        title={t('analytics.critHighRisk')}
         value={criticalAndHigh}
-        subtitle={`${kpis?.critical_risk_count ?? 0} critiques, ${kpis?.high_risk_count ?? 0} élevés`}
+        subtitle={t('analytics.critHighSubtitle', { critical: kpis?.critical_risk_count ?? 0, high: kpis?.high_risk_count ?? 0 })}
         icon={<ShieldAlert className="h-4 w-4 text-red-600" />}
         iconBg="bg-red-50 dark:bg-red-950"
         valueColor={criticalAndHigh > 0 ? 'text-red-600' : 'text-gray-900 dark:text-white'}
       />
       <KpiCard
-        title="Risque faible"
+        title={t('analytics.lowRisk')}
         value={kpis?.low_risk_count ?? '—'}
-        subtitle="Fournisseurs score ≥ 70"
+        subtitle={t('analytics.lowRiskSubtitle')}
         icon={<CheckCircle className="h-4 w-4 text-green-600" />}
         iconBg="bg-green-50 dark:bg-green-950"
         valueColor="text-green-600"
       />
       <KpiCard
-        title="Alertes ouvertes"
+        title={t('analytics.openAlerts')}
         value={kpis?.open_alerts_total ?? '—'}
-        subtitle={`dont ${kpis?.critical_alerts_total ?? 0} critiques`}
+        subtitle={t('analytics.openAlertsSubtitle', { critical: kpis?.critical_alerts_total ?? 0 })}
         icon={<AlertTriangle className="h-4 w-4 text-orange-600" />}
         iconBg="bg-orange-50 dark:bg-orange-950"
         valueColor={(kpis?.open_alerts_total ?? 0) > 0 ? 'text-orange-600' : 'text-gray-900 dark:text-white'}
       />
       <KpiCard
-        title="Sole sources"
+        title={t('analytics.soleSources')}
         value={kpis?.sole_source_count ?? '—'}
-        subtitle="Fournisseurs uniques — risque élevé"
+        subtitle={t('analytics.soleSourcesSubtitle')}
         icon={<TrendingUp className="h-4 w-4 text-amber-600" />}
         iconBg="bg-amber-50 dark:bg-amber-950"
         valueColor={(kpis?.sole_source_count ?? 0) > 0 ? 'text-amber-600' : 'text-gray-900 dark:text-white'}

@@ -5,6 +5,7 @@ import { AlertTriangle, ArrowUpRight, GitBranch, Layers, Shield } from 'lucide-r
 import { PageBody, PageHeader } from '@kit/ui/page';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@kit/ui/card';
 
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { withI18n } from '~/lib/i18n/with-i18n';
 import { getSupplyChainOverview } from '~/lib/vendorshield/actions/tier.actions';
 import { getSuppliers } from '~/lib/vendorshield/suppliers.server';
@@ -18,6 +19,7 @@ const RISK_COLORS: Record<string, string> = {
 };
 
 async function SupplyChainPage() {
+  const { t } = await createI18nServerInstance();
   const [overview, { suppliers }] = await Promise.all([
     getSupplyChainOverview(),
     getSuppliers({ limit: 50, sort: 'global_score', order: 'asc' }),
@@ -32,8 +34,8 @@ async function SupplyChainPage() {
   return (
     <>
       <PageHeader
-        title="Supply Chain Graph"
-        description="Cartographie multi-tiers de votre chaîne d'approvisionnement"
+        title={t('vendorshield:pages.supplyChain')}
+        description={t('vendorshield:pages.supplyChainDesc')}
       />
       <PageBody>
         <div className="space-y-6">
@@ -41,10 +43,10 @@ async function SupplyChainPage() {
           {/* KPIs */}
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {[
-              { label: 'Fournisseurs Tier 1', value: overview.total_tier1, icon: Shield, color: 'bg-blue-50 text-blue-600' },
-              { label: 'Nœuds Tier 2 (IA)', value: overview.total_tier2, icon: Layers, color: 'bg-violet-50 text-violet-600' },
-              { label: 'Nœuds Tier 3 (IA)', value: overview.total_tier3, icon: GitBranch, color: 'bg-purple-50 text-purple-600' },
-              { label: 'Risques critiques', value: overview.critical_tiers.length, icon: AlertTriangle, color: 'bg-red-50 text-red-600' },
+              { label: t('vendorshield:supplyChain.tier1'), value: overview.total_tier1, icon: Shield, color: 'bg-blue-50 text-blue-600' },
+              { label: t('vendorshield:supplyChain.tier2'), value: overview.total_tier2, icon: Layers, color: 'bg-violet-50 text-violet-600' },
+              { label: t('vendorshield:supplyChain.tier3'), value: overview.total_tier3, icon: GitBranch, color: 'bg-purple-50 text-purple-600' },
+              { label: t('vendorshield:supplyChain.critRisks'), value: overview.critical_tiers.length, icon: AlertTriangle, color: 'bg-red-50 text-red-600' },
             ].map(({ label, value, icon: Icon, color }) => (
               <div key={label} className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm">
                 <div className="flex items-start justify-between">

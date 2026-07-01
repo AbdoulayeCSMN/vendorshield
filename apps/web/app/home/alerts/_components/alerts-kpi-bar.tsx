@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { AlertTriangle, CheckCircle, Info, ShieldAlert, Shield } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import type { AlertsKpis } from '~/lib/vendorshield/alerts.server';
 
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function AlertsKpiBar({ kpis }: Props) {
+  const { t } = useTranslation('vendorshield');
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -26,7 +28,7 @@ export function AlertsKpiBar({ kpis }: Props) {
 
   const cards = [
     {
-      label: 'Ouvertes',
+      label: t('alerts.kpiOpen'),
       value: kpis.open_total,
       icon: Shield,
       iconCls: 'text-gray-500 bg-gray-50 dark:bg-gray-800',
@@ -34,7 +36,7 @@ export function AlertsKpiBar({ kpis }: Props) {
       severity: null,
     },
     {
-      label: 'Critiques',
+      label: t('alerts.kpiCritical'),
       value: kpis.critical_open,
       icon: ShieldAlert,
       iconCls: 'text-red-600 bg-red-50 dark:bg-red-950',
@@ -42,7 +44,7 @@ export function AlertsKpiBar({ kpis }: Props) {
       severity: 'critical',
     },
     {
-      label: 'Avertissements',
+      label: t('alerts.kpiWarning'),
       value: kpis.warning_open,
       icon: AlertTriangle,
       iconCls: 'text-orange-600 bg-orange-50 dark:bg-orange-950',
@@ -50,7 +52,7 @@ export function AlertsKpiBar({ kpis }: Props) {
       severity: 'warning',
     },
     {
-      label: 'Informations',
+      label: t('alerts.kpiInfo'),
       value: kpis.info_open,
       icon: Info,
       iconCls: 'text-blue-600 bg-blue-50 dark:bg-blue-950',
@@ -58,7 +60,7 @@ export function AlertsKpiBar({ kpis }: Props) {
       severity: 'info',
     },
     {
-      label: 'Résolues auj.',
+      label: t('alerts.kpiResolvedToday'),
       value: kpis.resolved_today,
       icon: CheckCircle,
       iconCls: 'text-green-600 bg-green-50 dark:bg-green-950',

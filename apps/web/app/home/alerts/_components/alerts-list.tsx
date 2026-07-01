@@ -1,6 +1,8 @@
 'use client';
 
 import { useCallback, useState, useTransition } from 'react';
+
+import { useTranslation } from 'react-i18next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import Link from 'next/link';
@@ -88,11 +90,11 @@ const SEVERITY_CFG: Record<AlertSeverity, {
   },
 };
 
-const STATUS_CFG: Record<AlertStatus, { label: string; cls: string }> = {
-  open:         { label: 'Ouverte',    cls: 'text-red-600 bg-red-50' },
-  acknowledged: { label: 'Acquittée', cls: 'text-orange-600 bg-orange-50' },
-  resolved:     { label: 'Résolue',   cls: 'text-green-600 bg-green-50' },
-  dismissed:    { label: 'Ignorée',   cls: 'text-gray-400 bg-gray-50' },
+const STATUS_CFG: Record<AlertStatus, { labelKey: string; cls: string }> = {
+  open:         { labelKey: 'alerts.statusOpen',         cls: 'text-red-600 bg-red-50' },
+  acknowledged: { labelKey: 'alerts.statusAcknowledged', cls: 'text-orange-600 bg-orange-50' },
+  resolved:     { labelKey: 'alerts.statusResolved',     cls: 'text-green-600 bg-green-50' },
+  dismissed:    { labelKey: 'alerts.statusDismissed',    cls: 'text-gray-400 bg-gray-50' },
 };
 
 // ─── Dialog résolution ────────────────────────────────────────────────────────
@@ -106,6 +108,7 @@ function ResolveDialog({
   open: boolean;
   onClose: () => void;
 }) {
+  const { t } = useTranslation('vendorshield');
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -121,28 +124,28 @@ function ResolveDialog({
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Résoudre l'alerte</DialogTitle>
+          <DialogTitle>{t('alerts.resolveTitle')}</DialogTitle>
           <DialogDescription>
-            Ajoutez une note de résolution pour expliquer comment l'alerte a été traitée.
+            {t('alerts.resolveDesc')}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label className="text-sm font-medium">Note de résolution (optionnel)</Label>
+            <Label className="text-sm font-medium">{t('alerts.resolveNoteLabel')}</Label>
             <Textarea
               name="resolution_note"
-              placeholder="Décrivez les actions prises pour résoudre cette alerte..."
+              placeholder={t('alerts.resolutionPlaceholder')}
               className="mt-1.5 resize-none"
               rows={3}
             />
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
-              Annuler
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Marquer comme résolue
+              {isPending ? t('alerts.resolving') : t('alerts.resolveConfirm')}
             </Button>
           </DialogFooter>
         </form>
@@ -160,6 +163,7 @@ function AlertCard({
   alert: AlertWithSupplier;
   onResolve: (id: string) => void;
 }) {
+  const { t, i18n } = useTranslation('vendorshield');
   const [isPending, startTransition] = useTransition();
   const sev = SEVERITY_CFG[alert.severity as AlertSeverity] ?? SEVERITY_CFG.info;
   const sta = STATUS_CFG[alert.status as AlertStatus] ?? STATUS_CFG.open;
@@ -199,7 +203,7 @@ function AlertCard({
               {ALERT_SEVERITY_LABELS[alert.severity as AlertSeverity]}
             </span>
             <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${sta.cls}`}>
-              {sta.label}
+              {t(sta.labelKey)}
             </span>
           </div>
         </div>
@@ -229,7 +233,7 @@ function AlertCard({
             </span>
           )}
           <span className="ml-auto text-xs text-gray-400">
-            {formatRelativeTime(alert.created_at)}
+            {formatRelativeTime(alert.created_at, i18n.language)}
           </span>
         </div>
 
@@ -244,7 +248,7 @@ function AlertCard({
               disabled={isPending}
             >
               <Check className="mr-1 h-3 w-3" />
-              Acquitter
+              {t('alerts.acknowledge')}
             </Button>
             <Button
               size="sm"
@@ -253,7 +257,7 @@ function AlertCard({
               disabled={isPending}
             >
               <CheckCircle2 className="mr-1 h-3 w-3" />
-              Résoudre
+              {t('alerts.resolve')}
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -265,7 +269,7 @@ function AlertCard({
                 {alert.supplier && (
                   <DropdownMenuItem asChild>
                     <Link href={`/home/suppliers/${alert.supplier.id}`}>
-                      Voir le fournisseur
+                      {t('alerts.viewSupplier')}
                     </Link>
                   </DropdownMenuItem>
                 )}
@@ -275,7 +279,7 @@ function AlertCard({
                   onClick={handleDismiss}
                 >
                   <EyeOff className="mr-2 h-3.5 w-3.5" />
-                  Ignorer
+                  {t('alerts.dismiss')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -304,6 +308,7 @@ interface Props {
 }
 
 export function AlertsList({ alerts, total, page, pageCount, filters }: Props) {
+  const { t } = useTranslation('vendorshield');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -332,13 +337,13 @@ export function AlertsList({ alerts, total, page, pageCount, filters }: Props) {
           onValueChange={(v) => updateParam('status', v)}
         >
           <SelectTrigger className="w-40">
-            <SelectValue placeholder="Tous les statuts" />
+            <SelectValue placeholder={t('alerts.filterAllStatuses')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tous les statuts</SelectItem>
-            <SelectItem value="open">Ouvertes</SelectItem>
-            <SelectItem value="acknowledged">Acquittées</SelectItem>
-            <SelectItem value="resolved">Résolues</SelectItem>
+            <SelectItem value="all">{t('alerts.filterAllStatuses')}</SelectItem>
+            <SelectItem value="open">{t('alerts.filterStatusOpen')}</SelectItem>
+            <SelectItem value="acknowledged">{t('alerts.filterStatusAcknowledged')}</SelectItem>
+            <SelectItem value="resolved">{t('alerts.filterStatusResolved')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -347,13 +352,13 @@ export function AlertsList({ alerts, total, page, pageCount, filters }: Props) {
           onValueChange={(v) => updateParam('severity', v)}
         >
           <SelectTrigger className="w-44">
-            <SelectValue placeholder="Toutes sévérités" />
+            <SelectValue placeholder={t('alerts.filterAllSeverities')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Toutes sévérités</SelectItem>
-            <SelectItem value="critical">Critique</SelectItem>
-            <SelectItem value="warning">Avertissement</SelectItem>
-            <SelectItem value="info">Information</SelectItem>
+            <SelectItem value="all">{t('alerts.filterAllSeverities')}</SelectItem>
+            <SelectItem value="critical">{t('alerts.filterSeverityCritical')}</SelectItem>
+            <SelectItem value="warning">{t('alerts.filterSeverityWarning')}</SelectItem>
+            <SelectItem value="info">{t('alerts.filterSeverityInfo')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -367,12 +372,12 @@ export function AlertsList({ alerts, total, page, pageCount, filters }: Props) {
             }}
           >
             <X className="mr-1 h-3.5 w-3.5" />
-            Effacer
+            {t('alerts.clearFilters')}
           </Button>
         )}
 
         <span className="ml-auto text-sm text-gray-500">
-          {total} alerte{total !== 1 ? 's' : ''}
+          {t('alerts.count', { count: total })}
         </span>
       </div>
 
@@ -440,14 +445,13 @@ function countryFlag(code: string): string {
   ).join('');
 }
 
-function formatRelativeTime(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const minutes = Math.floor(diff / 60000);
-  if (minutes < 1) return 'à l\'instant';
-  if (minutes < 60) return `il y a ${minutes} min`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `il y a ${hours}h`;
-  const days = Math.floor(hours / 24);
-  if (days < 7) return `il y a ${days}j`;
-  return new Date(dateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+function formatRelativeTime(dateStr: string, locale?: string): string {
+  const date = new Date(dateStr);
+  const diff = (Date.now() - date.getTime()) / 1000;
+
+  if (diff < 60) return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-Math.round(diff), 'second');
+  if (diff < 3600) return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-Math.round(diff / 60), 'minute');
+  if (diff < 86400) return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-Math.round(diff / 3600), 'hour');
+  if (diff < 604800) return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-Math.round(diff / 86400), 'day');
+  return date.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
 }

@@ -1,5 +1,6 @@
 import { PageBody, PageHeader } from '@kit/ui/page';
 
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { withI18n } from '~/lib/i18n/with-i18n';
 import {
   getAnalyticsDashboard,
@@ -16,6 +17,7 @@ import { getBankruptcyOverview } from '~/lib/vendorshield/actions/prediction.act
 import { AnalyticsDashboard } from './_components/analytics-dashboard';
 
 async function AnalyticsPage() {
+  const { t } = await createI18nServerInstance();
   // Tout en parallèle — une seule passe réseau
   const [
     kpis,
@@ -42,8 +44,8 @@ async function AnalyticsPage() {
   return (
     <>
       <PageHeader
-        title="Risk Analytics"
-        description="Vue agrégée de l'exposition risque de votre portefeuille fournisseurs"
+        title={t('vendorshield:pages.analytics')}
+        description={t('vendorshield:pages.analyticsDesc')}
       />
       <PageBody>
         <AnalyticsDashboard

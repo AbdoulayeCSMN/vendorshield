@@ -42,39 +42,42 @@ import {
   TableRow,
 } from '@kit/ui/table';
 
+import { useTranslation } from 'react-i18next';
+
 import type { AuditFilters, AuditLogEntry } from '~/lib/vendorshield/alerts.server';
 import type { AuditAction } from '~/lib/vendorshield/types';
 
 // ─── Config actions ───────────────────────────────────────────────────────────
 
 const ACTION_CFG: Record<AuditAction, {
-  label: string;
+  labelKey: string;
   icon: React.ComponentType<{ className?: string }>;
   cls: string;
 }> = {
-  create:  { label: 'Création',     icon: FilePlus,    cls: 'text-green-700 bg-green-50' },
-  update:  { label: 'Modification', icon: Pencil,      cls: 'text-blue-700 bg-blue-50' },
-  delete:  { label: 'Suppression',  icon: Trash2,      cls: 'text-red-700 bg-red-50' },
-  view:    { label: 'Consultation', icon: Eye,         cls: 'text-gray-600 bg-gray-50' },
-  export:  { label: 'Export',       icon: Download,    cls: 'text-purple-700 bg-purple-50' },
-  approve: { label: 'Approbation',  icon: CheckCircle, cls: 'text-emerald-700 bg-emerald-50' },
-  archive: { label: 'Archivage',    icon: Archive,     cls: 'text-orange-700 bg-orange-50' },
+  create:  { labelKey: 'auditLog.actionCreate', icon: FilePlus,    cls: 'text-green-700 bg-green-50' },
+  update:  { labelKey: 'auditLog.actionUpdate', icon: Pencil,      cls: 'text-blue-700 bg-blue-50' },
+  delete:  { labelKey: 'auditLog.actionDelete', icon: Trash2,      cls: 'text-red-700 bg-red-50' },
+  view:    { labelKey: 'auditLog.actionView',   icon: Eye,         cls: 'text-gray-600 bg-gray-50' },
+  export:  { labelKey: 'auditLog.actionExport', icon: Download,    cls: 'text-purple-700 bg-purple-50' },
+  approve: { labelKey: 'auditLog.actionApprove',icon: CheckCircle, cls: 'text-emerald-700 bg-emerald-50' },
+  archive: { labelKey: 'auditLog.actionArchive',icon: Archive,     cls: 'text-orange-700 bg-orange-50' },
 };
 
-const ENTITY_LABELS: Record<string, string> = {
-  supplier:       'Fournisseur',
-  assessment:     'Évaluation',
-  alert:          'Alerte',
-  alert_rule:     'Règle d\'alerte',
-  document:       'Document',
-  organization:   'Organisation',
-  org_member:     'Membre',
+const ENTITY_KEY_MAP: Record<string, string> = {
+  supplier:     'auditLog.entitySupplier',
+  assessment:   'auditLog.entityAssessment',
+  alert:        'auditLog.entityAlert',
+  alert_rule:   'auditLog.entityRule',
+  document:     'auditLog.entityDocument',
+  organization: 'auditLog.entityOrg',
+  org_member:   'auditLog.entityMember',
 };
 
 // ─── Diff viewer ─────────────────────────────────────────────────────────────
 
 function DiffViewer({ changes }: { changes: Record<string, unknown> | null }) {
-  if (!changes) return <p className="text-sm text-gray-400">Aucun détail disponible.</p>;
+  const { t } = useTranslation('vendorshield');
+  if (!changes) return <p className="text-sm text-gray-400">{t('auditLog.noDetails')}</p>;
 
   const before = changes.before as Record<string, unknown> | undefined;
   const after  = changes.after  as Record<string, unknown> | undefined;
@@ -98,7 +101,7 @@ function DiffViewer({ changes }: { changes: Record<string, unknown> | null }) {
   );
 
   if (changedKeys.length === 0) {
-    return <p className="text-sm text-gray-400">Aucun changement détecté.</p>;
+    return <p className="text-sm text-gray-400">{t('auditLog.noDetails')}</p>;
   }
 
   return (
@@ -142,6 +145,7 @@ function EntryDetailDialog({
   open: boolean;
   onClose: () => void;
 }) {
+  const { t } = useTranslation('vendorshield');
   if (!entry) return null;
   const cfg = ACTION_CFG[entry.action] ?? ACTION_CFG.view;
 
@@ -161,12 +165,12 @@ function EntryDetailDialog({
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
               <p className="text-xs text-gray-500">Action</p>
-              <p className="font-medium">{cfg.label}</p>
+              <p className="font-medium">{t(cfg.labelKey)}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500">Entité</p>
+              <p className="text-xs text-gray-500">{t('auditLog.labelEntity')}</p>
               <p className="font-medium">
-                {ENTITY_LABELS[entry.entity_type] ?? entry.entity_type}
+                {t(ENTITY_KEY_MAP[entry.entity_type] ?? 'auditLog.entityDocument')}
                 {entry.entity_name && ` — ${entry.entity_name}`}
               </p>
             </div>
@@ -205,6 +209,7 @@ interface Props {
 }
 
 export function AuditLogTable({ entries, total, page, pageCount, filters }: Props) {
+  const { t } = useTranslation('vendorshield');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -228,24 +233,24 @@ export function AuditLogTable({ entries, total, page, pageCount, filters }: Prop
       <div className="flex flex-wrap items-center gap-2">
         <Select value={filters.action ?? 'all'} onValueChange={(v) => updateParam('action', v)}>
           <SelectTrigger className="w-44">
-            <SelectValue placeholder="Toutes les actions" />
+            <SelectValue placeholder={t('auditLog.filterAllActions')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Toutes les actions</SelectItem>
+            <SelectItem value="all">{t('auditLog.filterAllActions')}</SelectItem>
             {(Object.keys(ACTION_CFG) as AuditAction[]).map((a) => (
-              <SelectItem key={a} value={a}>{ACTION_CFG[a].label}</SelectItem>
+              <SelectItem key={a} value={a}>{t(ACTION_CFG[a].labelKey)}</SelectItem>
             ))}
           </SelectContent>
         </Select>
 
         <Select value={filters.entity_type ?? 'all'} onValueChange={(v) => updateParam('entity_type', v)}>
           <SelectTrigger className="w-44">
-            <SelectValue placeholder="Toutes les entités" />
+            <SelectValue placeholder={t('auditLog.filterAllEntities')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Toutes les entités</SelectItem>
-            {Object.entries(ENTITY_LABELS).map(([k, v]) => (
-              <SelectItem key={k} value={k}>{v}</SelectItem>
+            <SelectItem value="all">{t('auditLog.filterAllEntities')}</SelectItem>
+            {Object.keys(ENTITY_KEY_MAP).map((k) => (
+              <SelectItem key={k} value={k}>{t(ENTITY_KEY_MAP[k]!)}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -254,11 +259,11 @@ export function AuditLogTable({ entries, total, page, pageCount, filters }: Prop
           <Button variant="ghost" size="sm" onClick={() => {
             startTransition(() => router.push(pathname));
           }}>
-            <X className="mr-1 h-3.5 w-3.5" />Effacer
+            <X className="mr-1 h-3.5 w-3.5" />{t('auditLog.clearFilters')}
           </Button>
         )}
 
-        <span className="ml-auto text-sm text-gray-500">{total} entrée{total !== 1 ? 's' : ''}</span>
+        <span className="ml-auto text-sm text-gray-500">{t('auditLog.entriesCount', { count: total })}</span>
       </div>
 
       {/* Table */}
@@ -266,16 +271,16 @@ export function AuditLogTable({ entries, total, page, pageCount, filters }: Prop
         {entries.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <FileSearch className="h-10 w-10 text-gray-200 mb-3" />
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Aucune entrée dans le journal</p>
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('auditLog.emptyTitle')}</p>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent border-gray-100 dark:border-gray-800">
                 <TableHead className="text-xs font-medium text-gray-500 w-32">Date</TableHead>
-                <TableHead className="text-xs font-medium text-gray-500 w-28">Action</TableHead>
-                <TableHead className="text-xs font-medium text-gray-500">Entité</TableHead>
-                <TableHead className="text-xs font-medium text-gray-500 hidden md:table-cell">Utilisateur</TableHead>
+                <TableHead className="text-xs font-medium text-gray-500 w-28">{t('auditLog.labelAction')}</TableHead>
+                <TableHead className="text-xs font-medium text-gray-500">{t('auditLog.labelEntity')}</TableHead>
+                <TableHead className="text-xs font-medium text-gray-500 hidden md:table-cell">{t('auditLog.labelUser')}</TableHead>
                 <TableHead className="text-xs font-medium text-gray-500 hidden lg:table-cell w-24">IP</TableHead>
                 <TableHead className="w-10" />
               </TableRow>
@@ -302,13 +307,13 @@ export function AuditLogTable({ entries, total, page, pageCount, filters }: Prop
                     <TableCell>
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium ${cfg.cls}`}>
                         <cfg.icon className="h-3 w-3" />
-                        {cfg.label}
+                        {t(cfg.labelKey)}
                       </span>
                     </TableCell>
 
                     <TableCell>
                       <p className="text-sm text-gray-700 dark:text-gray-300">
-                        {ENTITY_LABELS[entry.entity_type] ?? entry.entity_type}
+                        {t(ENTITY_KEY_MAP[entry.entity_type] ?? 'auditLog.entityDocument')}
                       </p>
                       {entry.entity_name && (
                         <p className="text-xs text-gray-400 truncate max-w-[200px]">{entry.entity_name}</p>

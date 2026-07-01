@@ -35,6 +35,7 @@ import {
 } from '@kit/ui/select';
 import { Switch } from '@kit/ui/switch';
 import { Textarea } from '@kit/ui/textarea';
+import { useTranslation } from 'react-i18next';
 
 import {
   createAlertRuleAction,
@@ -55,6 +56,7 @@ import {
 // ─── Composant règle ──────────────────────────────────────────────────────────
 
 function RuleCard({ rule }: { rule: AlertRule }) {
+  const { t } = useTranslation('vendorshield');
   const [isPending, startTransition] = useTransition();
 
   const handleToggle = (active: boolean) => {
@@ -64,7 +66,7 @@ function RuleCard({ rule }: { rule: AlertRule }) {
   };
 
   const handleDelete = () => {
-    if (!confirm('Supprimer cette règle ?')) return;
+    if (!confirm(t('alerts.rules.confirmDelete'))) return;
     startTransition(async () => {
       await deleteAlertRuleAction(rule.id);
     });
@@ -77,12 +79,14 @@ function RuleCard({ rule }: { rule: AlertRule }) {
   };
 
   const severityLabels: Record<AlertSeverity, string> = {
-    info: 'Information', warning: 'Avertissement', critical: 'Critique',
+    info: t('alerts.rules.severityInfo'),
+    warning: t('alerts.rules.severityWarning'),
+    critical: t('alerts.rules.severityCritical'),
   };
 
   const dimensionLabel = rule.dimension
     ? DIMENSION_LABELS[rule.dimension as RiskDimension]
-    : 'Score global';
+    : t('alerts.rules.fieldGlobal');
 
   const conditionText = `${dimensionLabel} ${rule.operator} ${rule.threshold}`;
 

@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from '@kit/ui/card';
 
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { withI18n } from '~/lib/i18n/with-i18n';
 import { getOrganizationExposure } from '~/lib/vendorshield/exposure.server';
 import { getMultiSourcingRecommendations } from '~/lib/vendorshield/multi-sourcing.server';
@@ -22,10 +23,16 @@ import { MultiSourcingPanel } from './_components/multi-sourcing-panel';
 const eur = (n: number) =>
   new Intl.NumberFormat('fr-FR', { notation: 'compact', style: 'currency', currency: 'EUR' }).format(n);
 
-const CONC_LABEL: Record<string, { label: string; cls: string }> = {
-  low: { label: 'Faible', cls: 'text-green-600' },
-  moderate: { label: 'Modérée', cls: 'text-amber-600' },
-  high: { label: 'Élevée', cls: 'text-red-600' },
+const CONC_LEVEL_KEY: Record<string, string> = {
+  low: 'exposure.concLow',
+  moderate: 'exposure.concModerate',
+  high: 'exposure.concHigh',
+};
+
+const CONC_CLS: Record<string, string> = {
+  low: 'text-green-600',
+  moderate: 'text-amber-600',
+  high: 'text-red-600',
 };
 
 function Tile({
@@ -55,44 +62,46 @@ function Tile({
 }
 
 async function ExposurePage() {
+  const { t } = await createI18nServerInstance();
   const [e, sourcing] = await Promise.all([
     getOrganizationExposure(),
     getMultiSourcingRecommendations(),
   ]);
-  const conc = CONC_LABEL[e.concentration_level] ?? CONC_LABEL.low!;
+  const concCls = CONC_CLS[e.concentration_level] ?? CONC_CLS.low!;
+  const concLabel = t(`vendorshield:${CONC_LEVEL_KEY[e.concentration_level] ?? 'exposure.concLow'}`);
 
   return (
     <>
-      <PageHeader title="Exposition au risque" description={<AppBreadcrumbs />} />
+      <PageHeader title={t('vendorshield:pages.exposure')} description={<AppBreadcrumbs />} />
       <PageBody>
         {/* KPIs */}
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <Tile
             icon={TrendingDown}
-            label="Spend-at-Risk"
+            label={t('vendorshield:exposure.spendAtRisk')}
             value={eur(e.spend_at_risk)}
-            hint={`${e.sar_pct}% de la dépense (${eur(e.total_spend)})`}
+            hint={t('vendorshield:exposure.sarHint', { pct: e.sar_pct, total: eur(e.total_spend) })}
             valueClass={e.sar_pct >= 30 ? 'text-red-600' : e.sar_pct >= 15 ? 'text-amber-600' : ''}
           />
           <Tile
             icon={PieChart}
-            label="Concentration (HHI)"
+            label={t('vendorshield:exposure.concentration')}
             value={String(e.hhi)}
-            hint={`Concentration ${conc.label.toLowerCase()}`}
-            valueClass={conc.cls}
+            hint={t('vendorshield:exposure.concHint', { level: concLabel })}
+            valueClass={concCls}
           />
           <Tile
             icon={Layers}
-            label="Dépendance top 3"
+            label={t('vendorshield:exposure.top3dep')}
             value={`${e.top3_share}%`}
-            hint="de la dépense totale"
+            hint={t('vendorshield:exposure.ofTotalSpend')}
             valueClass={e.top3_share >= 50 ? 'text-red-600' : e.top3_share >= 30 ? 'text-amber-600' : ''}
           />
           <Tile
             icon={AlertTriangle}
-            label="Mono-sources"
+            label={t('vendorshield:exposure.soleSources')}
             value={String(e.sole_source_count)}
-            hint={`${eur(e.sole_source_spend)} exposés`}
+            hint={t('vendorshield:exposure.exposed', { amount: eur(e.sole_source_spend) })}
             valueClass={e.sole_source_count > 0 ? 'text-amber-600' : ''}
           />
         </div>

@@ -1,5 +1,6 @@
 import { PageBody, PageHeader } from '@kit/ui/page';
 
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { withI18n } from '~/lib/i18n/with-i18n';
 import type { AuditAction } from '~/lib/vendorshield/types';
 import {
@@ -18,6 +19,7 @@ interface Props {
 }
 
 async function AuditLogPage({ searchParams }: Props) {
+  const { t } = await createI18nServerInstance();
   const params = await searchParams;
 
   const filters: AuditFilters = {
@@ -32,8 +34,8 @@ async function AuditLogPage({ searchParams }: Props) {
   return (
     <>
       <PageHeader
-        title="Journal d'audit"
-        description={`${total} entrée${total !== 1 ? 's' : ''} — lecture seule`}
+        title={t('vendorshield:pages.auditLog')}
+        description={t('vendorshield:pages.auditLogDesc', { count: total })}
       />
       <PageBody>
         <AuditLogTable
