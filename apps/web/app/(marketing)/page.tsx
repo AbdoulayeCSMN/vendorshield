@@ -25,6 +25,7 @@ import {
 } from '@kit/ui/marketing';
 import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { withI18n } from '~/lib/i18n/with-i18n';
+import appConfig from '~/config/app.config';
 
 async function Home() {
   const { t } = await createI18nServerInstance();
@@ -48,7 +49,7 @@ async function Home() {
           }
           subtitle={<span>{t('marketing:home.heroSubtitle')}</span>}
           cta={<MainCallToActionButton t={t} />}
-          image={<DashboardPreview t={t} />}
+          image={<DashboardPreview t={t} demoUrl={`${new URL(appConfig.url).hostname}/home`} />}
         />
       </div>
 
@@ -237,7 +238,7 @@ function StatCard({ value, label }: { value: string; label: string }) {
   );
 }
 
-function DashboardPreview({ t }: { t: (key: string) => string }) {
+function DashboardPreview({ t, demoUrl }: { t: (key: string) => string; demoUrl: string }) {
   const riskHigh = t('marketing:home.demoRiskHigh');
   const riskMedium = t('marketing:home.demoRiskMedium');
 
@@ -251,7 +252,7 @@ function DashboardPreview({ t }: { t: (key: string) => string }) {
           <div className="h-3 w-3 rounded-full bg-green-400" />
         </div>
         <div className="mx-auto text-xs text-gray-400 font-mono bg-white dark:bg-gray-700 rounded-full px-3 py-0.5">
-          app.vendorshield.io/home
+          {demoUrl}
         </div>
       </div>
       {/* Dashboard mock */}
