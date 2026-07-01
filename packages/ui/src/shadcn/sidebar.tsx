@@ -258,7 +258,7 @@ const Sidebar: React.FC<
   return (
     <div
       ref={ref}
-      className="group peer hidden md:block"
+      className="group/layout peer hidden md:block"
       data-state={pinnedState}
       data-collapsible={pinnedState === 'collapsed' ? collapsible : ''}
       data-variant={variant}
@@ -269,11 +269,11 @@ const Sidebar: React.FC<
       <div
         className={cn(
           'relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear',
-          'group-data-[collapsible=offcanvas]:w-0',
-          'group-data-[side=right]:rotate-180',
+          'group-data-[collapsible=offcanvas]/layout:w-0',
+          'group-data-[side=right]/layout:rotate-180',
           variant === 'floating' || variant === 'inset'
-            ? 'group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]'
-            : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon)',
+            ? 'group-data-[collapsible=icon]/layout:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]'
+            : 'group-data-[collapsible=icon]/layout:w-(--sidebar-width-icon)',
           {
             'h-svh': variant !== 'ghost',
           },
@@ -286,15 +286,15 @@ const Sidebar: React.FC<
         className={cn(
           'group fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex',
           side === 'left'
-            ? 'left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]'
-            : 'right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]',
+            ? 'left-0 group-data-[collapsible=offcanvas]/layout:left-[calc(var(--sidebar-width)*-1)]'
+            : 'right-0 group-data-[collapsible=offcanvas]/layout:right-[calc(var(--sidebar-width)*-1)]',
           // Width of the floating panel responds to its OWN data-state (visual,
           // pinned-or-hovered) via the self-targeting data-[state=*] variant.
           // This is intentionally different from the spacer above (which uses
-          // group-data-* targeting the OUTER group / pinnedState).
+          // group-data-*/layout targeting the OUTER named group / pinnedState).
           variant === 'floating' || variant === 'inset'
             ? 'p-2 data-[state=collapsed]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]'
-            : 'data-[state=collapsed]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l',
+            : 'data-[state=collapsed]:w-(--sidebar-width-icon) group-data-[side=left]/layout:border-r group-data-[side=right]/layout:border-l',
           className,
         )}
         data-state={state}
@@ -312,7 +312,7 @@ const Sidebar: React.FC<
         <div
           data-sidebar="sidebar"
           className={cn(
-            'bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm',
+            'bg-sidebar group-data-[variant=floating]/layout:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]/layout:rounded-lg group-data-[variant=floating]/layout:border group-data-[variant=floating]/layout:shadow-sm',
             {
               'bg-transparent': variant === 'ghost',
             },
