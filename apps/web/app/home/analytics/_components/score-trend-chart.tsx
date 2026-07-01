@@ -16,27 +16,30 @@ import {
   ChartTooltipContent,
 } from '@kit/ui/chart';
 
+import { useTranslation } from 'react-i18next';
+
 import type { ScoreTrendPoint } from '~/lib/vendorshield/analytics.server';
 
 interface Props {
   trend: ScoreTrendPoint[];
 }
 
-const chartConfig = {
-  avg_score: {
-    label: 'Score moyen',
-    color: 'hsl(var(--chart-1))',
-  },
-} satisfies ChartConfig;
-
-// Formater "2025-01" → "Jan 25"
-function formatMonth(month: string): string {
+function formatMonth(month: string, locale: string): string {
   const [year, m] = month.split('-');
   const d = new Date(parseInt(year ?? '0'), parseInt(m ?? '1') - 1);
-  return d.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
+  return d.toLocaleDateString(locale, { month: 'short', year: '2-digit' });
 }
 
 export function ScoreTrendChart({ trend }: Props) {
+  const { t, i18n } = useTranslation('vendorshield');
+
+  const chartConfig = {
+    avg_score: {
+      label: t('analytics.avgScoreLabel'),
+      color: 'hsl(var(--chart-1))',
+    },
+  } satisfies ChartConfig;
+
   const isEmpty = trend.length === 0;
 
   // Calculer tendance globale
@@ -46,7 +49,7 @@ export function ScoreTrendChart({ trend }: Props) {
 
   const chartData = trend.map((p) => ({
     ...p,
-    month: formatMonth(p.month),
+    month: formatMonth(p.month, i18n.language),
     rawMonth: p.month,
   }));
 
@@ -55,15 +58,15 @@ export function ScoreTrendChart({ trend }: Props) {
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>
-            <CardTitle className="text-sm font-semibold">Évolution du score de risque moyen</CardTitle>
-            <CardDescription>Score global agrégé par mois sur les 12 derniers mois</CardDescription>
+            <CardTitle className="text-sm font-semibold">{t('analytics.scoreTrendTitle')}</CardTitle>
+            <CardDescription>{t('analytics.scoreTrendDesc')}</CardDescription>
           </div>
           {delta !== null && (
             <div className={`text-right ${delta >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               <p className="text-lg font-bold tabular-nums">
                 {delta >= 0 ? '+' : ''}{delta}
               </p>
-              <p className="text-xs text-gray-400">évolution</p>
+              <p className="text-xs text-gray-400">{t('analytics.scoreTrendEvolution')}</p>
             </div>
           )}
         </div>
@@ -71,7 +74,7 @@ export function ScoreTrendChart({ trend }: Props) {
       <CardContent>
         {isEmpty ? (
           <div className="flex h-[200px] items-center justify-center text-sm text-gray-400">
-            Aucune évaluation complétée sur la période — le graphique apparaîtra après les premières évaluations.
+            {t('analytics.scoreTrendEmpty')}
           </div>
         ) : (
           <ChartContainer config={chartConfig} className="h-[220px] w-full">
@@ -105,13 +108,14 @@ export function ScoreTrendChart({ trend }: Props) {
               <ChartTooltip
                 content={
                   <ChartTooltipContent
-                    formatter={(value, name) => [
+                    formatter={(value) => [
                       `${value}/100`,
-                      'Score moyen',
+                      t('analytics.avgScoreLabel'),
                     ]}
                     labelFormatter={(label, payload) => {
                       const item = payload?.[0]?.payload;
-                      return `${label} · ${item?.assessment_count ?? 0} évaluation${(item?.assessment_count ?? 0) > 1 ? 's' : ''}`;
+                      const count = item?.assessment_count ?? 0;
+                      return `${label} · ${t('analytics.assessmentCount', { count })}`;
                     }}
                   />
                 }

@@ -20,6 +20,8 @@ import {
   CardTitle,
 } from '@kit/ui/card';
 
+import { useTranslation } from 'react-i18next';
+
 import type {
   AlertsTrendPoint,
   AssessmentTrendItem,
@@ -52,7 +54,8 @@ export function DashboardTrends({
   scoreTrend: AssessmentTrendItem[];
   alertsTrend: AlertsTrendPoint[];
 }) {
-  // Delta score : dernier mois noté vs le précédent noté.
+  const { t } = useTranslation('vendorshield');
+
   const scored = scoreTrend.filter((s) => s.avg_score !== null);
   const scoreDelta =
     scored.length >= 2
@@ -71,13 +74,13 @@ export function DashboardTrends({
       <Card>
         <CardHeader className="pb-1">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-semibold">Évolution du score moyen</CardTitle>
+            <CardTitle className="text-sm font-semibold">{t('analytics.avgScoreTrend')}</CardTitle>
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold tabular-nums">{lastScore ?? '—'}</span>
               <Delta value={scoreDelta} />
             </div>
           </div>
-          <CardDescription className="text-xs">12 derniers mois (évaluations)</CardDescription>
+          <CardDescription className="text-xs">{t('analytics.last12MonthsAssessments')}</CardDescription>
         </CardHeader>
         <CardContent className="pt-1">
           <div className="h-32">
@@ -85,7 +88,7 @@ export function DashboardTrends({
               <LineChart data={scoreTrend} margin={{ top: 6, right: 6, bottom: 0, left: -22 }}>
                 <XAxis dataKey="month" tick={{ fontSize: 9 }} interval={1} tickLine={false} axisLine={false} />
                 <YAxis domain={[0, 100]} tick={{ fontSize: 9 }} tickLine={false} axisLine={false} />
-                <Tooltip formatter={(v: number) => [`${v}/100`, 'Score moyen']} labelStyle={{ fontSize: 11 }} />
+                <Tooltip formatter={(v: number) => [`${v}/100`, t('analytics.avgScoreLabel')]} labelStyle={{ fontSize: 11 }} />
                 <Line type="monotone" dataKey="avg_score" stroke="#6366f1" strokeWidth={2} dot={false} connectNulls />
               </LineChart>
             </ResponsiveContainer>
@@ -97,13 +100,13 @@ export function DashboardTrends({
       <Card>
         <CardHeader className="pb-1">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-semibold">Alertes par semaine</CardTitle>
+            <CardTitle className="text-sm font-semibold">{t('analytics.alertsPerWeek')}</CardTitle>
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold tabular-nums">{alertsTotal}</span>
               <Delta value={alertsDelta} invert />
             </div>
           </div>
-          <CardDescription className="text-xs">8 dernières semaines · vs semaine précédente</CardDescription>
+          <CardDescription className="text-xs">{t('analytics.last8WeeksVsPrev')}</CardDescription>
         </CardHeader>
         <CardContent className="pt-1">
           <div className="h-32">
@@ -117,7 +120,7 @@ export function DashboardTrends({
                 </defs>
                 <XAxis dataKey="label" tick={{ fontSize: 9 }} tickLine={false} axisLine={false} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 9 }} tickLine={false} axisLine={false} />
-                <Tooltip formatter={(v: number) => [v, 'Alertes']} labelStyle={{ fontSize: 11 }} />
+                <Tooltip formatter={(v: number) => [v, t('analytics.alertsLabel')]} labelStyle={{ fontSize: 11 }} />
                 <Area type="monotone" dataKey="count" stroke="#f97316" strokeWidth={2} fill="url(#alertsGrad)" />
               </AreaChart>
             </ResponsiveContainer>

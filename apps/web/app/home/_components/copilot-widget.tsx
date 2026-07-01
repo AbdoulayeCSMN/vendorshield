@@ -7,6 +7,8 @@ import { usePathname } from 'next/navigation';
 
 import { Loader2, Maximize2, RotateCcw, Send, Sparkles, X } from 'lucide-react';
 
+import { useTranslation } from 'react-i18next';
+
 import { Button } from '@kit/ui/button';
 
 import { CopilotMarkdown } from './copilot-markdown';
@@ -21,6 +23,7 @@ export function askCopilot(message: string): void {
 }
 
 export function CopilotWidget() {
+  const { t } = useTranslation('vendorshield');
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
@@ -61,7 +64,7 @@ export function CopilotWidget() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          aria-label="Ouvrir le copilote"
+          aria-label={t('copilot.openCopilot')}
           className="bg-primary text-primary-foreground fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-transform hover:scale-105"
         >
           <Sparkles className="h-6 w-6" />
@@ -73,18 +76,18 @@ export function CopilotWidget() {
           <header className="flex items-center justify-between border-b px-4 py-3">
             <div className="flex items-center gap-2">
               <Sparkles className="text-primary h-4 w-4" />
-              <span className="text-sm font-semibold">Copilote Avilyre</span>
+              <span className="text-sm font-semibold">{t('copilot.title')}</span>
             </div>
             <div className="flex items-center gap-1">
               {messages.length > 0 && (
-                <button type="button" onClick={clear} aria-label="Nouvelle conversation" title="Nouvelle conversation" className="text-muted-foreground hover:text-foreground p-1">
+                <button type="button" onClick={clear} aria-label={t('copilot.newConversation')} title={t('copilot.newConversation')} className="text-muted-foreground hover:text-foreground p-1">
                   <RotateCcw className="h-3.5 w-3.5" />
                 </button>
               )}
-              <Link href="/home/copilot" aria-label="Ouvrir en plein écran" title="Plein écran" className="text-muted-foreground hover:text-foreground p-1">
+              <Link href="/home/copilot" aria-label={t('copilot.fullscreen')} title={t('copilot.fullscreen')} className="text-muted-foreground hover:text-foreground p-1">
                 <Maximize2 className="h-3.5 w-3.5" />
               </Link>
-              <button type="button" onClick={() => setOpen(false)} aria-label="Fermer" className="text-muted-foreground hover:text-foreground p-1">
+              <button type="button" onClick={() => setOpen(false)} aria-label={t('copilot.close')} className="text-muted-foreground hover:text-foreground p-1">
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -93,7 +96,7 @@ export function CopilotWidget() {
           <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-4">
             {messages.length === 0 ? (
               <div className="text-muted-foreground space-y-3 text-sm">
-                <p>Posez une question sur vos fournisseurs, vos risques ou l'utilisation de l'application.</p>
+                <p>{t('copilot.welcomeDesc')}</p>
                 <SuggestionList supplierId={supplierId} onPick={submit} />
               </div>
             ) : (
@@ -127,7 +130,7 @@ export function CopilotWidget() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Votre question..."
+              placeholder={t('copilot.placeholder')}
               className="border-input bg-background focus-visible:ring-ring flex-1 rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1"
             />
             <Button type="submit" size="icon" disabled={streaming || !input.trim()}>

@@ -23,40 +23,43 @@ import {
   ChartTooltipContent,
 } from '@kit/ui/chart';
 
+import { useTranslation } from 'react-i18next';
+
 import type { AccountRiskDashboard } from '~/lib/vendorshield/types';
 
 interface Props {
   kpis: AccountRiskDashboard | null;
 }
 
-const chartConfig = {
-  count: { label: 'Fournisseurs' },
-} satisfies ChartConfig;
-
 export function RiskDistributionChart({ kpis }: Props) {
+  const { t } = useTranslation('vendorshield');
   const total = kpis?.total_suppliers ?? 0;
+
+  const chartConfig = {
+    count: { label: t('analytics.suppliersLabel') },
+  } satisfies ChartConfig;
 
   const data = [
     {
-      level: 'Critique',
+      level: t('dashboard.riskCritical'),
       count: kpis?.critical_risk_count ?? 0,
       color: '#ef4444',
       pct: total > 0 ? Math.round(((kpis?.critical_risk_count ?? 0) / total) * 100) : 0,
     },
     {
-      level: 'Élevé',
+      level: t('dashboard.riskHigh'),
       count: kpis?.high_risk_count ?? 0,
       color: '#f97316',
       pct: total > 0 ? Math.round(((kpis?.high_risk_count ?? 0) / total) * 100) : 0,
     },
     {
-      level: 'Modéré',
+      level: t('dashboard.riskMedium'),
       count: kpis?.medium_risk_count ?? 0,
       color: '#eab308',
       pct: total > 0 ? Math.round(((kpis?.medium_risk_count ?? 0) / total) * 100) : 0,
     },
     {
-      level: 'Faible',
+      level: t('dashboard.riskLow'),
       count: kpis?.low_risk_count ?? 0,
       color: '#22c55e',
       pct: total > 0 ? Math.round(((kpis?.low_risk_count ?? 0) / total) * 100) : 0,
@@ -68,12 +71,12 @@ export function RiskDistributionChart({ kpis }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm font-semibold">Distribution des niveaux de risque</CardTitle>
-        <CardDescription>Répartition du portefeuille par niveau</CardDescription>
+        <CardTitle className="text-sm font-semibold">{t('dashboard.riskDistribution')}</CardTitle>
+        <CardDescription>{t('dashboard.riskDistributionDesc')}</CardDescription>
       </CardHeader>
       <CardContent>
         {isEmpty ? (
-          <EmptyChart />
+          <EmptyChart label={t('dashboard.noSupplierEvaluated')} />
         ) : (
           <>
             <ChartContainer config={chartConfig} className="h-[200px] w-full">
@@ -126,10 +129,10 @@ export function RiskDistributionChart({ kpis }: Props) {
   );
 }
 
-function EmptyChart() {
+function EmptyChart({ label }: { label: string }) {
   return (
     <div className="flex h-[200px] items-center justify-center text-sm text-gray-400">
-      Aucune donnée disponible — ajoutez des fournisseurs évalués.
+      {label}
     </div>
   );
 }

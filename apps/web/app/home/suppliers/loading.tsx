@@ -1,16 +1,22 @@
 import { PageBody, PageHeader } from '@kit/ui/page';
 import { Skeleton } from '@kit/ui/skeleton';
 
-export default function SuppliersLoading() {
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
+
+export default async function SuppliersLoading() {
+  const { t } = await createI18nServerInstance();
+
   return (
     <>
-      <PageHeader title="Fournisseurs" description="Chargement...">
+      <PageHeader
+        title={t('pages.suppliers', { ns: 'vendorshield' })}
+        description={t('common.loading', { ns: 'vendorshield' })}
+      >
         <Skeleton className="h-9 w-36" />
       </PageHeader>
 
       <PageBody>
         <div className="space-y-3">
-          {/* Filters skeleton */}
           <div className="flex gap-2">
             <Skeleton className="h-9 w-64" />
             <Skeleton className="h-9 w-36" />
@@ -18,7 +24,6 @@ export default function SuppliersLoading() {
             <Skeleton className="h-9 w-36" />
           </div>
 
-          {/* Table skeleton */}
           <div className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
             <div className="border-b border-gray-100 dark:border-gray-800 p-4">
               <div className="grid grid-cols-7 gap-4">

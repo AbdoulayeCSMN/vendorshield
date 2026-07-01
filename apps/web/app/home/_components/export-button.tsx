@@ -9,6 +9,7 @@ import {
   FileText,
   Loader2,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@kit/ui/button';
 import {
@@ -21,8 +22,6 @@ import {
   DropdownMenuTrigger,
 } from '@kit/ui/dropdown-menu';
 
-// ─── Types ─────────────────────────────────────────────────────────────────────
-
 type ExportType =
   | 'csv-suppliers'
   | 'json-suppliers'
@@ -31,54 +30,13 @@ type ExportType =
   | 'pdf-assessment';
 
 interface ExportConfig {
-  type:          ExportType;
-  label:         string;
-  icon:          React.ComponentType<{ className?: string }>;
-  description:   string;
+  type:        ExportType;
+  label:       string;
+  icon:        React.ComponentType<{ className?: string }>;
+  descKey:     string;
 }
 
-// ─── Configs disponibles selon le contexte ────────────────────────────────────
-
-const SUPPLIER_EXPORTS: ExportConfig[] = [
-  {
-    type:        'csv-suppliers',
-    label:       'CSV',
-    icon:        FileSpreadsheet,
-    description: 'Compatible Excel, Google Sheets',
-  },
-  {
-    type:        'json-suppliers',
-    label:       'JSON',
-    icon:        FileCode,
-    description: 'Données structurées complètes',
-  },
-];
-
-const ASSESSMENT_EXPORTS: ExportConfig[] = [
-  {
-    type:        'pdf-assessment',
-    label:       'PDF (rapport)',
-    icon:        FileText,
-    description: 'Rapport de conformité imprimable',
-  },
-  {
-    type:        'csv-assessment',
-    label:       'CSV (facteurs)',
-    icon:        FileSpreadsheet,
-    description: 'Détail des 24 critères',
-  },
-  {
-    type:        'json-assessment',
-    label:       'JSON (complet)',
-    icon:        FileCode,
-    description: 'Évaluation + facteurs + scores',
-  },
-];
-
-// ─── Composant ────────────────────────────────────────────────────────────────
-
 interface ExportButtonProps {
-  /** 'suppliers' → export liste | 'assessment' → export évaluation */
   context:       'suppliers' | 'assessment';
   supplierId?:   string;
   assessmentId?: string;
@@ -95,7 +53,19 @@ export function ExportButton({
   size = 'sm',
   label,
 }: ExportButtonProps) {
+  const { t } = useTranslation('vendorshield');
   const [loading, setLoading] = useState<ExportType | null>(null);
+
+  const SUPPLIER_EXPORTS: ExportConfig[] = [
+    { type: 'csv-suppliers',  label: 'CSV',          icon: FileSpreadsheet, descKey: 'common.exportCsvDesc' },
+    { type: 'json-suppliers', label: 'JSON',         icon: FileCode,        descKey: 'common.exportJsonDesc' },
+  ];
+
+  const ASSESSMENT_EXPORTS: ExportConfig[] = [
+    { type: 'pdf-assessment',  label: 'PDF',         icon: FileText,        descKey: 'common.exportPdfDesc' },
+    { type: 'csv-assessment',  label: 'CSV',         icon: FileSpreadsheet, descKey: 'common.exportCsvAssessmentDesc' },
+    { type: 'json-assessment', label: 'JSON',        icon: FileCode,        descKey: 'common.exportJsonAssessmentDesc' },
+  ];
 
   const configs = context === 'assessment' ? ASSESSMENT_EXPORTS : SUPPLIER_EXPORTS;
 
@@ -109,10 +79,8 @@ export function ExportButton({
       const url = `/api/exports/${type}?${params.toString()}`;
 
       if (type === 'pdf-assessment') {
-        // Ouvrir dans un nouvel onglet pour impression navigateur
         window.open(url, '_blank');
       } else {
-        // Téléchargement direct
         const res = await fetch(url);
         if (!res.ok) throw new Error(await res.text());
 
@@ -129,7 +97,7 @@ export function ExportButton({
       }
     } catch (err) {
       console.error('Export failed:', err);
-      alert(`Export échoué : ${(err as Error).message}`);
+      alert(t('common.exportFailed', { message: (err as Error).message }));
     } finally {
       setLoading(null);
     }
@@ -150,7 +118,7 @@ export function ExportButton({
 
       <DropdownMenuContent align="end" className="w-52">
         <DropdownMenuLabel className="text-xs text-gray-500 font-normal">
-          {context === 'assessment' ? 'Exporter l\'évaluation' : 'Exporter les fournisseurs'}
+          {context === 'assessment' ? t('common.exportAssessment') : t('common.exportSuppliers')}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
 
@@ -173,7 +141,7 @@ export function ExportButton({
                   )}
                   <div>
                     <p className="text-sm font-medium">{cfg.label}</p>
-                    <p className="text-[10px] text-gray-400">{cfg.description}</p>
+                    <p className="text-[10px] text-gray-400">{t(cfg.descKey)}</p>
                   </div>
                 </div>
               </DropdownMenuItem>

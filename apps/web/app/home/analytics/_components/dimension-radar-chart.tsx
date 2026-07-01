@@ -22,25 +22,26 @@ import {
   ChartTooltipContent,
 } from '@kit/ui/chart';
 
+import { useTranslation } from 'react-i18next';
+
 import type { AccountRiskDashboard } from '~/lib/vendorshield/types';
 
 interface Props {
   kpis: AccountRiskDashboard | null;
 }
 
-const chartConfig = {
-  score: {
-    label: 'Score moyen',
-    color: 'hsl(var(--chart-1))',
-  },
-} satisfies ChartConfig;
-
 export function DimensionRadarChart({ kpis }: Props) {
+  const { t } = useTranslation('vendorshield');
+
+  const chartConfig = {
+    score: { label: t('analytics.avgScoreLabel'), color: 'hsl(var(--chart-1))' },
+  } satisfies ChartConfig;
+
   const data = [
-    { dimension: 'Financier',    score: kpis?.avg_financial_score    ?? 0 },
-    { dimension: 'Opérationnel', score: kpis?.avg_operational_score  ?? 0 },
-    { dimension: 'Géopolitique', score: kpis?.avg_geopolitical_score ?? 0 },
-    { dimension: 'ESG',          score: kpis?.avg_esg_score          ?? 0 },
+    { dimension: t('dashboard.dimFinancial'),    score: kpis?.avg_financial_score    ?? 0 },
+    { dimension: t('dashboard.dimOperational'),  score: kpis?.avg_operational_score  ?? 0 },
+    { dimension: t('dashboard.dimGeopolitical'), score: kpis?.avg_geopolitical_score ?? 0 },
+    { dimension: t('dashboard.dimEsg'),          score: kpis?.avg_esg_score          ?? 0 },
   ];
 
   const isEmpty = data.every((d) => d.score === 0);
@@ -56,13 +57,13 @@ export function DimensionRadarChart({ kpis }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm font-semibold">Scores moyens par dimension</CardTitle>
-        <CardDescription>Vision 360° de l'exposition au risque</CardDescription>
+        <CardTitle className="text-sm font-semibold">{t('dashboard.avgByDimension')}</CardTitle>
+        <CardDescription>{t('dashboard.riskDistribution')}</CardDescription>
       </CardHeader>
       <CardContent>
         {isEmpty ? (
           <div className="flex h-[260px] items-center justify-center text-sm text-gray-400">
-            Aucune évaluation disponible.
+            {t('assessments.emptyTitle')}
           </div>
         ) : (
           <>
@@ -75,10 +76,10 @@ export function DimensionRadarChart({ kpis }: Props) {
                 />
                 <ChartTooltip
                   content={<ChartTooltipContent />}
-                  formatter={(value) => [`${value}/100`, 'Score moyen']}
+                  formatter={(value) => [`${value}/100`, t('analytics.avgScoreLabel')]}
                 />
                 <Radar
-                  name="Score moyen"
+                  name={t('analytics.avgScoreLabel')}
                   dataKey="score"
                   stroke={fillColor}
                   fill={fillColor}

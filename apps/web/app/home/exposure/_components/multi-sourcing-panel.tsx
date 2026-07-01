@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 import { Loader2, Sparkles, Network } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@kit/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@kit/ui/card';
@@ -14,24 +15,25 @@ import { CopilotMarkdown } from '~/home/_components/copilot-markdown';
 import { sourcingAdviceAction } from '~/lib/vendorshield/actions/sourcing.actions';
 import type { MultiSourcingResult } from '~/lib/vendorshield/multi-sourcing.server';
 
-const eur = (n: number) =>
-  new Intl.NumberFormat('fr-FR', { notation: 'compact', style: 'currency', currency: 'EUR' }).format(n);
-
 const LEVEL_BADGE: Record<string, string> = {
   critical: 'bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-300',
   high: 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300',
   medium: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
 };
 
-const ACTION_LABEL: Record<string, string> = {
-  qualify_second_source: 'Qualifier une 2ᵉ source',
-  diversify: 'Répartir le volume',
-  monitor: 'Surveiller',
-};
-
 export function MultiSourcingPanel({ data }: { data: MultiSourcingResult }) {
+  const { t, i18n } = useTranslation('vendorshield');
   const [advice, setAdvice] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+
+  const eur = (n: number) =>
+    new Intl.NumberFormat(i18n.language, { notation: 'compact', style: 'currency', currency: 'EUR' }).format(n);
+
+  const ACTION_LABEL: Record<string, string> = {
+    qualify_second_source: t('exposure.qualifySecondSource'),
+    diversify: t('exposure.diversify'),
+    monitor: t('exposure.monitor'),
+  };
 
   const generate = () =>
     startTransition(async () => {
@@ -53,8 +55,8 @@ export function MultiSourcingPanel({ data }: { data: MultiSourcingResult }) {
             </CardTitle>
             <CardDescription>
               {data.count > 0
-                ? `${data.count} fournisseur(s) à risque de dépendance · ${eur(data.exposed_spend)} de dépense exposée`
-                : 'Aucune dépendance critique détectée.'}
+                ? t('exposure.dependencyCount', { count: data.count, spend: eur(data.exposed_spend) })
+                : t('exposure.noCritical')}
             </CardDescription>
           </div>
           <Button size="sm" variant="outline" onClick={generate} disabled={pending}>
@@ -63,7 +65,7 @@ export function MultiSourcingPanel({ data }: { data: MultiSourcingResult }) {
             ) : (
               <Sparkles className="mr-1.5 h-4 w-4" />
             )}
-            Conseil stratégique IA
+            {t('exposure.aiAdvice')}
           </Button>
         </div>
       </CardHeader>
@@ -76,8 +78,7 @@ export function MultiSourcingPanel({ data }: { data: MultiSourcingResult }) {
 
         {data.count === 0 ? (
           <p className="text-muted-foreground text-sm">
-            Votre portefeuille est correctement diversifié. Continuez le suivi régulier des
-            fournisseurs critiques.
+            {t('exposure.wellDiversified')}
           </p>
         ) : (
           <ul className="space-y-2">
@@ -93,7 +94,7 @@ export function MultiSourcingPanel({ data }: { data: MultiSourcingResult }) {
                   <div className="flex items-center gap-1.5">
                     {r.is_sole_source && (
                       <span className="rounded bg-purple-100 px-1.5 py-0.5 text-xs font-medium text-purple-700 dark:bg-purple-950/40 dark:text-purple-300">
-                        Mono-source
+                        {t('exposure.monoSource')}
                       </span>
                     )}
                     <span className={`rounded px-1.5 py-0.5 text-xs font-medium ${LEVEL_BADGE[r.level]}`}>
@@ -105,7 +106,7 @@ export function MultiSourcingPanel({ data }: { data: MultiSourcingResult }) {
                 <p className="text-muted-foreground mt-1 text-xs">{r.rationale}</p>
                 {r.alternatives.length > 0 && (
                   <div className="mt-1.5 flex flex-wrap items-center gap-1 text-xs">
-                    <span className="text-muted-foreground">Alternatives :</span>
+                    <span className="text-muted-foreground">{t('exposure.alternatives')}</span>
                     {r.alternatives.map((a) => (
                       <Link
                         key={a.id}
