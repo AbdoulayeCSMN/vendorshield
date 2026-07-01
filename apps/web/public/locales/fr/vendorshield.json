@@ -223,7 +223,42 @@
     "supplyChainDesc": "Cartographie multi-tiers de votre chaîne d'approvisionnement",
     "copilot": "Copilote",
     "alertRules": "Règles d'alerte",
-    "newManualAlert": "Nouvelle alerte manuelle"
+    "newManualAlert": "Nouvelle alerte manuelle",
+    "dashboard": "Tableau de bord",
+    "dashboardDesc": "Vue d'ensemble de vos risques fournisseurs",
+    "riskMap": "Cartographie des risques",
+    "riskMapPriorities": "Priorités d'action ({{count}})",
+    "riskMapPrioritiesDesc": "Fournisseurs du quadrant critique (forte probabilité × fort impact).",
+    "riskMapEmpty": "Aucun fournisseur dans le quadrant critique. 🎉"
+  },
+  "copilot": {
+    "welcomeTitle": "Comment puis-je vous aider ?",
+    "welcomeDesc": "Posez une question sur vos fournisseurs, vos risques ou l'utilisation de l'application.",
+    "placeholder": "Votre question...",
+    "newConversation": "Nouvelle"
+  },
+  "manual": {
+    "alertTitle": "Alerte manuelle",
+    "alertDesc": "Créez une alerte contextuelle non liée à une évaluation automatique.",
+    "labelSupplier": "Fournisseur concerné (optionnel)",
+    "noSpecificSupplier": "Aucun fournisseur spécifique",
+    "labelTitle": "Titre",
+    "labelDescription": "Description",
+    "titlePlaceholder": "Ex : Grève logistique prévue",
+    "descPlaceholder": "Décrivez la situation et son impact potentiel...",
+    "creating": "Création...",
+    "create": "Créer l'alerte"
+  },
+  "riskMatrix": {
+    "title": "Matrice des risques fournisseurs",
+    "desc": "Probabilité d'incident (axe X) × impact business (axe Y). Taille = dépense annuelle. Le quadrant haut-droit concentre les priorités.",
+    "probability": "Probabilité",
+    "probabilityAxis": "Probabilité d'incident →",
+    "impactAxis": "Impact →",
+    "spend": "Dépense",
+    "tooltipProb": "Probabilité {{likelihood}}/100 · Impact {{impact}}/100",
+    "tooltipCrit": "Criticité {{val}}",
+    "tooltipClick": "Cliquer pour ouvrir la fiche →"
   },
   "alerts": {
     "statusOpen": "Ouverte",

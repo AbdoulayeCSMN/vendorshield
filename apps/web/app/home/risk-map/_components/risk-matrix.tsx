@@ -24,7 +24,10 @@ import {
   CardTitle,
 } from '@kit/ui/card';
 
+import { useTranslation } from 'react-i18next';
+
 import type { RiskMatrixPoint } from '~/lib/vendorshield/analytics.server';
+import { useEnumLabels } from '~/lib/vendorshield/use-labels';
 
 const RISK_COLOR: Record<string, string> = {
   critical: '#dc2626',
@@ -45,26 +48,29 @@ interface Datum extends RiskMatrixPoint {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function MatrixTooltip({ active, payload }: any) {
+  const { t, i18n } = useTranslation('vendorshield');
   if (!active || !payload?.length) return null;
   const d: Datum = payload[0].payload;
   return (
     <div className="bg-background rounded-lg border p-2 text-xs shadow-md">
       <div className="font-semibold">{d.name}</div>
       <div className="text-muted-foreground">
-        Probabilité {d.likelihood}/100 · Impact {d.impact}/100
+        {t('riskMatrix.tooltipProb', { likelihood: d.likelihood, impact: d.impact })}
       </div>
       <div className="text-muted-foreground">
-        Criticité {d.criticality ?? '—'}
+        {t('riskMatrix.tooltipCrit', { val: d.criticality ?? '—' })}
         {d.annual_spend_eur
-          ? ` · ${new Intl.NumberFormat('fr-FR', { notation: 'compact', style: 'currency', currency: 'EUR' }).format(d.annual_spend_eur)}`
+          ? ` · ${new Intl.NumberFormat(i18n.language, { notation: 'compact', style: 'currency', currency: 'EUR' }).format(d.annual_spend_eur)}`
           : ''}
       </div>
-      <div className="text-primary mt-1">Cliquer pour ouvrir la fiche →</div>
+      <div className="text-primary mt-1">{t('riskMatrix.tooltipClick')}</div>
     </div>
   );
 }
 
 export function RiskMatrix({ points }: { points: RiskMatrixPoint[] }) {
+  const { t } = useTranslation('vendorshield');
+  const { riskLevelLabels } = useEnumLabels();
   const router = useRouter();
   const data: Datum[] = points.map((p) => ({
     ...p,
@@ -76,11 +82,8 @@ export function RiskMatrix({ points }: { points: RiskMatrixPoint[] }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Matrice des risques fournisseurs</CardTitle>
-        <CardDescription>
-          Probabilité d&apos;incident (axe X) × impact business (axe Y). Taille = dépense annuelle.
-          Le quadrant haut-droit concentre les priorités.
-        </CardDescription>
+        <CardTitle className="text-base">{t('riskMatrix.title')}</CardTitle>
+        <CardDescription>{t('riskMatrix.desc')}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="h-[460px] w-full">
@@ -94,20 +97,20 @@ export function RiskMatrix({ points }: { points: RiskMatrixPoint[] }) {
               <XAxis
                 type="number"
                 dataKey="x"
-                name="Probabilité"
+                name={t('riskMatrix.probability')}
                 domain={[0, 100]}
                 tick={{ fontSize: 11 }}
-                label={{ value: "Probabilité d'incident →", position: 'bottom', fontSize: 11 }}
+                label={{ value: t('riskMatrix.probabilityAxis'), position: 'bottom', fontSize: 11 }}
               />
               <YAxis
                 type="number"
                 dataKey="y"
-                name="Impact"
+                name={t('riskMatrix.impactAxis')}
                 domain={[0, 100]}
                 tick={{ fontSize: 11 }}
-                label={{ value: 'Impact →', angle: -90, position: 'insideLeft', fontSize: 11 }}
+                label={{ value: t('riskMatrix.impactAxis'), angle: -90, position: 'insideLeft', fontSize: 11 }}
               />
-              <ZAxis type="number" dataKey="z" range={[60, 600]} name="Dépense" />
+              <ZAxis type="number" dataKey="z" range={[60, 600]} name={t('riskMatrix.spend')} />
               <Tooltip content={<MatrixTooltip />} cursor={{ strokeDasharray: '3 3' }} />
               <Scatter
                 data={data}
@@ -125,15 +128,10 @@ export function RiskMatrix({ points }: { points: RiskMatrixPoint[] }) {
         </div>
 
         <div className="text-muted-foreground mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
-          {[
-            ['critical', 'Critique'],
-            ['high', 'Élevé'],
-            ['medium', 'Moyen'],
-            ['low', 'Faible'],
-          ].map(([k, label]) => (
+          {(['critical', 'high', 'medium', 'low'] as const).map((k) => (
             <span key={k} className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full" style={{ background: colorFor(k ?? null) }} />
-              {label}
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: colorFor(k) }} />
+              {riskLevelLabels[k]}
             </span>
           ))}
         </div>

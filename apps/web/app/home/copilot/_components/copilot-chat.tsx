@@ -6,11 +6,14 @@ import { Loader2, RotateCcw, Send, Sparkles } from 'lucide-react';
 
 import { Button } from '@kit/ui/button';
 
+import { useTranslation } from 'react-i18next';
+
 import { CopilotMarkdown } from '~/home/_components/copilot-markdown';
 import { SuggestionChips, SuggestionList } from '~/home/_components/copilot-suggestions';
 import { useCopilotChat } from '~/home/_components/use-copilot-chat';
 
 export function CopilotChat() {
+  const { t } = useTranslation('vendorshield');
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
   const { messages, streaming, supplierId, send, clear } = useCopilotChat();
@@ -32,9 +35,9 @@ export function CopilotChat() {
             <div className="bg-primary/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
               <Sparkles className="text-primary h-6 w-6" />
             </div>
-            <h2 className="text-lg font-semibold">Comment puis-je vous aider ?</h2>
+            <h2 className="text-lg font-semibold">{t('copilot.welcomeTitle')}</h2>
             <p className="text-muted-foreground mt-1 text-sm">
-              Posez une question sur vos fournisseurs, vos risques ou l'utilisation de l'application.
+              {t('copilot.welcomeDesc')}
             </p>
             <div className="mx-auto mt-6 max-w-md">
               <SuggestionList supplierId={supplierId} onPick={submit} limit={6} />
@@ -58,7 +61,7 @@ export function CopilotChat() {
         <div className="flex items-center justify-between gap-2 pt-2">
           <SuggestionChips supplierId={supplierId} onPick={submit} limit={5} />
           <Button type="button" variant="ghost" size="sm" onClick={clear} className="shrink-0">
-            <RotateCcw className="mr-1.5 h-3.5 w-3.5" /> Nouvelle
+            <RotateCcw className="mr-1.5 h-3.5 w-3.5" /> {t('copilot.newConversation')}
           </Button>
         </div>
       )}
@@ -73,7 +76,7 @@ export function CopilotChat() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Votre question..."
+          placeholder={t('copilot.placeholder')}
           className="border-input bg-background focus-visible:ring-ring flex-1 rounded-lg border px-4 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-1"
         />
         <Button type="submit" size="icon" disabled={streaming || !input.trim()}>

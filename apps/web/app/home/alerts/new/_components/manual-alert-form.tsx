@@ -22,8 +22,11 @@ import {
 } from '@kit/ui/select';
 import { Textarea } from '@kit/ui/textarea';
 
+import { useTranslation } from 'react-i18next';
+
 import { createManualAlertAction } from '~/lib/vendorshield/actions/alert.actions';
-import { CATEGORY_LABELS, type Supplier } from '~/lib/vendorshield/types';
+import { type Supplier } from '~/lib/vendorshield/types';
+import { useEnumLabels } from '~/lib/vendorshield/use-labels';
 import { useActionState } from 'react';
 
 type FormState = { success?: boolean; error?: string } | null;
@@ -33,6 +36,8 @@ interface Props {
 }
 
 export function ManualAlertForm({ suppliers }: Props) {
+  const { t } = useTranslation('vendorshield');
+  const { categoryLabels, severityLabels } = useEnumLabels();
   const [state, formAction, isPending] = useActionState(
     createManualAlertAction,
     null,
@@ -42,9 +47,9 @@ export function ManualAlertForm({ suppliers }: Props) {
     <form action={formAction} className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Alerte manuelle</CardTitle>
+          <CardTitle className="text-base">{t('manual.alertTitle')}</CardTitle>
           <CardDescription>
-            Créez une alerte contextuelle non liée à une évaluation automatique.
+            {t('manual.alertDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -56,16 +61,16 @@ export function ManualAlertForm({ suppliers }: Props) {
 
           {/* Fournisseur */}
           <div>
-            <Label className="text-sm font-medium">Fournisseur concerné (optionnel)</Label>
+            <Label className="text-sm font-medium">{t('manual.labelSupplier')}</Label>
             <Select name="supplier_id">
               <SelectTrigger className="mt-1.5">
-                <SelectValue placeholder="Aucun fournisseur spécifique" />
+                <SelectValue placeholder={t('manual.noSpecificSupplier')} />
               </SelectTrigger>
               <SelectContent>
                 {suppliers.map((s) => (
                   <SelectItem key={s.id} value={s.id}>
                     {s.country_code && countryFlag(s.country_code)} {s.name}
-                    <span className="ml-1 text-xs text-gray-400">— {CATEGORY_LABELS[s.category]}</span>
+                    <span className="ml-1 text-xs text-gray-400">— {categoryLabels[s.category]}</span>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -74,27 +79,27 @@ export function ManualAlertForm({ suppliers }: Props) {
 
           {/* Titre */}
           <div>
-            <Label className="text-sm font-medium">Titre <span className="text-red-500">*</span></Label>
-            <Input name="title" required placeholder="Ex: Grève logistique prévue" className="mt-1.5" />
+            <Label className="text-sm font-medium">{t('manual.labelTitle')} <span className="text-red-500">*</span></Label>
+            <Input name="title" required placeholder={t('manual.titlePlaceholder')} className="mt-1.5" />
           </div>
 
           {/* Message */}
           <div>
-            <Label className="text-sm font-medium">Description <span className="text-red-500">*</span></Label>
-            <Textarea name="message" required placeholder="Décrivez la situation et son impact potentiel..." className="mt-1.5 resize-none" rows={3} />
+            <Label className="text-sm font-medium">{t('manual.labelDescription')} <span className="text-red-500">*</span></Label>
+            <Textarea name="message" required placeholder={t('manual.descPlaceholder')} className="mt-1.5 resize-none" rows={3} />
           </div>
 
           {/* Sévérité */}
           <div>
-            <Label className="text-sm font-medium">Sévérité</Label>
+            <Label className="text-sm font-medium">{t('alerts.rules.labelSeverity')}</Label>
             <Select name="severity" defaultValue="warning">
               <SelectTrigger className="mt-1.5">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="info">Information</SelectItem>
-                <SelectItem value="warning">Avertissement</SelectItem>
-                <SelectItem value="critical">Critique</SelectItem>
+                <SelectItem value="info">{severityLabels.info}</SelectItem>
+                <SelectItem value="warning">{severityLabels.warning}</SelectItem>
+                <SelectItem value="critical">{severityLabels.critical}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -103,10 +108,10 @@ export function ManualAlertForm({ suppliers }: Props) {
 
       <div className="flex justify-end gap-3">
         <Button variant="outline" asChild disabled={isPending}>
-          <Link href="/home/alerts">Annuler</Link>
+          <Link href="/home/alerts">{t('common.cancel')}</Link>
         </Button>
         <Button type="submit" disabled={isPending}>
-          {isPending ? 'Création...' : 'Créer l\'alerte'}
+          {isPending ? t('manual.creating') : t('manual.create')}
         </Button>
       </div>
     </form>

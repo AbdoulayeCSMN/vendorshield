@@ -223,7 +223,42 @@
     "supplyChainDesc": "Multi-tier mapping of your supply chain",
     "copilot": "Copilot",
     "alertRules": "Alert Rules",
-    "newManualAlert": "New Manual Alert"
+    "newManualAlert": "New Manual Alert",
+    "dashboard": "Dashboard",
+    "dashboardDesc": "Overview of your supplier risks",
+    "riskMap": "Risk Map",
+    "riskMapPriorities": "Action priorities ({{count}})",
+    "riskMapPrioritiesDesc": "Suppliers in the critical quadrant (high probability × high impact).",
+    "riskMapEmpty": "No supplier in the critical quadrant. 🎉"
+  },
+  "copilot": {
+    "welcomeTitle": "How can I help you?",
+    "welcomeDesc": "Ask a question about your suppliers, your risks, or how to use the app.",
+    "placeholder": "Your question...",
+    "newConversation": "New"
+  },
+  "manual": {
+    "alertTitle": "Manual alert",
+    "alertDesc": "Create a contextual alert not linked to an automatic assessment.",
+    "labelSupplier": "Concerned supplier (optional)",
+    "noSpecificSupplier": "No specific supplier",
+    "labelTitle": "Title",
+    "labelDescription": "Description",
+    "titlePlaceholder": "e.g. Planned logistics strike",
+    "descPlaceholder": "Describe the situation and its potential impact...",
+    "creating": "Creating...",
+    "create": "Create alert"
+  },
+  "riskMatrix": {
+    "title": "Supplier risk matrix",
+    "desc": "Incident probability (X axis) × business impact (Y axis). Size = annual spend. The top-right quadrant concentrates priorities.",
+    "probability": "Probability",
+    "probabilityAxis": "Incident probability →",
+    "impactAxis": "Impact →",
+    "spend": "Spend",
+    "tooltipProb": "Probability {{likelihood}}/100 · Impact {{impact}}/100",
+    "tooltipCrit": "Criticality {{val}}",
+    "tooltipClick": "Click to open supplier →"
   },
   "alerts": {
     "statusOpen": "Open",

@@ -3,12 +3,14 @@ import Link from 'next/link';
 import { PageBody, PageHeader } from '@kit/ui/page';
 import { AppBreadcrumbs } from '@kit/ui/app-breadcrumbs';
 
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { withI18n } from '~/lib/i18n/with-i18n';
 import { getRiskMatrix } from '~/lib/vendorshield/analytics.server';
 
 import { RiskMatrix } from './_components/risk-matrix';
 
 async function RiskMapPage() {
+  const { t } = await createI18nServerInstance();
   const points = await getRiskMatrix();
 
   // Quadrant prioritaire : forte probabilité ET fort impact.
@@ -20,7 +22,7 @@ async function RiskMapPage() {
   return (
     <>
       <PageHeader
-        title="Cartographie des risques"
+        title={t('vendorshield:pages.riskMap')}
         description={<AppBreadcrumbs />}
       />
       <PageBody>
@@ -31,15 +33,15 @@ async function RiskMapPage() {
 
           <div className="rounded-xl border p-4">
             <h2 className="text-sm font-semibold">
-              Priorités d&apos;action ({priorities.length})
+              {t('vendorshield:pages.riskMapPriorities', { count: priorities.length })}
             </h2>
             <p className="text-muted-foreground mt-0.5 text-xs">
-              Fournisseurs du quadrant critique (forte probabilité × fort impact).
+              {t('vendorshield:pages.riskMapPrioritiesDesc')}
             </p>
             <ul className="mt-3 space-y-2">
               {priorities.length === 0 && (
                 <li className="text-muted-foreground text-sm">
-                  Aucun fournisseur dans le quadrant critique. 🎉
+                  {t('vendorshield:pages.riskMapEmpty')}
                 </li>
               )}
               {priorities.map((p) => (

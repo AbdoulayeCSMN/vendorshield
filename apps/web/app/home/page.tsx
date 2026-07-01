@@ -1,5 +1,6 @@
 import { PageBody, PageHeader } from '@kit/ui/page';
 
+import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { withI18n } from '~/lib/i18n/with-i18n';
 import {
   getAnalyticsDashboard,
@@ -20,6 +21,7 @@ import { QuickStartCard } from './_components/quick-start-card';
 import { VendorShieldDashboard } from './_components/vendorshield-dashboard';
 
 async function HomePage() {
+  const { t } = await createI18nServerInstance();
   const [
     kpis,
     riskDist,
@@ -49,8 +51,8 @@ async function HomePage() {
   return (
     <>
       <PageHeader
-        title="Tableau de bord"
-        description="Vue d'ensemble de vos risques fournisseurs"
+        title={t('vendorshield:pages.dashboard')}
+        description={t('vendorshield:pages.dashboardDesc')}
       />
       <PageBody>
         {!quickStart.complete && (

@@ -25,7 +25,8 @@ import type {
   CountryExposure, DimensionScore, RiskDistributionItem,
   TopRiskySupplier, SupplierNode,
 } from '~/lib/vendorshield/analytics.server';
-import { CATEGORY_LABELS, CRITICALITY_LABELS, formatEur } from '~/lib/vendorshield/types';
+import { formatEur } from '~/lib/vendorshield/types';
+import { useEnumLabels } from '~/lib/vendorshield/use-labels';
 import { WorldMapReal } from './world-map-real';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -108,6 +109,7 @@ function WorldMap({ countries, selected, onSelect }: {
   selected: string | null;
   onSelect: (code: string | null) => void;
 }) {
+  const { t } = useTranslation('vendorshield');
   const [hovered, setHovered] = useState<string | null>(null);
   const countryMap = useMemo(() => new Map(countries.map(c => [c.country_code, c])), [countries]);
 
@@ -179,7 +181,7 @@ function WorldMap({ countries, selected, onSelect }: {
           })}
 
           {/* Légende */}
-          {[['#22c55e','Faible'],['#f97316','Modéré'],['#ef4444','Élevé']].map(([c,l],i) => (
+          {([['#22c55e', t('dashboard.riskLow')], ['#f97316', t('dashboard.riskMedium')], ['#ef4444', t('dashboard.riskHigh')]] as [string,string][]).map(([c,l],i) => (
             <g key={l} transform={`translate(${20 + i * 90},238)`}>
               <circle cx="5" cy="5" r="5" fill={c} fillOpacity="0.85"/>
               <text x="14" y="9" fontSize="8.5" fill="currentColor" fillOpacity="0.55">{l}</text>
@@ -243,13 +245,14 @@ const CRIT_VALUES: Record<string, number> = { critical: 4, high: 3, medium: 2, l
 
 function MatrixTooltip({ active, payload }: { active?: boolean; payload?: {payload: SupplierNode}[] }) {
   const { t } = useTranslation('vendorshield');
+  const { categoryLabels } = useEnumLabels();
   if (!active || !payload?.length) return null;
   const s = payload[0]?.payload;
   if (!s) return null;
   return (
     <div className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg p-3 text-xs max-w-48">
       <p className="font-semibold mb-1 text-gray-900 dark:text-white">{s.name}</p>
-      <p className="text-gray-500">{CATEGORY_LABELS[s.category as keyof typeof CATEGORY_LABELS] ?? s.category}</p>
+      <p className="text-gray-500">{categoryLabels[s.category as keyof typeof categoryLabels] ?? s.category}</p>
       <p className="mt-1">{t('dashboard.matrixScore')} : <span className={`font-medium ${scoreTextClass(s.global_score)}`}>{s.global_score ?? '—'}/100</span></p>
       <p>{t('dashboard.axisSpend')} : <span className="font-medium">{s.annual_spend_eur ? formatEur(s.annual_spend_eur) : '—'}</span></p>
       {s.is_sole_source && <p className="text-amber-600 font-medium mt-1">⚠ {t('dashboard.matrixSoleSource')}</p>}
@@ -316,7 +319,7 @@ function DimensionRadar({ suppliers }: { suppliers: SupplierNode[] }) {
           <PolarGrid stroke="currentColor" strokeOpacity={0.15}/>
           <PolarAngleAxis dataKey="subject" tick={{fontSize:10,fill:'currentColor',fillOpacity:0.65}}/>
           <Radar dataKey="A" stroke={fill} fill={fill} fillOpacity={0.22} strokeWidth={2}/>
-          <Tooltip formatter={(v:number)=>[`${v}/100`,'Score moyen']}/>
+          <Tooltip formatter={(v:number)=>[`${v}/100`, t('analytics.avgScoreLabel')]}/>
         </RadarChart>
       </ResponsiveContainer>
     </div>
@@ -465,9 +468,14 @@ function MiniScoreBar({ score }: { score: number | null }) {
   );
 }
 
-function relativeTime(d: string) {
-  const m = Math.max(0, Math.floor((Date.now()-new Date(d).getTime())/60000));
-  return m<1?'à l\'instant':m<60?`il y a ${m}min`:m<1440?`il y a ${Math.floor(m/60)}h`:`il y a ${Math.floor(m/1440)}j`;
+function relativeTime(d: string, locale?: string): string {
+  const diff = (Date.now() - new Date(d).getTime()) / 1000;
+  const fmt = (val: number, unit: Intl.RelativeTimeFormatUnit) =>
+    new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-Math.round(val), unit);
+  if (diff < 60) return fmt(diff, 'second');
+  if (diff < 3600) return fmt(diff / 60, 'minute');
+  if (diff < 86400) return fmt(diff / 3600, 'hour');
+  return fmt(diff / 86400, 'day');
 }
 
 // ─── Dashboard principal ──────────────────────────────────────────────────────
@@ -475,7 +483,7 @@ export function VendorShieldDashboard({
   kpis, riskDistribution, topSuppliers,
   recentAlerts, countryExposure, networkSuppliers, recentAnalyses,
 }: Props) {
-  const { t } = useTranslation('vendorshield');
+  const { t, i18n } = useTranslation('vendorshield');
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
 
   const selectedData  = selectedCountry ? countryExposure.find(c=>c.country_code===selectedCountry) : null;
@@ -704,7 +712,7 @@ export function VendorShieldDashboard({
                       <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{alert.supplier?.name??alert.title}</p>
                       <p className="text-[10px] text-gray-400 mt-0.5 line-clamp-1">{alert.message}</p>
                     </div>
-                    <span suppressHydrationWarning className="text-[9px] text-gray-400 shrink-0">{relativeTime(alert.created_at)}</span>
+                    <span suppressHydrationWarning className="text-[9px] text-gray-400 shrink-0">{relativeTime(alert.created_at, i18n.language)}</span>
                   </div>
                 ))
             )}
@@ -737,7 +745,7 @@ export function VendorShieldDashboard({
                   <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{analysis.supplier_name}</p>
                   <p className="text-[10px] text-gray-400 mt-0.5">{t('dashboard.signalsDetected',{count:analysis.risk_signals?.length ?? 0})}</p>
                 </div>
-                <span suppressHydrationWarning className="text-[9px] text-gray-400 shrink-0">{relativeTime(analysis.created_at)}</span>
+                <span suppressHydrationWarning className="text-[9px] text-gray-400 shrink-0">{relativeTime(analysis.created_at, i18n.language)}</span>
               </Link>
             ))
           )}
