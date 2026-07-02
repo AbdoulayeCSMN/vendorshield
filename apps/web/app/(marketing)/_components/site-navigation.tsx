@@ -9,20 +9,17 @@ import {
   DropdownMenuTrigger,
 } from '@kit/ui/dropdown-menu';
 import { NavigationMenu, NavigationMenuList } from '@kit/ui/navigation-menu';
-
-import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
+import { Trans } from '@kit/ui/trans';
 
 import { SiteNavigationItem } from './site-navigation-item';
 
-type NavLink = { label: string; path: string };
+type NavLink = { label: React.ReactNode; path: string };
 
-export async function SiteNavigation() {
-  const { t } = await createI18nServerInstance();
-
+export function SiteNavigation() {
   const links: NavLink[] = [
-    { label: t('marketing:navFeatures'), path: '/#features' },
-    { label: t('marketing:pricing'), path: '/pricing' },
-    { label: t('marketing:faq'), path: '/faq' },
+    { label: <Trans i18nKey="marketing:navFeatures" />, path: '/#features' },
+    { label: <Trans i18nKey="marketing:pricing" />, path: '/pricing' },
+    { label: <Trans i18nKey="marketing:faq" />, path: '/faq' },
   ];
 
   const NavItems = links.map((item) => (
@@ -40,16 +37,16 @@ export async function SiteNavigation() {
       </div>
 
       <div className={'flex justify-start sm:items-center md:hidden'}>
-        <MobileDropdown links={links} openLabel={t('marketing:navOpenMenu')} />
+        <MobileDropdown links={links} />
       </div>
     </>
   );
 }
 
-function MobileDropdown({ links, openLabel }: { links: NavLink[]; openLabel: string }) {
+function MobileDropdown({ links }: { links: NavLink[] }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger aria-label={openLabel}>
+      <DropdownMenuTrigger aria-label="Open menu">
         <Menu className={'h-8 w-8'} />
       </DropdownMenuTrigger>
       <DropdownMenuContent className={'w-full'}>
