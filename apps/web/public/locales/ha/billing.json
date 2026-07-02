@@ -1,0 +1,174 @@
+{
+  "subscriptionTabSubheading": "Sarrafa biyan kuɗi da kuɗin wata-watanka",
+  "planCardTitle": "Shirin ka",
+  "planCardDescription": "A ƙasa akwai cikakkun bayanan shirinka na yanzu. Kana iya canza shirinka ko soke biyan kuɗin ka a kowane lokaci.",
+  "planRenewal": "Ana sabunta kowace {{interval}} akan {{price}}",
+  "planDetails": "Cikakkun bayanan shirin",
+  "checkout": "Ci gaba zuwa biya",
+  "trialEndsOn": "Gwajinka zai ƙare a",
+  "billingPortalCardButton": "Ziyarci shafin biyan kuɗi",
+  "billingPortalCardTitle": "Sarrafa bayanan biyan kuɗinka",
+  "billingPortalCardDescription": "Ziyarci shafin biyan kuɗi don sarrafa biyan kuɗi. Kana iya canza ko soke shirinka, ko zazzage lissafinka.",
+  "cancelAtPeriodEndDescription": "An tsara soke biyan kuɗinka a ranar {{- endDate }}.",
+  "renewAtPeriodEndDescription": "An tsara sabunta biyan kuɗinka a ranar {{- endDate }}",
+  "noPermissionsAlertHeading": "Ba ka da izinin canza saituna na biyan kuɗi",
+  "noPermissionsAlertBody": "Ka tuntuɓi mai asusunka don canza saituna na biyan kuɗi.",
+  "checkoutSuccessTitle": "An gama! Duk yana da kyau.",
+  "checkoutSuccessDescription": "Na gode da biyan kuɗi, mun sarrafa biyan kuɗinka da nasara! Za a aika imel na tabbatarwa zuwa {{ customerEmail }}.",
+  "checkoutSuccessBackButton": "Koma manhajar",
+  "cannotManageBillingAlertTitle": "Ba za ka iya sarrafa biyan kuɗi ba",
+  "cannotManageBillingAlertDescription": "Ba ka da izinin sarrafa biyan kuɗi. Ka tuntuɓi mai asusunka.",
+  "manageTeamPlan": "Sarrafa shirinka na ƙungiya",
+  "manageTeamPlanDescription": "Zaɓi shirin da ya dace da buƙatun ƙungiyarka. Kana iya ɗagawa ko sauke shirinka a kowane lokaci.",
+  "basePlan": "Shirin asali",
+  "billingInterval": {
+    "label": "Zaɓi lokacin biyan kuɗi",
+    "month": "Ana biya kowace wata",
+    "year": "Ana biya kowace shekara"
+  },
+  "perMonth": "a wata",
+  "custom": "Shiri na musamman",
+  "lifetime": "Har abada",
+  "trialPeriod": "Gwaji na kwanaki {{period}}",
+  "perPeriod": "a kowace {{period}}",
+  "redirectingToPayment": "Ana karkatar da kai zuwa biya. Ka jira...",
+  "proceedToPayment": "Ci gaba zuwa biya",
+  "startTrial": "Fara gwaji",
+  "perTeamMember": "A kowace memba na ƙungiya",
+  "perUnit": "A kowane {{unit}} da aka yi amfani",
+  "teamMembers": "Mambobin ƙungiya",
+  "includedUpTo": "Har zuwa {{upTo}} {{unit}} an ƙunsa a cikin shirin",
+  "fromPreviousTierUpTo": "a kowace {{unit}} na gaba {{upTo}} {{unit}}",
+  "andAbove": "sama da {{previousTier}} {{unit}}",
+  "forEveryUnit": "a kowace {{unit}}",
+  "setupFee": "da ƙarin kuɗi na saiti {{setupFee}}",
+  "perUnitIncluded": "({{included}} an ƙunsa)",
+  "featuresLabel": "Abubuwa",
+  "detailsLabel": "Cikakken bayani",
+  "planPickerLabel": "Zaɓi shirinka da kake so",
+  "planCardLabel": "Sarrafa shirinka",
+  "planPickerAlertErrorTitle": "Kuskure wajen neman biya",
+  "planPickerAlertErrorDescription": "An samu kuskure wajen neman biya. Sake gwadawa daga baya.",
+  "subscriptionCancelled": "An soke biyan kuɗi",
+  "cancelSubscriptionDate": "Za a soke biyan kuɗinka a ƙarshen lokacin",
+  "noPlanChosen": "Ka zaɓi shiri",
+  "noIntervalPlanChosen": "Ka zaɓi lokacin biyan kuɗi",
+  "status": {
+    "free": {
+      "badge": "Shiri na Kyauta",
+      "heading": "Kana cikin Shirin Kyauta",
+      "description": "Kana cikin shirin kyauta. Kana iya ɗagawa zuwa shirin da ake biya a kowane lokaci."
+    },
+    "active": {
+      "badge": "Mai aiki",
+      "heading": "Biyan kuɗinka yana aiki",
+      "description": "Biyan kuɗinka yana aiki. Kana iya sarrafa biyan kuɗi ta shafin mai amfani."
+    },
+    "trialing": {
+      "badge": "Gwaji",
+      "heading": "Kana cikin gwaji",
+      "description": "Kana jin daɗin fa'idodin shirin har sai gwaji ya ƙare"
+    },
+    "past_due": {
+      "badge": "Ya ƙetare lokaci",
+      "heading": "Lissafinka ya ƙetare lokaci",
+      "description": "Lissafinka ya ƙetare lokaci. Ka sabunta hanyar biyan kuɗinka."
+    },
+    "canceled": {
+      "badge": "An soke",
+      "heading": "An soke biyan kuɗinka",
+      "description": "An soke biyan kuɗinka. An tsara ya ƙare a ƙarshen lokacin biyan kuɗi."
+    },
+    "unpaid": {
+      "badge": "Ba a biya ba",
+      "heading": "Ba a biya lissafinka ba",
+      "description": "Ba a biya lissafinka ba. Ka sabunta hanyar biyan kuɗinka."
+    },
+    "incomplete": {
+      "badge": "Ba a kammala ba",
+      "heading": "Muna jiran biyan kuɗinka",
+      "description": "Muna jiran biyan kuɗinka ya cika. Ka yi haƙuri."
+    },
+    "incomplete_expired": {
+      "badge": "Ya ƙare",
+      "heading": "Biyan kuɗinka ya ƙare",
+      "description": "Biyan kuɗinka ya ƙare. Ka sabunta hanyar biyan kuɗinka."
+    },
+    "paused": {
+      "badge": "An dakatar",
+      "heading": "An dakatar da biyan kuɗinka",
+      "description": "An dakatar da biyan kuɗinka. Kana iya ci gaba da shi a kowane lokaci."
+    },
+    "succeeded": {
+      "badge": "Ya yi nasara",
+      "heading": "Biyan kuɗinka ya yi nasara",
+      "description": "Biyan kuɗinka ya yi nasara. Na gode da biyan kuɗi!"
+    },
+    "pending": {
+      "badge": "Ana jira",
+      "heading": "Biyan kuɗinka yana jira",
+      "description": "Biyan kuɗinka yana jira. Ka yi haƙuri."
+    },
+    "failed": {
+      "badge": "Ya kasa",
+      "heading": "Biyan kuɗinka ya kasa",
+      "description": "Biyan kuɗinka ya kasa. Ka sabunta hanyar biyan kuɗinka."
+    }
+  },
+  "plans": {
+    "starter": {
+      "name": "Starter",
+      "description": "Fara sa ido kan mahimman masu kawo kayanka.",
+      "features": [
+        "Har zuwa masu kawo kaya 50",
+        "Masu amfani 2",
+        "Makin haɗari na fannonni 4",
+        "Faɗakarwa da dokokin da za a saita",
+        "Shigo da Excel / CSV"
+      ]
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Sa ido da AI da hasashen gazawa.",
+      "features": [
+        "Har zuwa masu kawo kaya 250",
+        "Masu amfani 10",
+        "AI OSINT da gano sigina",
+        "Hasashen gazawar mai kawo kaya",
+        "Taswirar matakai da yawa",
+        "Fitar da PDF da bincike mai zurfi"
+      ]
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "description": "Don ƙungiyoyin masana'antu da rukunoni da yawa.",
+      "features": [
+        "Masu kawo kaya marasa iyaka",
+        "Masu amfani marasa iyaka",
+        "SSO (SAML / OIDC)",
+        "Shirye-shirye na musamman da tallafi",
+        "SLA da masaukin keɓantacce"
+      ]
+    }
+  },
+  "plansPage": {
+    "activeSubscriptionTitle": "Biyan kuɗi mai aiki",
+    "statusLabel": "Matsayi",
+    "renewsOn": "ana sabunta a {{date}}",
+    "manageSubscription": "Sarrafa biyan kuɗina",
+    "monthly": "Wata-wata",
+    "yearly": "Shekara-shekara",
+    "yearlyDiscount": "(watanni 2 kyauta)",
+    "popularBadge": "Shahararren",
+    "customPrice": "Farashi na musamman",
+    "perMonth": "/wata",
+    "perYear": "/shekara",
+    "contactCta": "Tuntuɓe mu",
+    "currentPlan": "Shirin yanzu",
+    "changeViaPortal": "Sarrafa ta shafi",
+    "subscribeCta": "Yi rajista",
+    "priceNotConfigured": "Ba a saita wannan farashi tukuna (ID ɗin farashi na Paddle yana ɓace).",
+    "genericPaymentError": "Biyan kuɗi ya kasa.",
+    "genericError": "Wani abu ya faskara."
+  }
+}
